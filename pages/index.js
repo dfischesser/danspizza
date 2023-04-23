@@ -1,15 +1,16 @@
-// index.html
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import useSWR from 'swr';
+import { Navbar } from './navbar';
+import Container from 'react-bootstrap/Container';
 
 function Header({ title }) {
-  return <h1>{title ? title : 'Default title'}</h1>;
+  return <h1 className="padding">{title ? title : 'Default title'}</h1>;
 }
 
 const fetcher = (...args) => fetch(...args).then((res) => res.json())
 
-function Profile() {
-  const {data, error } = useSWR('https://localhost:44302/WeatherForecast', fetcher)
+function Coupons() {
+  const { data, error } = useSWR('https://localhost:44302/Coupon', fetcher)
 
   if (error) return <div>Failed to load</div>
   if (!data) return <div>Loading...</div>
@@ -17,44 +18,20 @@ function Profile() {
 
   return (
     <div>
-      <p>Date: {data[0].date}</p>
-      <p>Weather: {data[0].summary}</p>
+      <h3>Coupons</h3>
+      <div className='coupon-container'>
+        <div className='box'>
+          {console.log(data)}
+          {data.map((data) => (
+            <p key={data.CouponID} className='coupon'>{data.couponText}</p>
+          ))}
+        </div>
+      </div>
     </div>
   )
 }
 
-// // This function gets called at build time
-// export async function getServerSideProps() {
-//   // Call an external API endpoint to get posts
-//   const res = await fetch('https://api.publicapis.org/entries')
-//   //const res = await fetch('https://localhost:44302/WeatherForecast')
-//   const posts = await res.json()
-
-//   // By returning { props: { posts } }, the Blog component
-//   // will receive `posts` as a prop at build time
-//   return {
-//     props: {
-//       posts,
-//     },
-//   }
-// }
-
-function jsAJAX() {
-  const xhttp = new XMLHttpRequest();
-  xhttp.onload = function() {
-
-    let response = JSON.parse(this.responseText);
-    document.getElementById("data").innerHTML = this.responseText;
-    //response = response.entries[0];
-
-    //document.getElementById("data").innerHTML = "API: " + response.API + "<br>Description: " + response.Description;
-    }
-  xhttp.open("GET", "https://localhost:44302/WeatherForecast", true);
-  xhttp.send();
-}
-
-export default function HomePage({posts}) {
-  const names = ['Ada Lovelace', 'Grace Hopper', 'Margaret Hamilton'];
+export default function HomePage({ posts }) {
 
   const [likes, setLikes] = useState(0);
 
@@ -63,17 +40,13 @@ export default function HomePage({posts}) {
   }
 
   return (
-    <div>
-      <Header title="Pizza Shop" />
-      <ul>
-        {names.map((name) => (
-          <li key={name}>{name}</li>
-        ))}
-      </ul>
-      {/* <p id="data">{posts.count}</p> */}
-      <Profile />
+    <>
+    <Container className="main">
+      <Navbar activePage="/"/>
+      <Header title="Dan's Pizza"/>
+      <Coupons />
       <button onClick={handleClick}>Like ({likes})</button>
-      <button onClick={jsAJAX}>AJAX BABY</button>
-    </div>
+      </Container>
+    </>
   );
 }
