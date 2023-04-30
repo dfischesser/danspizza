@@ -1,23 +1,35 @@
-import Nav from 'react-bootstrap/Nav';
+import Link from 'next/link'
+import { Cart } from './cart';
+import { useRouter } from 'next/router';
 
-export function Navbar() {
+export function Navbar(props) {
 
-    return (
-      <>
-            <Nav variant="pills" defaultActiveKey="/">
-              <Nav.Item>
-                <Nav.Link href="/">Home</Nav.Link>
-                </Nav.Item>
-              <Nav.Item>
-                <Nav.Link eventKey="menu" href="/menu">Menu</Nav.Link>
-                </Nav.Item>
-              <Nav.Item>
-                <Nav.Link eventKey="aboutus">About Us</Nav.Link>
-                </Nav.Item>
-              <Nav.Item>
-                <Nav.Link eventKey="contact">Contact</Nav.Link>
-              </Nav.Item>
-            </Nav>
-      </>
+    const { asPath } = useRouter();
+    
+    const pages = [
+        {Name:'Home', Path:'/', IsActive: function() { return asPath == this.Path ? true : false }},
+        {Name:'Menu', Path:'/menu', IsActive: function() { return asPath == this.Path ? true : false }}
+    ]
+    
+    function BuildCartLink() {
+        return (
+            <Link className={'navigate-link ' + (props.isActive ? 'navigate-active' : '')} href='' onClick={() => props.onCartClick()}>Cart</Link>
+        )
+    }
+    
+    return(
+        <div className='navigate-center'>
+            <div className='navigate-link-container'>
+            {pages.map(pages => (
+            <Link key={pages.Name} href={pages.Path} className={'navigate-link ' + (pages.IsActive() ? 'navigate-active' : '')}>{pages.Name}</Link>
+            ))}
+            </div>
+            <div className='navigate-cart-container'>
+                <BuildCartLink/>
+            </div>
+            {props.isActive && <Cart cartItems={props.currentCartItems}/>}
+        </div>
     )
-  }
+    
+}
+

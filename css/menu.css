@@ -1,0 +1,24 @@
+.menu {
+    width: 500px;
+    text-align:center;
+    margin: 0 auto;
+    padding-top: 50px;
+}
+
+.menu-item {
+    list-style-type:none;
+    border: 2px solid;
+    text-align: left;
+    padding: 5px;
+    margin: 5px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.menu-list {
+    padding: 0px;
+}
+
+.accordion-header button {
+    font-weight: 600;
+}

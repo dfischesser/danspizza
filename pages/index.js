@@ -1,16 +1,15 @@
-import { useState, useEffect } from 'react';
-import useSWR from 'swr';
-import { Navbar } from './navbar';
-import Container from 'react-bootstrap/Container';
+import { useState } from 'react';
+import useSWR, { preload } from 'swr';
 
 function Header({ title }) {
-  return <h1 className="padding">{title ? title : 'Default title'}</h1>;
+  return <h1 className="header-styles">{title ? title : 'Default title'}</h1>;
 }
 
 const fetcher = (...args) => fetch(...args).then((res) => res.json())
+preload('https://localhost:44302/Coupon/Get', fetcher)
 
 function Coupons() {
-  const { data, error } = useSWR('https://localhost:44302/Coupon', fetcher)
+  const { data, error } = useSWR('https://localhost:44302/Coupon/Get', fetcher)
 
   if (error) return <div>Failed to load</div>
   if (!data) return <div>Loading...</div>
@@ -21,13 +20,18 @@ function Coupons() {
       <h3>Coupons</h3>
       <div className='coupon-container'>
         <div className='box'>
-          {console.log(data)}
-          {data.map((data) => (
-            <p key={data.CouponID} className='coupon'>{data.couponText}</p>
+          {data.couponList.map((data) => (
+            <p key={data.couponID} className='coupon'>{data.couponText}</p>
           ))}
         </div>
       </div>
     </div>
+  )
+}
+
+function Blurb() {
+  return (
+    <p className='blurb'> Welcome! Check out our menu!</p>
   )
 }
 
@@ -41,12 +45,10 @@ export default function HomePage({ posts }) {
 
   return (
     <>
-    <Container className="main">
-      <Navbar activePage="/"/>
       <Header title="Dan's Pizza"/>
+      <Blurb />
       <Coupons />
       <button onClick={handleClick}>Like ({likes})</button>
-      </Container>
     </>
   );
 }

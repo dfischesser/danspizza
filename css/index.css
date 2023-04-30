@@ -1,0 +1,27 @@
+.coupon-container {
+    padding: 20px;
+}
+
+.blurb {
+    padding: 10px 0px 50px 0px;
+}
+
+.coupon {
+    width: 150px;
+    height: 100px;
+    vertical-align: middle;
+    border: 3px solid;
+    border-radius: 10px;
+    text-align:center;
+    padding: 10px;
+    margin: 10px;
+}
+
+.box {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    width: fit-content;
+    margin: auto;
+    position: relative;
+}
