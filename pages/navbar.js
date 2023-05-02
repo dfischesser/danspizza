@@ -3,7 +3,6 @@ import { Cart } from './cart';
 import { useRouter } from 'next/router';
 
 export function Navbar(props) {
-
     const { asPath } = useRouter();
     
     const pages = [
@@ -20,14 +19,14 @@ export function Navbar(props) {
     return(
         <div className='navigate-center'>
             <div className='navigate-link-container'>
-            {pages.map(pages => (
-            <Link key={pages.Name} href={pages.Path} className={'navigate-link ' + (pages.IsActive() ? 'navigate-active' : '')}>{pages.Name}</Link>
-            ))}
+                {pages.map(pages => (
+                <Link key={pages.Name} href={pages.Path} className={'navigate-link ' + (pages.IsActive() ? 'navigate-active' : '')}>{pages.Name}</Link>
+                ))}
             </div>
             <div className='navigate-cart-container'>
                 <BuildCartLink/>
             </div>
-            {props.isActive && <Cart cartItems={props.currentCartItems}/>}
+            {props.isActive && <Cart currentCartItems={props.currentCartItems} onRemoveItem={props.onRemoveItem} />}
         </div>
     )
     
