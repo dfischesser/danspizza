@@ -26,7 +26,7 @@ export function Navbar(props) {
             <div className='navigate-cart-container'>
                 <BuildCartLink/>
             </div>
-            {props.isActive && <Cart currentCartItems={props.currentCartItems} onRemoveItem={props.onRemoveItem} />}
+            {props.isActive && <Cart currentCartItems={props.currentCartItems} removeItem={(foodItem) => props.removeItem(foodItem)} customizeData={props.customizeData}/>}
         </div>
     )
     

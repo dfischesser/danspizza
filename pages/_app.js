@@ -5,6 +5,7 @@ import '../css/navbar.css'
 import '../css/index.css'
 import '../css/menu.css'
 import '../css/cart.css'
+import '../css/customize.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Container from 'react-bootstrap/Container';
 import { Navbar } from './navbar';
@@ -17,17 +18,46 @@ import { useRouter } from 'next/router';
 export default function MyApp({ Component, pageProps }) {
   //const { data, error } = useSWR('https://localhost:44302/Menu/Get', fetcher)
 
-  //console.log('first category id: ' + JSON.stringify(data.menuCategoryList[0].menuCategoryID))
-
   const data = {"menuCategoryList":[{"menuCategoryID":1,"foodType":"Pizza","foodList":[{"foodID":1,"menuCategoryID":1,"foodName":"Hand-Tossed"},{"foodID":2,"menuCategoryID":1,"foodName":"Thin-Crust"},{"foodID":3,"menuCategoryID":1,"foodName":"Sicilian"}]},{"menuCategoryID":2,"foodType":"Pasta","foodList":[{"foodID":4,"menuCategoryID":2,"foodName":"Francese"},{"foodID":5,"menuCategoryID":2,"foodName":"Marsala"},{"foodID":6,"menuCategoryID":2,"foodName":"Alfredo"}]},{"menuCategoryID":3,"foodType":"Salad","foodList":[]},{"menuCategoryID":4,"foodType":"Soup","foodList":[]},{"menuCategoryID":5,"foodType":"Sides","foodList":[]},{"menuCategoryID":6,"foodType":"Drinks","foodList":[]},{"menuCategoryID":7,"foodType":"Dessert","foodList":[]}]}
+  const customizeData = {"customizePizzaID":null,"size":null,"style":null,"toppings":[{"toppingID":1,"toppingName":"Pepperoni"},{"toppingID":2,"toppingName":"Sausage"},{"toppingID":3,"toppingName":"Ham"},{"toppingID":4,"toppingName":"Olives"},{"toppingID":5,"toppingName":"Mushrooms"},{"toppingID":6,"toppingName":"Pineapple"}]}
   
   //load static menu
   const menu = data.menuCategoryList
-  
+
+  //initial topping list
+  const initialIsChecked = customizeData.toppings.map((newTopping) => ({toppingID: newTopping.toppingID, isChecked: false}))
+
   //set states
   const [openCart, setOpenCart] = useState(false)
   const [cartItems, dispatch] = useReducer(cartItemsReducer, [])
   const [cartID, setCartID] = useState(1)
+
+  //customize    
+  const [foodToCustomize, setfoodToCustomize] = useState({foodID: 0, menuCategoryID: 0, foodName: ''});
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [checked, setChecked] = useState(initialIsChecked) 
+
+  function handleOpenModal(selectedFoodItem) {
+      setfoodToCustomize(selectedFoodItem)
+      setIsModalOpen(true)
+  }
+
+  function handleCloseCustomize() {
+    setIsModalOpen(false)
+}
+
+  function addCustomItem(selectedFoodItem) {
+    console.log('app add cust selectedFoodItem: ' + JSON.stringify(selectedFoodItem))
+    console.log('app add cust cartitems: ' + JSON.stringify(cartItems))
+    let checkedToppings = checked.filter(topping => topping.isChecked)
+    let checkedToppingIDs = checkedToppings.map(topping => topping.toppingID)
+    selectedFoodItem = {...selectedFoodItem, toppings: checkedToppingIDs}
+    setfoodToCustomize(selectedFoodItem)
+    setOpenCart(true)
+    handleCloseCustomize()
+    setChecked(initialIsChecked)
+    handleAddItem(selectedFoodItem)
+  }
 
   //handle functions
   function handleAddItem(selectedFood) {
@@ -42,6 +72,7 @@ export default function MyApp({ Component, pageProps }) {
   }
 
   function handleRemoveItem(selectedFood) {
+    console.log('app handleRemove foodItem: ' + JSON.stringify(selectedFood))
     dispatch(
       {
         type: 'removed',
@@ -52,6 +83,7 @@ export default function MyApp({ Component, pageProps }) {
   }
 
   function cartItemsReducer(cartItems, action) {
+    console.log('app reducer foodItem: ' + JSON.stringify(action.foodItem))
     switch (action.type) {
       case 'added': {
         action.foodItem = {...action.foodItem, cartItemID: action.id}
@@ -79,14 +111,23 @@ export default function MyApp({ Component, pageProps }) {
       <Navbar 
         isActive={openCart} 
         onCartClick={() => setOpenCart(!openCart)} 
-        onRemoveItem={(foodItem) => handleRemoveItem(foodItem)} 
+        removeItem={(foodItem) => handleRemoveItem(foodItem)} 
         currentCartItems={cartItems}
+        addCartCustomize = {checked}
+        customizeData={customizeData}
       />
       { asPath == '/menu' && 
         <Component 
-          onAddItem={(foodItem) => handleAddItem(foodItem)} 
           currentCartItems={cartItems} 
           menu={menu} 
+          customizeData={customizeData}
+          openModal={(foodItem) => handleOpenModal(foodItem)}
+          closeCustomize={() => handleCloseCustomize()}
+          isModalOpen={isModalOpen}
+          foodToCustomize={foodToCustomize}
+          updateCheckedToppings={(updatedChecked) => setChecked(updatedChecked)}
+          addCustomItem={(foodItem) => addCustomItem(foodItem)}
+          checked={checked}
           {...pageProps} 
         /> 
       }
