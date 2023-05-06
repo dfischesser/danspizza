@@ -7,7 +7,8 @@ export function Navbar(props) {
     
     const pages = [
         {Name:'Home', Path:'/', IsActive: function() { return asPath == this.Path ? true : false }},
-        {Name:'Menu', Path:'/menu', IsActive: function() { return asPath == this.Path ? true : false }}
+        {Name:'Menu', Path:'/menu', IsActive: function() { return asPath == this.Path ? true : false }},
+        {Name:'Order', Path:'/order', IsActive: function() { return asPath == this.Path ? true : false }}
     ]
     
     function BuildCartLink() {

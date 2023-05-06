@@ -1,5 +1,3 @@
-import { useState } from 'react';
-
 function Header({ title }) {
     return <h5 className='padding customize-header'>{title ? title : 'Default title'}</h5>;
   }
@@ -21,10 +19,11 @@ export function Customize(props) {
                 <Header title='Customize'/>
                 <button className='customize-close-button' onClick={() => props.closeCustomize()}>X</button>
             </div>
+            <p>{props.foodToCustomize.foodName}</p>
             <div className='customize-body'>
                     {props.customizeData.toppings.map((topping) => (
                     <div className='customize-center' key={topping.toppingID}>
-                        <label htmlFor={topping.toppingID} className='customize-label'>{topping.toppingName}</label>
+                        <label htmlFor={topping.toppingID} className='customize-label'>{topping.toppingName}: {topping.price.toLocaleString('us-US', { style: 'currency', currency: 'USD' })}</label>
                         <input type='checkbox' 
                             key={topping.toppingID} 
                             id={topping.toppingID} 
@@ -37,7 +36,7 @@ export function Customize(props) {
                     </div>
                     )
                     )}
-                    <button onClick={(foodToCustomize) => props.addCustomItem(props.foodToCustomize)}>Add to Cart</button>
+                    <button onClick={() => props.addCustomItem(props.foodToCustomize)}>Add to Cart</button>
             </div>
         </div>
     )

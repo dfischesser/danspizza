@@ -18,7 +18,7 @@ export default function Menu(props) {
                             <ul className='menu-list'>
                                 {data.foodList.map((data) => (
                                     <li key={data.foodID} className='menu-center'>
-                                        <div className='menu-item'>{data.foodName}</div>
+                                        <div className='menu-item'>{data.foodName}: ${data.price}</div>
                                     <div className='menu-button'>
                                         <button onClick={() => props.openModal(data)} key={data.foodID}>Customize</button>
                                     </div>
