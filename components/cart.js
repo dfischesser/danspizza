@@ -11,24 +11,26 @@ function ItemList( props ) {
         return(
             props.currentCartItems.map(
                 foodItem => (
-                <div className='cart-item-wrapper' key={foodItem.cartItemID}>
-                <div className='cart-item'>
-                    {foodItem.foodName}: {foodItem.price}
-                    <button onClick={() => props.removeItem(foodItem)}>x</button>
-                </div>
-                    <li className='cart-item'>
-                        <ul>
-                            {foodItem.toppings.map((cartItemTopping) => (
-                            <li key={cartItemTopping}>
-                                {props.toppings.find(
-                                    toppingListItem => toppingListItem.toppingID == cartItemTopping).toppingName + ': '}
-                                {props.toppings.find(
-                                    toppingListItem => toppingListItem.toppingID == cartItemTopping).price.toLocaleString('us-US', { style: 'currency', currency: 'USD' })}
-                            </li>
-                            ))}
-                        </ul>
-                    </li>
-                </div>)
+                    <div className='cart-item-wrapper' key={foodItem.cartItemID}>
+                    <div className='cart-item'>
+                        {foodItem.foodName}: {foodItem.price}
+                        <button onClick={() => props.removeItem(foodItem)}>x</button>
+                    </div>
+                        <li className='cart-item'>
+                            <ul>
+                                {foodItem.toppings.map((cartItemTopping) => (
+                                    <li key={cartItemTopping}>
+                                        {props.toppings.find(
+                                            toppingListItem => toppingListItem.toppingID == cartItemTopping).toppingName + ': '}
+                                        {props.toppings.find(
+                                            toppingListItem => toppingListItem.toppingID == cartItemTopping).price.toLocaleString('us-US', { style: 'currency', currency: 'USD' })}
+                                    </li>
+                                    )
+                                )}
+                            </ul>
+                        </li>
+                    </div>
+                )
             )
         )
     }
@@ -57,7 +59,7 @@ export function Cart(props) {
                 <ul className='cart-list'>
                     <ItemList currentCartItems={props.currentCartItems} removeItem={(foodItem) => props.removeItem(foodItem)} toppings={props.customizeData.toppings} />
                 </ul>
-                <p>Subtotal: {getPrice()}</p>
+                <p>Subtotal: {getPrice().toLocaleString('us-US', { style: 'currency', currency: 'USD' })}</p>
                 {(props.currentCartItems.length > 0) ? <Link href='/order' passHref><button>Add to Order</button></Link> : <p>No items added</p>}
             </div>
         </div>

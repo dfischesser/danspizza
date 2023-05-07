@@ -1,9 +1,12 @@
 import Link from 'next/link'
-import { Cart } from './cart';
+import { Cart } from '../components/cart';
 import { useRouter } from 'next/router';
 
 export function Navbar(props) {
     const { asPath } = useRouter();
+    console.log('navbar topping price cust data: ' + JSON.stringify(props.customizeData))
+    
+    console.log('menudata: ' + JSON.stringify(props.menuDataState))
     
     const pages = [
         {Name:'Home', Path:'/', IsActive: function() { return asPath == this.Path ? true : false }},

@@ -1,17 +1,39 @@
 import Accordion from 'react-bootstrap/Accordion';
-import { Customize } from './customize'
+import { Customize } from '../components/customize'
 
 function Header({ title }) {
     return <h1 className="header-padding">{title ? title : 'Default title'}</h1>;
   }
 
+  export async function getStaticProps() {
+    const res = await fetch('https://localhost:443/Menu/Get');
+    const data = await res.json();
+    console.log('(Menu) Hi it\'s me, the server!')
+    console.log('Here is your data: ' + JSON.stringify(data))
+   
+    return {
+      props: {
+        data
+      },
+      // Next.js will attempt to re-generate the page:
+      // - When a request comes in
+      // - At most once every 10 seconds
+      revalidate: 10, // In seconds
+    };
+  }
+
 export default function Menu(props) {
+
+    console.log('(Menu) Hey it\'s me, the client!')
+    console.log('Here is your data: ' + JSON.stringify(props.data))
     
+    props.setMenuData(props.data);
+
     return (
             <>
                 <Header title="Menu"/>
                 <Accordion defaultActiveKey='0' className='menu'>
-                {props.menu.map((data) => (
+                {props.data.menuCategoryList.map((data) => (
                     <Accordion.Item key={data.menuCategoryID} eventKey={data.menuCategoryID} className='menu-category'>
                         <Accordion.Header className='accordion-head'>{data.foodType}</Accordion.Header>
                         <Accordion.Body>

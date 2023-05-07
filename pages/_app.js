@@ -8,21 +8,18 @@ import '../css/cart.css'
 import '../css/customize.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Container from 'react-bootstrap/Container';
-import { Navbar } from './navbar';
+import { Navbar } from '../components/navbar';
 import { useRouter } from 'next/router';
-//import useSWR, { preload } from 'swr';
-
-//const fetcher = (...args) => fetch(...args).then((res) => res.json())
-//preload('https://localhost:44302/Menu/Get', fetcher)
-
+import useSWR, { preload } from 'swr';
 export default function MyApp({ Component, pageProps }) {
-  //const { data, error } = useSWR('https://localhost:44302/Menu/Get', fetcher)
-
-  const data = {"menuCategoryList":[{"menuCategoryID":1,"foodType":"Pizza","foodList":[{"foodID":2,"menuCategoryID":1,"foodName":"Hand-Tossed","price":17.99},{"foodID":3,"menuCategoryID":1,"foodName":"Thin-Crust","price":18.99},{"foodID":4,"menuCategoryID":1,"foodName":"Sicilian","price":19.99}]},{"menuCategoryID":2,"foodType":"Pasta","foodList":[{"foodID":5,"menuCategoryID":2,"foodName":"Francese","price":14.99},{"foodID":6,"menuCategoryID":2,"foodName":"Marsala","price":14.99},{"foodID":7,"menuCategoryID":2,"foodName":"Alfredo","price":14.99}]},{"menuCategoryID":3,"foodType":"Salad","foodList":[]},{"menuCategoryID":4,"foodType":"Soup","foodList":[]},{"menuCategoryID":5,"foodType":"Sides","foodList":[]},{"menuCategoryID":6,"foodType":"Drinks","foodList":[]},{"menuCategoryID":7,"foodType":"Dessert","foodList":[]}]}
+  
+  //console.log('menu data live: ' + JSON.stringify(data))
+  //const data = {"menuCategoryList":[{"menuCategoryID":1,"foodType":"Pizza","foodList":[{"foodID":2,"menuCategoryID":1,"foodName":"Hand-Tossed","price":17.99},{"foodID":3,"menuCategoryID":1,"foodName":"Thin-Crust","price":18.99},{"foodID":4,"menuCategoryID":1,"foodName":"Sicilian","price":19.99}]},{"menuCategoryID":2,"foodType":"Pasta","foodList":[{"foodID":5,"menuCategoryID":2,"foodName":"Francese","price":14.99},{"foodID":6,"menuCategoryID":2,"foodName":"Marsala","price":14.99},{"foodID":7,"menuCategoryID":2,"foodName":"Alfredo","price":14.99}]},{"menuCategoryID":3,"foodType":"Salad","foodList":[]},{"menuCategoryID":4,"foodType":"Soup","foodList":[]},{"menuCategoryID":5,"foodType":"Sides","foodList":[]},{"menuCategoryID":6,"foodType":"Drinks","foodList":[]},{"menuCategoryID":7,"foodType":"Dessert","foodList":[]}]}
   const customizeData = {"customizePizzaID":"","size":"","style":"","toppings":[{"toppingID":1,"toppingName":"Pepperoni","price":2.5},{"toppingID":2,"toppingName":"Sausage","price":2.5},{"toppingID":3,"toppingName":"Ham","price":2.5},{"toppingID":4,"toppingName":"Olives","price":2.5},{"toppingID":5,"toppingName":"Mushrooms","price":2.5},{"toppingID":6,"toppingName":"Pineapple","price":2.5}]}
+  const [menuDataState, setMenuDataState] = useState(null);
   
   //load static menu
-  const menu = data.menuCategoryList.slice()
+  //const menu = data.menuCategoryList.slice()
 
   //initial topping list
   const initialIsChecked = customizeData.toppings.map((newTopping) => ({toppingID: newTopping.toppingID, isChecked: false}))
@@ -119,7 +116,7 @@ export default function MyApp({ Component, pageProps }) {
       { asPath == '/menu' && 
         <Component 
           currentCartItems={cartItems} 
-          menu={menu} 
+          menu={menuDataState} 
           customizeData={customizeData}
           openModal={(foodItem) => handleOpenModal(foodItem)}
           closeCustomize={() => handleCloseCustomize()}
@@ -128,6 +125,7 @@ export default function MyApp({ Component, pageProps }) {
           updateCheckedToppings={(updatedChecked) => setChecked(updatedChecked)}
           addCustomItem={(foodItem) => addCustomItem(foodItem)}
           checked={checked}
+          setMenuData={() => setMenuDataState()}
           {...pageProps} 
         /> 
       }
