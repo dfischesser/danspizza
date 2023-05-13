@@ -7,6 +7,15 @@
     border-radius: 3px;
 }
 
+.navigate-link-account {
+    margin: 5px;
+    padding: 2px;
+    text-decoration: none;
+    font-size: larger;
+    color: black;
+    border-radius: 3px;
+}
+
 .navigate-active {
     color: #0d6efd;
     font-weight: 700
@@ -28,4 +37,31 @@
 .navigate-cart-container {
     display: flex;
     text-align: right;
+    margin: auto 0;
 }
+.navigate-dropdown {
+    position: relative;
+    display: inline-block;
+    text-align: left;
+  }
+  
+.navigate-dropdown-content {
+    display: none;
+    position: absolute;
+    border-radius: 5px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+  }
+
+  .navigate-dropdown-content a {
+    color: black;
+    padding: 5px;
+    text-decoration: none;
+    display: block;
+  }
+
+ /* Show the dropdown menu on hover */
+.navigate-dropdown:hover .navigate-dropdown-content {display: block;}
+
+/* Change the background color of the dropdown button when the dropdown content is shown */
+.navigate-dropdown:hover .navigate-link-account {background-color: #f1f1f1;}
