@@ -9,7 +9,7 @@ function Header({ title }) {
   }
 
 export default function Menu(props) {
-    const { data, error } = useSWR('https://localhost:443/Menu/Get', props.fetcher)
+    const { data, error } = useSWR('https://danspizza-api.azurewebsites.net/api/Menu/Get', props.fetcher)
     if (error) {
       console.log('app fetch error: ' + error.message)
     }

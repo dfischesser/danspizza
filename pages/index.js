@@ -29,7 +29,7 @@ function Blurb() {
 }
 
 export default function HomePage(props) {  
-  const { data, error } = useSWR('https://localhost:443/Coupon/Get', props.fetcher)
+  const { data, error } = useSWR('https://danspizza-api.azurewebsites.net/api/Coupon/Get', props.fetcher)
 
   if (error) {return <div>Failed to load</div>}
   if (!data) return <div>Loading...</div>
