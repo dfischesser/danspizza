@@ -1,4 +1,6 @@
+/* eslint-disable react/prop-types */
 import Link from 'next/link'
+import React from 'react';
 
 function Header({ title }) {
     return <h3 className='cart-title'>{title ? title : 'Default title'}</h3>;
