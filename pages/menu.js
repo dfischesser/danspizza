@@ -2,20 +2,19 @@
 import Accordion from 'react-bootstrap/Accordion';
 import { Customize } from '../components/customize'
 import React from 'react';
-import useSWR from 'swr';
 
 function Header({ title }) {
     return <h1 className="header-padding">{title ? title : 'Default title'}</h1>;
-  }
+}
+
+export const getStaticProps = async () => {
+const res = await fetch('/api/Menu/Get')
+const menu = await res.json()
+return {props: {menu}}
+}
 
 export default function Menu(props) {
-    const { data, error } = useSWR('https://danspizza-api.azurewebsites.net/api/Menu/Get', props.fetcher)
-    if (error) {
-      console.log('app fetch error: ' + error.message)
-    }
-
-    if (error) return <div>Failed to load</div>
-    if (!data) return <div>Loading...</div>
+    const data = props.menu
 
     return (
             <>
