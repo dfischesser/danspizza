@@ -8,7 +8,7 @@ function Header({ title }) {
 }
 
 export const getStaticProps = async () => {
-const res = await fetch('/api/Menu/Get')
+const res = await fetch('https://localhost/api/Menu/Get')
 const menu = await res.json()
 return {props: {menu}}
 }

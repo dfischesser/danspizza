@@ -28,7 +28,7 @@ function Blurb() {
 }
 
 export const getStaticProps = async () => {
-  const res = await fetch('https://danspizza.dev/api/Coupon/Get')
+  const res = await fetch('https://localhost/api/Coupon/Get')
   const coupons = await res.json()
   return {props: {coupons}}
 }
