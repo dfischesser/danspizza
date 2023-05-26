@@ -17,14 +17,6 @@ export default function Account(props) {
     console.log('account props: ' + JSON.stringify(props))
     //const user = props.accountInfo
 
-    const router = useRouter()
-    useEffect(() => {
-        if (!(props.isLoggedIn)) {
-          router.push('/')
-        }
-      }
-    )
-
     if (props.isLoggedIn) {        
         return (
             <>

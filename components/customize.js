@@ -11,7 +11,7 @@ export function Customize(props) {
         updatedChecked = props.checked.map((checked) => 
             (checked.toppingID == newToppingID) ? filterChecked : checked)
         console.log('cust updatedchecked: ' + JSON.stringify(updatedChecked))
-      };
+      }
 
     return (
         <div className='customize-wrapper'>

@@ -7,8 +7,7 @@ import React from 'react';
 
 export function Navbar(props) {
 
-    const { asPath } = useRouter();
-    const { user, isLoading, isError } = props.useUser()
+    const { asPath } = useRouter()
     console.log('navbar isActive: ' + JSON.stringify(props.isActive))
     
     console.log('navbar login success: ' + props.isLoggedIn)
