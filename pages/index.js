@@ -28,9 +28,9 @@ function Blurb() {
 }
 
 export const getStaticProps = async () => {
-  // const res = await fetch('https://localhost/api/Coupon/Get')
-  // const coupons = await res.json()
-  const coupons = {"couponList":[{"couponID":1,"couponText":"Large Pizza and 2-Liter Coke for $20"},{"couponID":2,"couponText":"Two Calzones for $15"}]}
+  const res = await fetch('https://danspizza-api.azurewebsites.net/api/Coupon/Get')
+  const coupons = await res.json()
+  //const coupons = {"couponList":[{"couponID":1,"couponText":"Large Pizza and 2-Liter Coke for $20"},{"couponID":2,"couponText":"Two Calzones for $15"}]}
   return {props: {coupons}}
 }
 
