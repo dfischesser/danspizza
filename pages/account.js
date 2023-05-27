@@ -9,21 +9,13 @@ function Header({ title }) {
 
 export default function Account(props) {
 
-    const { user, isLoading, isError } = props.useUser()
+    //const { user, isLoading, isError } = props.useUser()
  
-    if (isLoading) return <div>Loading...</div>
-    if (isError) return <div>{isError.message}</div>
+    // if (isLoading) return <div>Loading...</div>
+    // if (isError) return <div>{isError.message}</div>
 
     console.log('account props: ' + JSON.stringify(props))
     //const user = props.accountInfo
-
-    const router = useRouter()
-    useEffect(() => {
-        if (!(props.isLoggedIn)) {
-          router.push('/')
-        }
-      }
-    )
 
     if (props.isLoggedIn) {        
         return (

@@ -1,5 +1,4 @@
 /* eslint-disable react/prop-types */
-import useSWR from 'swr';
 import React from 'react';
 
 function Header({ title }) {
@@ -28,18 +27,20 @@ function Blurb() {
   )
 }
 
+export const getStaticProps = async () => {
+  const res = await fetch('https://danspizza-api.azurewebsites.net/api/Coupon/Get')
+  const coupons = await res.json()
+  //const coupons = {"couponList":[{"couponID":1,"couponText":"Large Pizza and 2-Liter Coke for $20"},{"couponID":2,"couponText":"Two Calzones for $15"}]}
+  return {props: {coupons}}
+}
+
 export default function HomePage(props) {  
-  const { data, error } = useSWR('https://danspizza-api.azurewebsites.net/api/Coupon/Get', props.fetcher)
-
-  if (error) {return <div>Failed to load</div>}
-  if (!data) return <div>Loading...</div>
-
 
   return (
     <>
       <Header title="Dan's Pizza"/>
       <Blurb />
-      <Coupons data={data} />
+      <Coupons data={props.coupons} />
     </>
   );
 }

@@ -10,6 +10,8 @@ export function LoginStatus(props) {
     const { user, isLoading, isError } = props.useUser()
     console.log('loginstatus user: ' + user)
 
+    const isLoggedIn = props.isLoggedIn
+    const isActive = props.isActive
     const [data, setData] = useState(false)
     
     async function fetchy(url) {
@@ -29,19 +31,19 @@ export function LoginStatus(props) {
             console.error("There has been a problem with your fetch operation:", error);
         }
       }
+    fetchy('https://localhost:443/Login/Post').then(json => setData(json));
 
     useEffect(() => {
-        fetchy('https://localhost:443/Login/Post').then(json => setData(json));
         console.log('useEffect data: ' + data)
         props.setIsLoggedIn(data)
-        console.log('useEffect loginSuccess: ' + props.isLoggedIn)
+        console.log('useEffect loginSuccess: ' + isLoggedIn)
         console.log('useEffect accountData: ' + JSON.stringify(user))
         if (data) {
             props.handleAccountInfo(user)
-            props.setIsActive({...props.isActive, login: false})
-            console.log('useEffect isActive: ' + JSON.stringify(props.isActive))
+            props.setIsActive({...isActive, login: false})
+            console.log('useEffect isActive: ' + JSON.stringify(isActive))
         }
-      },[data, props.isLoggedIn]);
+      },[data, isLoggedIn, isActive, user, props]);
     
     
     console.log('login post result success: ' + data)
