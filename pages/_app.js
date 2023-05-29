@@ -1,5 +1,5 @@
 // pages/_app.js
-import { useState, useReducer } from 'react';
+import { useState, useEffect, useReducer } from 'react';
 import '../css/styles.css'
 import '../css/navbar.css'
 import '../css/index.css'
@@ -12,15 +12,14 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Container from 'react-bootstrap/Container';
 import { Navbar } from '../components/navbar';
 import { useRouter } from 'next/router';
-
-import React from 'react';
-
-const fetcher = (...args) => fetch(...args).then(res => res.json())
+import { useCookies } from 'react-cookie'
 
 export default function MyApp({ Component, pageProps }) {
   const customizeData = {"customizePizzaID":"","size":"","style":"","toppings":[{"toppingID":1,"toppingName":"Pepperoni","price":2.5},{"toppingID":2,"toppingName":"Sausage","price":2.5},{"toppingID":3,"toppingName":"Ham","price":2.5},{"toppingID":4,"toppingName":"Olives","price":2.5},{"toppingID":5,"toppingName":"Mushrooms","price":2.5},{"toppingID":6,"toppingName":"Pineapple","price":2.5}]}
- 
 
+  console.log('myapp rendered.')
+  //cookies!
+  const [cookies, setCookie, removeCookie] = useCookies(['token'])
   //initial topping list
   const initialIsChecked = customizeData.toppings.map((newTopping) => ({toppingID: newTopping.toppingID, isChecked: false}))
 
@@ -33,15 +32,20 @@ export default function MyApp({ Component, pageProps }) {
 
   //customize    
   const [foodToCustomize, setfoodToCustomize] = useState({foodID: 0, menuCategoryID: 0, foodName: ''});
-  const [isModalOpen, setIsModalOpen] = useState(false)
   const [checked, setChecked] = useState(initialIsChecked) 
 
 
+  // useEffect(() => {
+  //   if (parseCookie(document.cookie).token) {
+  //     setCookie(parseCookie(document.cookie).token)
+  //     setIsLoggedIn(true)
+  //   }
+  // })
 
   //handle functions
   function handleOpenModal(selectedFoodItem) {
       setfoodToCustomize(selectedFoodItem)
-      setIsModalOpen(true)
+      setOpenModal({...openModal, customize: true})
   }
 
   function handleCloseCustomize() {
@@ -133,17 +137,14 @@ export default function MyApp({ Component, pageProps }) {
             customizeData={customizeData}
             openModal={(foodItem) => handleOpenModal(foodItem)}
             closeCustomize={() => handleCloseCustomize()}
-            isModalOpen={isModalOpen}
             foodToCustomize={foodToCustomize}
             updateCheckedToppings={(updatedChecked) => setChecked(updatedChecked)}
             addCustomItem={(foodItem) => addCustomItem(foodItem)}
             checked={checked}
-            fetcher={fetcher}
           /> 
         }
         { asPath == '/' && 
           <Component {...pageProps}
-            fetcher={fetcher}
           /> 
         }
         { asPath == '/order' && 

@@ -3,15 +3,35 @@ import Link from 'next/link'
 import { Cart } from '../components/cart';
 import { Login } from '../components/login';
 import { useRouter } from 'next/router';
-import React from 'react';
+import { useState, useEffect } from 'react';
+import { useCookies } from 'react-cookie'
 
 export function Navbar(props) {
 
+    const [hasCookie, setHasCookie] = useState(false)
+    console.log('Navbar code start. hasCookie: ' + hasCookie)
+    
     const { asPath } = useRouter()
-    console.log('navbar isActive: ' + JSON.stringify(props.isActive))
-    
-    console.log('navbar login success: ' + props.isLoggedIn)
-    
+    useEffect(() => {
+        console.log('useEffect start. cookie value: ' + document.cookie)
+        if (!document.cookie || document.cookie == "token="){
+            console.log('useEffect. no token found. hasCookie before set false: ' + hasCookie)
+            setHasCookie(false)
+        } 
+        else {
+            console.log('useEffect. token found. hasCookie before set true: ' + hasCookie)
+            setHasCookie(true)
+        }
+        return () => console.log('cleanup code hit')
+    }, [hasCookie])
+
+    function logOut() {
+        console.log('logout hit! ');
+        console.log('logout state of hasCookie: ' + hasCookie)
+        document.cookie = "token=";
+        setHasCookie(false)
+        props.setIsLoggedIn(false)
+    }
     const pages = [
         {Name:'Home', Path:'/', IsActive: function() { return asPath == this.Path ? true : false }},
         {Name:'Menu', Path:'/menu', IsActive: function() { return asPath == this.Path ? true : false }},
@@ -26,7 +46,7 @@ export function Navbar(props) {
                 ))}
             </div>
             <div className='navigate-cart-container navigate-dropdown'>
-                { props.isLoggedIn ? 
+                { hasCookie ? 
                     <>
                         <Link 
                             className={'navigate-link-account ' + (asPath == '/account' ? 'navigate-active' : '')} 
@@ -42,12 +62,11 @@ export function Navbar(props) {
                         <Link 
                             className='navigate-link'
                             href='' 
-                            onClick={() => props.setIsLoggedIn(false)}
+                            onClick={() => logOut()}
                         > Logout
                         </Link>
                     </div>
-                </>
-                : 
+                </> :
                     <Link 
                         className={'navigate-link ' + (props.isActive.login ? 'navigate-active' : '')} 
                         href='' 
@@ -71,7 +90,7 @@ export function Navbar(props) {
                 isActive={props.isActive}
                 setIsActive={(data) => props.setIsActive(data)}
                 handleAccountInfo={(data) => props.handleAccountInfo(data)}
-                useUser={() => props.useUser()}
+                setHasCookie={(data) => setHasCookie(data)}
             />}
         </div>
     )

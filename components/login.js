@@ -1,61 +1,33 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
 import { useState, useEffect } from 'react';
+import useSWR from 'swr'
+import jwt_decode from 'jwt-decode'
+import {fetchy} from '../components/fetchy'
 
 function Header({ title }) {
     return <h5 className='padding login-header'>{title ? title : 'Default title'}</h5>;
   }
   
 export function LoginStatus(props) {
-    const { user, isLoading, isError } = props.useUser()
-    console.log('loginstatus user: ' + user)
-
-    const isLoggedIn = props.isLoggedIn
-    const isActive = props.isActive
-    const [data, setData] = useState(false)
-    
-    async function fetchy(url) {
-        try {
-            const res = await fetch(url, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          }, 
-          body: JSON.stringify(props.login)
-        });
-        if (!res.ok){
-            throw new Error("Network response was not OK");
-        }
-        return res.json()
-        } catch (error) {
-            console.error("There has been a problem with your fetch operation:", error);
-        }
-      }
-    fetchy('https://localhost:443/Login/Post').then(json => setData(json));
-
-    useEffect(() => {
-        console.log('useEffect data: ' + data)
-        props.setIsLoggedIn(data)
-        console.log('useEffect loginSuccess: ' + isLoggedIn)
-        console.log('useEffect accountData: ' + JSON.stringify(user))
-        if (data) {
-            props.handleAccountInfo(user)
-            props.setIsActive({...isActive, login: false})
-            console.log('useEffect isActive: ' + JSON.stringify(isActive))
-        }
-      },[data, isLoggedIn, isActive, user, props]);
-    
-    
-    console.log('login post result success: ' + data)
-    console.log('login post loginSuccess: ' + props.isLoggedIn)
-    
-    return <div>Data Retrieved.<br></br> {data ? 'Login success!' : 'Login failed!'} </div>
+    fetchy('http://localhost:5753/api/Login', props.login)
+        .then((data) => {
+            console.log('handleFetch data: ' + JSON.stringify(data)) 
+            document.cookie = "token=" + data.userToken + "; max-age=" + 15*60 + ";"
+            props.setLoginPosted(false)
+            props.setHasCookie(true)
+            props.setIsActive(false)})
+        .catch((error) => {
+            console.log('handleFetch error: ' + error.message)
+            props.setError(error.message)
+            props.setLoginPosted(false)
+        })
 }
-
 
 export function Login(props) {    
     const [login, setLogin] = useState({email: '', password: ''})
     const [loginPosted, setLoginPosted] = useState(false)
+    const [error, setError] = useState(null)
 
     return (
         <div className='login-wrapper'>
@@ -64,35 +36,38 @@ export function Login(props) {
             </div>
             <div className='login-body'>
                 <label htmlFor='email'>Email Address</label>
-                <input type='text' id='email' name='email' value={login.email} readOnly={loginPosted} onChange={ e => setLogin({...login, email: e.target.value})}></input>
+                <input type='text' id='email' name='email' value={login.email} onChange={ e => setLogin({...login, email: e.target.value})}></input>
                 <label htmlFor='pw'>Password</label>
-                <input type='text' id='pw' name='pw' value={login.password} readOnly={loginPosted} onChange={ e => setLogin({...login, password: e.target.value})}></input>
+                <input type='text' id='pw' name='pw' value={login.password} onChange={ e => setLogin({...login, password: e.target.value})}></input>
             </div>
             <div>
                 <button 
                 className='login-button' 
                 onClick={() => {
                     setLoginPosted(true)
-                    setTimeout(() => {
-                        setLoginPosted(false)
-                        console.log('timeout!')
-                    }, 2000)
                 }}>Login</button>
-                {loginPosted && 
+                 {loginPosted && 
                     <LoginStatus 
                         login={login} 
-                        loginPosted={loginPosted} 
-                        isLoggedIn={props.isLoggedIn}
-                        setIsLoggedIn={(data) => props.setIsLoggedIn(data)}
-                        setLoginPosted={() => setLoginPosted()} 
-                        handleLoginPost={(data) => props.handleLoginPost(data)}
-                        isActive={props.isActive}
-                        setIsActive={(data) => props.setIsActive(data)}
-                        handleAccountInfo={(data) => props.handleAccountInfo(data)}
-                        fetcher={props.fetcher}
-                        useUser={() => props.useUser()}
-                    />}
+                        setIsActive={(modal) => props.setIsActive(modal)}
+                        setHasCookie={(data) => props.setHasCookie(data)}
+                        setError={(error) => setError(error)} 
+                        setLoginPosted={(data) => setLoginPosted(data)} />}
             </div>
+            <div>Error: {error}</div>
         </div>
     )
 }
+
+    //fetchy('http://localhost:5753/api/Login').then(json => setData(json));
+    // useEffect(() => {
+    //     console.log('useEffect data: ' + JSON.stringify(data))
+    //     console.log('useEffect jwt-decode: ' + JSON.stringify(jwt_decode(data)))
+    //     props.setIsLoggedIn(data)
+    //     console.log('useEffect loginSuccess: ' + JSON.stringify(isLoggedIn))
+    //     //console.log('useEffect accountData: ' + JSON.stringify(user))
+    //     if (data) {
+    //         //props.handleAccountInfo(user)
+    //         props.setIsActive({...isActive, login: false})
+    //     }
+    //   },[data, isLoggedIn, isActive, props]);

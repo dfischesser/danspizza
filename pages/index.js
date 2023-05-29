@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import React from 'react';
+import React from 'react'
 
 function Header({ title }) {
   return <h1 className="header-styles">{title ? title : 'Default title'}</h1>;
@@ -34,8 +34,10 @@ export const getStaticProps = async () => {
   return {props: {coupons}}
 }
 
+
 export default function HomePage(props) {  
 
+  console.log('index rendered.')
   return (
     <>
       <Header title="Dan's Pizza"/>
