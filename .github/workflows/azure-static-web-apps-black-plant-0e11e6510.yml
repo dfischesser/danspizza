@@ -4,11 +4,11 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - 052723-Dev
+      - master
   pull_request:
     types: [opened, synchronize, reopened, closed]
     branches:
-      - 052723-Dev
+      - master
 
 jobs:
   build_and_deploy_job:
