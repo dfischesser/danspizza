@@ -28,7 +28,7 @@ export default function MyApp({ Component, pageProps }) {
   const [cartItems, dispatch] = useReducer(cartItemsReducer, [])
   const [cartID, setCartID] = useState(1)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const [accountInfo, setAccountInfo] = useState(null)
+  const [token, setToken] = useState(null)
 
   //customize    
   const [foodToCustomize, setfoodToCustomize] = useState({foodID: 0, menuCategoryID: 0, foodName: ''});
@@ -130,6 +130,7 @@ export default function MyApp({ Component, pageProps }) {
           isLoggedIn={isLoggedIn}
           setIsLoggedIn={(data) => setIsLoggedIn(data)}
           handleAccountInfo={(data) => handleAccountInfo(data)}
+          setToken={(data) => setToken(data)}
         />
         { asPath == '/menu' && 
           <Component {...pageProps} 
@@ -154,7 +155,7 @@ export default function MyApp({ Component, pageProps }) {
         { asPath == '/account' &&
           <Component {...pageProps} 
           isLoggedIn={isLoggedIn}
-          accountInfo={accountInfo}
+          token={token}
           /> 
         }
         

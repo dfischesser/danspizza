@@ -1,8 +1,6 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
 import { useState, useEffect } from 'react';
-import useSWR from 'swr'
-import jwt_decode from 'jwt-decode'
 import {fetchy} from '../components/fetchy'
 
 function Header({ title }) {
@@ -16,6 +14,8 @@ export function LoginStatus(props) {
             document.cookie = "token=" + data.userToken + "; max-age=" + 15*60 + ";"
             props.setLoginPosted(false)
             props.setHasCookie(true)
+            props.setIsLoggedIn(true)
+            props.setToken(data.userToken)
             props.setIsActive(false)})
         .catch((error) => {
             console.log('handleFetch error: ' + error.message)
@@ -51,23 +51,12 @@ export function Login(props) {
                         login={login} 
                         setIsActive={(modal) => props.setIsActive(modal)}
                         setHasCookie={(data) => props.setHasCookie(data)}
+                        setIsLoggedIn={(data) => props.setIsLoggedIn(data)}
+                        setToken={(data) => props.setToken(data)}
                         setError={(error) => setError(error)} 
                         setLoginPosted={(data) => setLoginPosted(data)} />}
             </div>
-            <div>Error: {error}</div>
+            {error && <div>Error: {error}</div>}
         </div>
     )
 }
-
-    //fetchy('http://localhost:5753/api/Login').then(json => setData(json));
-    // useEffect(() => {
-    //     console.log('useEffect data: ' + JSON.stringify(data))
-    //     console.log('useEffect jwt-decode: ' + JSON.stringify(jwt_decode(data)))
-    //     props.setIsLoggedIn(data)
-    //     console.log('useEffect loginSuccess: ' + JSON.stringify(isLoggedIn))
-    //     //console.log('useEffect accountData: ' + JSON.stringify(user))
-    //     if (data) {
-    //         //props.handleAccountInfo(user)
-    //         props.setIsActive({...isActive, login: false})
-    //     }
-    //   },[data, isLoggedIn, isActive, props]);

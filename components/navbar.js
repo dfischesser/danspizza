@@ -13,14 +13,13 @@ export function Navbar(props) {
     
     const { asPath } = useRouter()
     useEffect(() => {
-        console.log('useEffect start. cookie value: ' + document.cookie)
         if (!document.cookie || document.cookie == "token="){
-            console.log('useEffect. no token found. hasCookie before set false: ' + hasCookie)
             setHasCookie(false)
+            props.setIsLoggedIn(false)
         } 
         else {
-            console.log('useEffect. token found. hasCookie before set true: ' + hasCookie)
             setHasCookie(true)
+            props.setIsLoggedIn(true)
         }
         return () => console.log('cleanup code hit')
     }, [hasCookie])
@@ -30,6 +29,7 @@ export function Navbar(props) {
         console.log('logout state of hasCookie: ' + hasCookie)
         document.cookie = "token=";
         setHasCookie(false)
+        props.setToken(null)
         props.setIsLoggedIn(false)
     }
     const pages = [
@@ -87,6 +87,7 @@ export function Navbar(props) {
             <Login 
                 isLoggedIn={props.isLoggedIn}
                 setIsLoggedIn={(data) => props.setIsLoggedIn(data)}
+                setToken={(data) => props.setToken(data)}
                 isActive={props.isActive}
                 setIsActive={(data) => props.setIsActive(data)}
                 handleAccountInfo={(data) => props.handleAccountInfo(data)}
