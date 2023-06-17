@@ -34,12 +34,14 @@
 .cart-item-wrapper {
     border: 1px solid;
     border-radius: 5px;
-    margin: 5px;
+    margin: 5px auto;
+    max-width: 500px;
 }
 
 .cart-item {
     text-align: left;
-    padding: 5px;
+    padding: 0px 5px;
     justify-content: space-between;
     display: flex;
+    list-style-type: none;
 }

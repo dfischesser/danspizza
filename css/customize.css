@@ -51,12 +51,38 @@
     width: 100%
 }
 
-.customize-item {
-    text-align: left;
+.customize-option {
+    text-align: center;
+    border: 2px solid;
     padding: 5px;
     margin: 5px;
     display: flex;
-    justify-content: right;
+    justify-content: space-between;
+}
+
+.customize-option-type {
+    user-select: none;
+}
+
+.customize-option-value {
+    text-align: left;
+    min-width: 100px;
+    user-select: none;
+}
+
+.customize-option-item {
+    text-align: right;
+    border: 1px dashed;
+    user-select: none;
+    padding: 5px;
+    margin: 5px;
+}
+
+.customize-option-item-active {
+    text-align: right;
+    border: 1px solid;
+    padding: 5px;
+    margin: 5px;
 }
 
 .customize-item-active {

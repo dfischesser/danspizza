@@ -1,15 +1,12 @@
-export async function fetchy(url, login) {
-
+export async function fetchy(url, postData, headers) {
     const res = await fetch(url, {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(login)
+        headers: headers,
+        body: JSON.stringify(postData)
     });
     if (!res.ok) {
-        throw new Error(res.statusText);
-    }
+        const text = await res.text()
+        throw new Error(text);
+    } 
     return res.json()
-
 }

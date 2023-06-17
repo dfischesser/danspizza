@@ -9,7 +9,6 @@
 
 .navigate-link-account {
     margin: 5px;
-    padding: 2px;
     text-decoration: none;
     font-size: larger;
     color: black;
@@ -53,6 +52,14 @@
     z-index: 1;
   }
 
+  .navigate-dropdown-content-cart {
+    display: none;
+    position: absolute;
+    border-radius: 5px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+  }
+
   .navigate-dropdown-content a {
     color: black;
     padding: 5px;
@@ -64,4 +71,4 @@
 .navigate-dropdown:hover .navigate-dropdown-content {display: block;}
 
 /* Change the background color of the dropdown button when the dropdown content is shown */
-.navigate-dropdown:hover .navigate-link-account {background-color: #f1f1f1;}
+/* .navigate-dropdown:hover .navigate-link-account {background-color: #f1f1f1;} */

@@ -61,3 +61,18 @@
 .login-item-active {
     background-color: grey;
 }
+
+.create-input {
+    border-color: black;
+    margin: 5px;
+}
+
+.create-input-invalid {
+    border-color: red;
+}
+
+.create-label-invalid {
+    color: red;
+    list-style-type: none;
+    padding: 5px
+}

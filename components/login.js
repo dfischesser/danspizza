@@ -1,22 +1,29 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
 import { useState, useEffect } from 'react';
-import {fetchy} from '../components/fetchy'
+import { fetchy } from '../components/fetchy'
+import Link from 'next/link'
 
 function Header({ title }) {
     return <h5 className='padding login-header'>{title ? title : 'Default title'}</h5>;
   }
   
 export function LoginStatus(props) {
-    fetchy('http://localhost:5753/api/Login', props.login)
+    var bcrypt = require('bcryptjs');
+    var salt = bcrypt.genSaltSync(10);
+    var hash = bcrypt.hashSync(props.login.password, salt);
+    console.log('salt: ' + salt);
+    console.log('hash: ' + hash);
+    const headers = {'Content-Type': 'application/json'}
+        fetchy('http://localhost:5753/api/Login', {email: props.login.email, password: hash, salt: salt}, headers)
         .then((data) => {
             console.log('handleFetch data: ' + JSON.stringify(data)) 
-            document.cookie = "token=" + data.userToken + "; max-age=" + 15*60 + ";"
+            document.cookie = "token=" + data.userToken + "; max-age=" + 60*60*24 + ";"
             props.setLoginPosted(false)
             props.setHasCookie(true)
             props.setIsLoggedIn(true)
-            props.setToken(data.userToken)
-            props.setIsActive(false)})
+            props.setIsActive({...props.isActive, login: false})
+        })
         .catch((error) => {
             console.log('handleFetch error: ' + error.message)
             props.setError(error.message)
@@ -46,17 +53,21 @@ export function Login(props) {
                 onClick={() => {
                     setLoginPosted(true)
                 }}>Login</button>
+                <div>
+                    <Link href='' onClick={() => props.setIsCreate(true)}>Create Account</Link>
+                </div>
                  {loginPosted && 
                     <LoginStatus 
                         login={login} 
                         setIsActive={(modal) => props.setIsActive(modal)}
+                        isActive={props.isActive}
                         setHasCookie={(data) => props.setHasCookie(data)}
                         setIsLoggedIn={(data) => props.setIsLoggedIn(data)}
-                        setToken={(data) => props.setToken(data)}
                         setError={(error) => setError(error)} 
-                        setLoginPosted={(data) => setLoginPosted(data)} />}
+                        setLoginPosted={(data) => setLoginPosted(data)}
+                        setUserName={(data) => props.setUserName(data)} />}
             </div>
-            {error && <div>Error: {error}</div>}
+            {error && <div>{error}</div>}
         </div>
     )
 }

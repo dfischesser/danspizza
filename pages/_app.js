@@ -12,44 +12,45 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Container from 'react-bootstrap/Container';
 import { Navbar } from '../components/navbar';
 import { useRouter } from 'next/router';
-import { useCookies } from 'react-cookie'
 
 export default function MyApp({ Component, pageProps }) {
-  const customizeData = {"customizePizzaID":"","size":"","style":"","toppings":[{"toppingID":1,"toppingName":"Pepperoni","price":2.5},{"toppingID":2,"toppingName":"Sausage","price":2.5},{"toppingID":3,"toppingName":"Ham","price":2.5},{"toppingID":4,"toppingName":"Olives","price":2.5},{"toppingID":5,"toppingName":"Mushrooms","price":2.5},{"toppingID":6,"toppingName":"Pineapple","price":2.5}]}
+  const customizeData = {"customizePizzaID":"","size":"","style":"","customize":[{"customizeID":1,"customizeName":"Pepperoni","price":2.5},{"customizeID":2,"customizeName":"Sausage","price":2.5},{"customizeID":3,"customizeName":"Ham","price":2.5},{"customizeID":4,"customizeName":"Olives","price":2.5},{"customizeID":5,"customizeName":"Mushrooms","price":2.5},{"customizeID":6,"customizeName":"Pineapple","price":2.5}]}
+  const router = useRouter();
+
 
   console.log('myapp rendered.')
-  //cookies!
-  const [cookies, setCookie, removeCookie] = useCookies(['token'])
   //initial topping list
-  const initialIsChecked = customizeData.toppings.map((newTopping) => ({toppingID: newTopping.toppingID, isChecked: false}))
+  const initialIsChecked = customizeData.customize.map((newCustomize) => ({customizeID: newCustomize.customizeID, isChecked: false}))
 
   //set states
   const [openModal, setOpenModal] = useState({cart: false, customize: false, login: false})
   const [cartItems, dispatch] = useReducer(cartItemsReducer, [])
   const [cartID, setCartID] = useState(1)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const [token, setToken] = useState(null)
+  const [hasOrder, setHasOrder] = useState(false)
 
   //customize    
   const [foodToCustomize, setfoodToCustomize] = useState({foodID: 0, menuCategoryID: 0, foodName: ''});
   const [checked, setChecked] = useState(initialIsChecked) 
 
-
-  // useEffect(() => {
-  //   if (parseCookie(document.cookie).token) {
-  //     setCookie(parseCookie(document.cookie).token)
-  //     setIsLoggedIn(true)
-  //   }
-  // })
-
   //handle functions
-  function handleOpenModal(selectedFoodItem) {
-      setfoodToCustomize(selectedFoodItem)
-      setOpenModal({...openModal, customize: true})
+  function handleCartClick() {
+    if (hasOrder){
+      //router.push('/order')
+    } else {
+      setOpenModal({...openModal, cart: !openModal.cart})
+    }
+  }
+  function handleAddOrderClick() {
+    console.log('hasorder set')
+    setHasOrder(true)
+    setOpenModal({...openModal, cart: false})
   }
 
-  function handleCloseCustomize() {
-    setIsModalOpen(false)
+  function handleOpenCustomize(selectedFoodItem) {
+    console.log('customize modal open. selected food item: ' + JSON.stringify(selectedFoodItem))
+      setfoodToCustomize({...selectedFoodItem, customizeOptions: null})
+      setOpenModal({...openModal, customize: !openModal.customize})
   }
 
   function handleAccountInfo(datums) {
@@ -60,12 +61,11 @@ export default function MyApp({ Component, pageProps }) {
   function addCustomItem(selectedFoodItem) {
     console.log('app add cust selectedFoodItem: ' + JSON.stringify(selectedFoodItem))
     console.log('app add cust cartitems: ' + JSON.stringify(cartItems))
-    let checkedToppings = checked.filter(topping => topping.isChecked)
-    let checkedToppingIDs = checkedToppings.map(topping => topping.toppingID)
-    selectedFoodItem = {...selectedFoodItem, toppings: checkedToppingIDs}
+    let checkedToppings = checked.filter(customize => customize.isChecked)
+    let checkedcustomizeIDs = checkedToppings.map(customize => customize.customizeID)
+    selectedFoodItem = {...selectedFoodItem, customize: checkedcustomizeIDs}
     setfoodToCustomize(selectedFoodItem)
-    setOpenModal({...openModal, cart: true})
-    handleCloseCustomize()
+    setOpenModal({...openModal, customize: false, cart: true})
     setChecked(initialIsChecked)
     handleAddItem(selectedFoodItem)
   }
@@ -93,6 +93,16 @@ export default function MyApp({ Component, pageProps }) {
     )
   }
 
+  //handleRemoveAllItems
+  function handleRemoveAllItems() {
+    console.log('handleRemoveAllItems hit')
+    dispatch(
+      {
+        type: 'removedAll'
+      }
+    )
+  }
+
   function cartItemsReducer(cartItems, action) {
     console.log('app reducer foodItem: ' + JSON.stringify(action.foodItem))
     switch (action.type) {
@@ -108,6 +118,10 @@ export default function MyApp({ Component, pageProps }) {
         console.log('removing cartItems: ' + JSON.stringify(cartItems))
         console.log('removing fooditem: ' + JSON.stringify(action.foodItem))
         return cartItems.filter(item => item.cartItemID != action.id)      
+      }
+      case 'removedAll': {
+        console.log('Removing all items')
+        return cartItems = []
       }
       default: {
         throw Error('Unknown Action: ' + action.type)
@@ -130,14 +144,17 @@ export default function MyApp({ Component, pageProps }) {
           isLoggedIn={isLoggedIn}
           setIsLoggedIn={(data) => setIsLoggedIn(data)}
           handleAccountInfo={(data) => handleAccountInfo(data)}
-          setToken={(data) => setToken(data)}
+          handleAddOrderClick={() => handleAddOrderClick()}
+          handleCartClick={() => handleCartClick()}
+          hasOrder={hasOrder}
         />
         { asPath == '/menu' && 
           <Component {...pageProps} 
             currentCartItems={cartItems} 
             customizeData={customizeData}
-            openModal={(foodItem) => handleOpenModal(foodItem)}
-            closeCustomize={() => handleCloseCustomize()}
+            handleOpenCustomize={(foodItem) => handleOpenCustomize(foodItem)}
+            openModal={openModal}
+            setOpenModal={(data) => setOpenModal(data)}
             foodToCustomize={foodToCustomize}
             updateCheckedToppings={(updatedChecked) => setChecked(updatedChecked)}
             addCustomItem={(foodItem) => addCustomItem(foodItem)}
@@ -150,12 +167,23 @@ export default function MyApp({ Component, pageProps }) {
         }
         { asPath == '/order' && 
           <Component {...pageProps}
+          currentCartItems={cartItems} 
+          removeAllItems={() => handleRemoveAllItems()}
+          removeItem={(foodItem) => handleRemoveItem(foodItem)} 
+          customizeData={customizeData}
+          openModal={openModal}
+          setHasOrder={(data) => setHasOrder(data)}
+          setOpenModal={(data) => setOpenModal(data)}
           /> 
         }
         { asPath == '/account' &&
           <Component {...pageProps} 
           isLoggedIn={isLoggedIn}
-          token={token}
+          /> 
+        }
+        { asPath == '/manage' &&
+          <Component {...pageProps} 
+          isLoggedIn={isLoggedIn}
           /> 
         }
         

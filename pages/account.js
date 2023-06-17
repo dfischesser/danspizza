@@ -21,22 +21,19 @@ export const getServerSideProps = async (context) => {
     }
     catch (error) {
         console.log('Error: ' + error.message)
+        
     }
 
 }
 
 
 export default function Account(props) {
-    // const [token, setToken] = useState(null)
-    // useEffect(() => {
-    //     setToken(document.cookie.split('=')[1])
-    // },[token])
     const user = props.user
-   
+    console.log('user: ' + JSON.stringify(user))
+    
     return (
         <>
             <Header title="Account"/>
-            {/* <div>{user.firstName} {user.lastName}</div> */}
             <div className='account-info'>
                 <table className='account-table'>
                     <tbody>
@@ -75,6 +72,50 @@ export default function Account(props) {
                     </tbody>
                 </table> 
             </div> 
+            <div>'Active'</div>
+            <div className='order-list'>
+                {user.activeOrders.map(order => 
+                <div className='account-order-item' key={order.orderID}> OrderID: {order.orderID}
+                    <div>{order.foodItems.map(foodItem =>
+                        <div className='account-item' key={foodItem.foodID}>
+                            Food: {foodItem.foodName} 
+                            <div>{foodItem.customizeOptions.map(option =>
+                                <div className='account-item' key={option.optionName}>
+                                    Option: {option.optionName}
+                                    {option.optionItems.map(optionItem =>
+                                        <div className='account-item' key={optionItem.customizeOptionItem}>
+                                            <div>{optionItem.customizeOptionItem} {optionItem.price}</div>
+                                        </div>
+                                        )}
+                                </div>
+                                )}</div>
+                        </div>
+                        )}</div>
+                </div>
+                    )}
+            </div>
+            <div>'Past'</div>
+            <div className='order-list'>
+                {user.pastOrders.map(order => 
+                <div className='account-order-item' key={order.orderID}> OrderID: {order.orderID}
+                    <div>{order.foodItems.map(foodItem =>
+                        <div className='account-item' key={foodItem.foodID}>
+                            Food: {foodItem.foodName} 
+                            <div>{foodItem.customizeOptions.map(option =>
+                                <div className='account-item' key={option.optionName}>
+                                    Option: {option.optionName}
+                                    {option.optionItems.map(optionItem =>
+                                        <div className='account-item' key={optionItem.customizeOptionItem}>
+                                            <div>{optionItem.customizeOptionItem} {optionItem.price}</div>
+                                        </div>
+                                        )}
+                                </div>
+                                )}</div>
+                        </div>
+                        )}</div>
+                </div>
+                    )}
+            </div>
         </> 
     )
     
