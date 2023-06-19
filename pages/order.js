@@ -32,7 +32,7 @@ export function PostOrder(props) {
     const token = getCookie('token')
     const headers = {'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json'}
     console.log('headers: ' + JSON.stringify(headers))
-    fetchy('http://localhost:5753/api/Order/Post', test, headers)
+    fetchy('http://localhost:5753/api/Order/Post', 'POST', test, headers)
         .then((data) => {
             console.log('handleFetch data: ' + JSON.stringify(data)) 
             props.setOrderPosted(false)

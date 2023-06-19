@@ -1,32 +1,51 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react'
 import { fetchy } from '../components/fetchy'
 import Link from 'next/link'
+import { createJWT } from './createJWT';
 
 function Header({ title }) {
     return <h5 className='padding login-header'>{title ? title : 'Default title'}</h5>;
   }
   
 export function LoginStatus(props) {
-    var bcrypt = require('bcryptjs');
-    var salt = bcrypt.genSaltSync(10);
-    var hash = bcrypt.hashSync(props.login.password, salt);
-    console.log('salt: ' + salt);
-    console.log('hash: ' + hash);
     const headers = {'Content-Type': 'application/json'}
-        fetchy('http://localhost:5753/api/Login', {email: props.login.email, password: hash, salt: salt}, headers)
+        fetchy('http://localhost:5753/api/User/Hash', 'POST', props.login.email, headers)
+        .catch((error) => {
+                console.log('API error: ' + error.message)
+                console.log('API error: ' + JSON.parse(error.message).message)
+                props.setError('API error: ' + JSON.parse(error.message).message)
+                props.setLoginPosted(false)
+        })
         .then((data) => {
-            console.log('handleFetch data: ' + JSON.stringify(data)) 
-            document.cookie = "token=" + data.userToken + "; max-age=" + 60*60*24 + ";"
-            props.setLoginPosted(false)
-            props.setHasCookie(true)
-            props.setIsLoggedIn(true)
-            props.setIsActive({...props.isActive, login: false})
+            //console.log('handleFetch login data: ' + JSON.stringify(data)) 
+            const bcrypt = require('bcryptjs');
+            bcrypt.compare(props.login.password, data.hash)
+            .then((res) => {
+                if (res === true) {
+                    console.log('handleFetch password: ' + props.login.password) 
+                    console.log('handleFetch hash: ' + data.hash) 
+                    console.log('handleFetch isValid: ' + res) 
+                    const token = createJWT(props.login.email, data.firstName, data.role, data.userID)
+                    document.cookie = "token=" + token + "; max-age=" + 60*60*24 + ";"
+                    props.setLoginPosted(false)
+                    props.setHasCookie(true)
+                    props.setIsLoggedIn(true)
+                    props.setUserName(data.firstName)
+                    props.setIsActive({...props.isActive, login: false})
+                } else {
+                    console.log('React fetch error: Username/Password combination does not match')
+                    props.setError('Username/Password combination does not match')
+                    props.setLoginPosted(false)
+                }
+            })
+            .catch((error) => {
+            })
         })
         .catch((error) => {
-            console.log('handleFetch error: ' + error.message)
-            props.setError(error.message)
+            console.log('React fetch error: ' + error.message)
+            props.setError('React fetch error: ' + error.message)
             props.setLoginPosted(false)
         })
 }

@@ -3,33 +3,59 @@ import React from 'react';
 import Link from 'next/link'
 import { useState } from 'react'
 import { fetchy } from '../components/fetchy'
+import { createJWT } from './createJWT';
 
 function Header({ title }) {
     return <h5 className='padding login-header'>{title ? title : 'Default title'}</h5>;
   }
 
   export function CreateStatus(props) {
-    var bcrypt = require('bcryptjs');
-    var salt = bcrypt.genSaltSync(10);
-    var hash = bcrypt.hashSync(props.login.password, salt);
+    const bcrypt = require('bcryptjs');
+    const salt = bcrypt.genSaltSync(10);
+    const hash = bcrypt.hashSync(props.login.password, salt);
     console.log('salt: ' + salt);
     console.log('hash: ' + hash);
 
     const headers = {'Content-Type': 'application/json'}
-    fetchy('http://localhost:5753/api/User/Create', {email: props.login.email, password: hash, salt: salt}, headers)
-        .then((data) => {
-            console.log('handleFetch data: ' + JSON.stringify(data)) 
-            document.cookie = "token=" + data.userToken + "; max-age=" + 60*60*24 + ";"
-            props.setIsLoggedIn(true)
+    fetchy('http://localhost:5753/api/User/Create', 'POST', {email: props.login.email, password: hash}, headers)
+    .catch((error) => {
+            console.log('API error: ' + JSON.parse(error.message).message)
+            props.setError('API error: ' + JSON.parse(error.message).message)
             props.setCreatePosted(false)
-            props.setIsStep2(true)
-            
-        })
-        .catch((error) => {
-            console.log('handleFetch error: ' + JSON.stringify(error.message))
-            props.setError(error)
+    })
+    .then((userID) => {
+        console.log('handleFetch step 2 data: ' + userID) 
+        // var date = new Date()
+        // var tomorrowUnix = (date.setDate(date.getDate() + 1) / 1000) >> 0
+        // console.log('handleFetch iss: ' + tomorrowUnix) 
+        // const pload = {
+        //     email: props.login.email, 
+        //     firstName: '', 
+        //     role: 'User', 
+        //     userID: userID, 
+        //     exp: tomorrowUnix, 
+        //     iss: 'danspizza.dev', 
+        //     aud: 'danspizza users'}
+        //     console.log('handleFetch payload: ' + pload) 
+
+        // const token = jws.sign({
+        //     header: {alg: 'HS256', typ: "JWT"}, 
+        //     payload: pload,
+        //     secret: 'CR2CQohJrsgoYwMU2lGpQ7BKthH2yYAA',
+        // })
+        const token = createJWT(props.login.email, '', '', userID)
+        console.log('handleFetch token: ' + token) 
+        document.cookie = "token=" + token + "; max-age=" + 60*60*24 + ";"
+        props.setIsLoggedIn(true)
+        props.setCreatePosted(false)
+        props.setIsStep2(true)
+        
+    })
+    .catch((error) => {
+            console.log('React fetch error: ' + error.message)
+            props.setError('React fetch error: ' + error.message)
             props.setCreatePosted(false)
-        })
+    })
 }
 
 export function CreateAccount(props) {    

@@ -1,6 +1,6 @@
-export async function fetchy(url, postData, headers) {
+export async function fetchy(url, method, postData, headers) {
     const res = await fetch(url, {
-        method: 'POST',
+        method: method,
         headers: headers,
         body: JSON.stringify(postData)
     });

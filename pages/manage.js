@@ -43,7 +43,7 @@ export function PostFulfill(props) {
     const token = getCookie('token')
     const headers = {'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json'}
     console.log('headers: ' + JSON.stringify(headers))
-    fetchy('http://localhost:5753/api/Order/Fulfill', props.fulfillPosted, headers)
+    fetchy('http://localhost:5753/api/Order/Fulfill', 'POST', props.fulfillPosted, headers)
         .then((newOrders) => {
             console.log('handleFetch data: ' + JSON.stringify(newOrders)) 
             props.setFulfillPosted(false)

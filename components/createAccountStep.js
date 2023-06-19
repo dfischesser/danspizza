@@ -7,6 +7,7 @@ import { MuiTelInput, matchIsValidTel } from 'mui-tel-input'
 import { debounce } from '@mui/material/utils';
 import { fetchy } from '../components/fetchy';
 import jwt_decode from 'jwt-decode';
+import { createJWT } from './createJWT';
 
 function Header({ title }) {
     return <h5 className='padding login-header'>{title ? title : 'Default title'}</h5>;
@@ -40,7 +41,30 @@ function Header({ title }) {
 }
 
 export function CreateStep2Status(props) {
-    const headers = {'Content-Type': 'application/json','Authorization': 'Bearer ' + getCookie('token')}
+    console.log('step2 post token before: ' + getCookie('token')) 
+    console.log('step2 email token before: ' + JSON.stringify(jwt_decode(getCookie('token'))))
+    // var date = new Date()
+    // var tomorrowUnix = (date.setDate(date.getDate() + 1) / 1000) >> 0
+    // const pload = {
+    //     email: jwt_decode(getCookie('token')).email, 
+    //     firstName: props.firstName, role: 'User', 
+    //     userID: jwt_decode(getCookie('token')).userID.toString(), 
+    //     exp: tomorrowUnix, iss: 'danspizza.dev', 
+    //     aud: 'danspizza users'
+    // }
+    
+    // const token = jws.sign({
+    //     header: {alg: 'HS256', typ: "JWT"}, 
+    //     payload: pload,
+    //     secret: 'CR2CQohJrsgoYwMU2lGpQ7BKthH2yYAA',
+    // })
+    
+    const token = createJWT('', props.firstName, 'User', jwt_decode(getCookie('token')).userID.toString())
+
+    document.cookie = "token=" + token + "; max-age=" + 60*60*24 + ";"
+    console.log('step2 post token after: ' + getCookie('token')) 
+    console.log('step2 email token after: ' + JSON.stringify(jwt_decode(getCookie('token'))))
+    const headers = {'Content-Type': 'application/json','Authorization': 'Bearer ' + token}
     const addies = {
         firstName: props.firstName, 
         lastName: props.lastName, 
@@ -51,20 +75,25 @@ export function CreateStep2Status(props) {
         state: props.address.state,
         zip: props.address.zip
     }
-    fetchy('http://localhost:5753/api/User/CreateStep2', addies, headers)
+    console.log('addies: ' + JSON.stringify(addies))
+    fetchy('http://localhost:5753/api/User/CreateStep2', 'POST', addies, headers)
+        .catch((error) => {
+                console.log('API error: ' + JSON.parse(error.message).message)
+                props.setError('API error: ' + JSON.parse(error.message).message)
+                props.setCreateStep2Posted(false)
+        })
         .then((data) => {
             console.log('handleFetch create data: ' + JSON.stringify(data)) 
-            document.cookie = "token=" + data.userToken + "; max-age=" + 60*60*24 + ";"
             props.setCreateStep2Posted(false)
             props.setIsCreate(false)
             props.setIsStep2(false)
             props.setIsLoggedIn(true)
             props.setIsActive({...props.isActive, login: false})
-            props.setUserName(jwt_decode(data.userToken).firstName)
+            props.setUserName(props.firstName)
         })
         .catch((error) => {
-            console.log('handleFetch create error: ' + error.message)
-            props.setError(error.message)
+            console.log('React fetch error: ' + error.message)
+            props.setError('React fetch error: ' + error.message)
             props.setCreateStep2Posted(false)
         })
 }
