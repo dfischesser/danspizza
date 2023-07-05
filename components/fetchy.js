@@ -1,4 +1,8 @@
 export async function fetchy(url, method, postData, headers) {
+    console.log('url: ' + url) 
+    console.log('method: ' + method) 
+    console.log('postData: ' + JSON.stringify(postData)) 
+    console.log('headers: ' + JSON.stringify(headers) )
     const res = await fetch(url, {
         method: method,
         headers: headers,

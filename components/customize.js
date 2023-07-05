@@ -1,211 +1,85 @@
-import { useState } from 'react'
-function Header({ title }) {
-    return <h5 className='padding customize-header'>{title ? title : 'Default title'}</h5>;
-  }
+import { useState, useEffect } from 'react'
+import Box from '@mui/material/Box';
+import Stack from '@mui/material/Stack';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import TextField from '@mui/material/TextField';
+import Autocomplete from '@mui/material/Autocomplete';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import Button from '@mui/material/Button';
+import { Typography } from '@mui/material';
+import Divider from '@mui/material/Divider';
+import { CustomizeMultiAutocomplete } from './customizeMultiAutocomplete'
+import { CustomizeAutocomplete } from './customizeAutocomplete'
+
 export function Customize(props) {
-    const [categoryCustomize, setCategoryCustomize] = useState(null)
-    const [optionSelected, setOptionSelected] = useState(false)
+
+    const custOptions = props.customizeFood.customizeOptions.map(custOption => ({
+    optionID: custOption.optionID,
+    optionName: custOption.optionName, 
+    isMultiSelect: custOption.isMultiSelect, 
+    isDefaultOption: custOption.isDefaultOption, 
+    price: 0,
+    optionItems: []
+    }))
+
     const [optionsValidated, setOptionsValidated] = useState(false)
-    const [currentCartItem, setCurrentCartItem] = useState(null)
-    let updatedChecked = props.checked
-    let customizeOptions
-    console.log('props:' + JSON.stringify(props))
-    console.log('cust food to customize:' + JSON.stringify(props))
-    if (props.customizeFood.customizeOptions){
-        customizeOptions = props.customizeFood.customizeOptions
-        console.log('hey!')
-    }
-    //console.log('data: ' + JSON.stringify(data))
+    const [customizeOptions, setCustomizeOptions] = useState(custOptions)
+    const [price, setPrice] = useState(0)
 
-    function handleChange(newCustomizeID) {
-        let filterChecked = props.checked.filter(customize => (customize.customizeID == newCustomizeID)).pop()
-        filterChecked.isChecked = !filterChecked.isChecked
-        updatedChecked = props.checked.map((checked) => 
-            (checked.customizeID == newCustomizeID) ? filterChecked : checked)
-        console.log('cust updatedchecked: ' + JSON.stringify(updatedChecked))
-      }
-    function validateOptions(newFoodToCustomize) {
-        // Validate toppings
-        console.log('validate newFoodToCustomize: ' + JSON.stringify(newFoodToCustomize))
-        let validator = []
-        props.customizeFood.customizeOptions.map(menuOption => {
-            validator.push({optionName: menuOption.optionName, isValid: false})
-        })
-        newFoodToCustomize.customizeOptions.map(newOption => {
-            validator.map(valOption => {
-                if (valOption.optionName == newOption.optionName) {
-                    valOption.isValid = true;
-                }
-            })
-        })
-        console.log('Validator: ' + JSON.stringify(validator))
-        setOptionsValidated(validator.every(validation => validation.isValid == true) ? true : false)
+    useEffect(() => {
+        console.log('setting price: ' + customizeOptions.filter(x => (x.price !== null)).reduce((a, b) => (a + b.price), 0))
+        setPrice(customizeOptions.filter(x => (x.price !== null)).reduce((a, b) => (a + b.price), 0))
+        console.log('valid: ' + customizeOptions.every(x => (x.optionItems.length > 0)))
+        
+    }, [customizeOptions, price])
 
-        // props.customizeFood.customizeOptions.map(menuOption => {
-        //     console.log('Validating for: ' + JSON.stringify(newFoodToCustomize.customizeOptions.find(newOption => newOption.optionName == menuOption.optionName)));
-        //     if (!newFoodToCustomize.customizeOptions.find(newOption => newOption.optionName == menuOption.optionName)) {
-        //         console.log('Validate Failed for: ' + JSON.stringify(newFoodToCustomize.customizeOptions.find(newOption => newOption.optionName == menuOption.optionName)));
-        //         setOptionsValidated(false)
-        //         return
-        //     }
-        //     console.log('Validate passed for: ' + JSON.stringify(newFoodToCustomize.customizeOptions.find(newOption => newOption.optionName == menuOption.optionName)))
-        //     setOptionsValidated(true)                
-        // })
+    //console.log('currentCartItem: ' + JSON.stringify(props.customizeFood))
+    console.log('customizeOptions: ' + JSON.stringify(customizeOptions))
+    console.log('current price: ' + price)
+
+    let test = customizeOptions.filter(x => (x.price !== null)).reduce((a, b) => (a + b.price), 0)
+    if (test.length > 0) {
+        console.log('filtered options: ' + JSON.stringify(test))
+        console.log('adding prices: ' + test.reduce((a, b) => (a + b.price), 0))
     }
-    function handleSetCurrentCartItem(optionItem) {
-        console.log('Current Cart Item: ' + JSON.stringify(props.foodToCustomize))
-        let newFoodToCustomize = props.foodToCustomize
-        let newCustomizeOption
-        //Do any options exist
-        if (newFoodToCustomize.customizeOptions) {
-            console.log('Some kind of options exist')
-            if (currentCartItem){
-                newCustomizeOption = currentCartItem.customizeOptions.find(option => option.optionName == optionItem.customizeOption)
-            }
-            console.log('find result: ' + JSON.stringify(newCustomizeOption))
-            // Does a specific option exist
-            if (newCustomizeOption) { 
-                console.log('Specific option exists: '+ JSON.stringify(newCustomizeOption) +'. assigning option item')
-                //If selected option item is part of a multiselect
-                if (optionItem.isMultiSelect == 1) {
-                    // If any current option items exist
-                    if (newCustomizeOption.optionItems) {
-                        // If any current option items are the new one, then remove
-                        if (newCustomizeOption.optionItems.find(custOptionItem => custOptionItem.customizeOptionItem == optionItem.customizeOptionItem)){
-                            newCustomizeOption.optionItems =
-                            newCustomizeOption.optionItems.filter(custOptionItem => custOptionItem.customizeOptionItem != optionItem.customizeOptionItem)
-                            setCategoryCustomize(categoryCustomize.map(ccOptionItem => ccOptionItem.customizeOptionItem == optionItem.customizeOptionItem ? {...ccOptionItem, isActive: 1} : ccOptionItem))
-                        } else { // If not, then add and activate
-                            console.log('Adding and activating. new categorycustomize: ' + JSON.stringify(categoryCustomize.find(ccOptionItem => ccOptionItem.customizeOptionItem == optionItem.customizeOptionItem).isActive = 1))
-                            newCustomizeOption.optionItems.push({...optionItem, isActive: 1})
-                            categoryCustomize.map(ccOptionItem => ccOptionItem.customizeOptionItem == optionItem.customizeOptionItem ? {...ccOptionItem, isActive: 1} : ccOptionItem)
-                            setCategoryCustomize(categoryCustomize.map(ccOptionItem => ccOptionItem.customizeOptionItem == optionItem.customizeOptionItem ? {...ccOptionItem, isActive: 1} : ccOptionItem))
-                        }
-                    } else { // If no options items exist then add as new option item
-                        newCustomizeOption.optionItems = [{...optionItem, isActive: 1}]
-                        setCategoryCustomize(categoryCustomize.map(ccOptionItem => ccOptionItem.customizeOptionItem == optionItem.customizeOptionItem ? {...ccOptionItem, isActive: 1} : ccOptionItem))
-                    }
-                } else { // if not multiselect remap
-                    newCustomizeOption.optionItems = [{...optionItem, isActive: 1}]
-                }
-            } else {
-                console.log('At least one option exists but not optionitem ' + JSON.stringify(optionItem.customizeOption) + ', pushing to customize options:')
-                    newFoodToCustomize.customizeOptions.push({optionName: optionItem.customizeOption, optionItems: [{...optionItem, isActive: 1}]})
-            }
-        } else { //Else add new Customize Options
-            console.log('No options exist. assigning options')
-            newFoodToCustomize.customizeOptions = [{optionName: optionItem.customizeOption, optionItems: [{...optionItem, isActive: 1}]}]
+
+    function handleChange(newValue) {
+        console.log('new value: ' + JSON.stringify(newValue))
+        console.log('custOptions value: ' + JSON.stringify(customizeOptions))
+        console.log('poop')
+        console.log('newValue[0]: ' + (newValue.optionItems.length > 0))
+        if (newValue.optionItems.length > 0) {
+            console.log('incoming price: ' + newValue.optionItems.reduce((a, b) => (a + b.price), 0))
+            setCustomizeOptions(customizeOptions.map(x => (x.optionID === newValue.optionID) ? {...x, optionItems: newValue.optionItems, price: newValue.optionItems.reduce((a, b) => (a + b.price), 0)} : {...x}))
+        } else {
+            setCustomizeOptions(customizeOptions.map(x => (x.optionID === newValue.optionID) ? {...x, optionItems: newValue.optionItems} : {...x}))
         }
-        console.log('customizeFood: ' + JSON.stringify(props.customizeFood))
-        if (customizeOptions.includes(food => food.foodID == props.foodToCustomize.foodID).customizeOptions)
-        console.log('new food: ' + JSON.stringify(newFoodToCustomize))
-        setCurrentCartItem(newFoodToCustomize) 
-        if (optionItem.isMultiSelect == 0) {
-            console.log('about to set option selected to false')
-            setOptionSelected(false);
-        }
-        validateOptions(newFoodToCustomize)
     }
-     if (categoryCustomize){
-        console.log('Category Customize: ' + JSON.stringify(categoryCustomize))
+
+    function handleClick() {
+        console.log('custOptions final value: ' + JSON.stringify(customizeOptions))
+        console.log('all optionItems selected: ' + JSON.stringify(customizeOptions.every(x => (x.optionItems.length > 0))))
+        props.addCustomItem({...props.customizeFood, customizeOptions: customizeOptions})
+        props.collapseCustomizeOnAdd()
     }
-    if (currentCartItem){
-        console.log('Current Cart Item: ' + JSON.stringify(currentCartItem))
-    }
+
     return (
-        <div className='customize-wrapper'>
-            <div className='customize-title'>
-                <Header title='Customize'/>
-                <button className='customize-close-button' onClick={() => props.setOpenModal({...props.openModal, customize: false})}>X</button>
-            </div>
-            <h6>{props.foodToCustomize.foodName}</h6>
+        <Stack sx={{ width: '100%' }}>
+            {props.customizeFood.customizeOptions.map(custOption => custOption.isMultiSelect ?
+                <CustomizeMultiAutocomplete key={custOption.optionID} handleChange={(newValue) => handleChange(newValue)} customizeOption={custOption}/> :
+                <CustomizeAutocomplete key={custOption.optionID} handleChange={(newValue) => handleChange(newValue)} customizeOption={custOption} />
+            )}
+            
+            {(customizeOptions.every(x => (x.optionItems.length > 0))) ? <Button onClick={() => handleClick()} variant='contained' sx={{ width: 300, mx: 'auto', display: 'block', my: 2 }}>Add To Cart - {price.toLocaleString('us-US', { style: 'currency', currency: 'USD' })}</Button>
+            : <Button disabled variant='contained' sx={{ width: 300, mx: 'auto', display: 'block', my: 2 }}>Add To Cart</Button>}
+            
+        </Stack>
 
-            <div className='customize-body'>
-                {customizeOptions.map(option => 
-                <div key={option.optionName}>
-                    <div className='customize-option' key={option.optionName} onClick={() => { setCategoryCustomize(option.optionItems.map(optionitem => ({...optionitem, isActive: 0}))); setOptionSelected(!optionSelected); console.log('options selected: ' + JSON.stringify(option.optionItems) + '\n customize option: ' + option.optionItems[0].customizeOption + '\n option name: ' + option.optionName)}}>
-                        <div className='customize-option-value'>{option.optionName}</div>
-                        <div className='customize-option-type'>
-                        {
-                            (currentCartItem &&
-                            currentCartItem.customizeOptions.find(cartOption => cartOption.optionName == option.optionName)) &&
-                            currentCartItem.customizeOptions.find(cartOption => cartOption.optionName == option.optionName).optionItems &&
-                            currentCartItem.customizeOptions.find(cartOption => cartOption.optionName == option.optionName).optionItems
-                            .find(optionItem => optionItem.customizeOptionItem) &&
-
-                            currentCartItem.customizeOptions.find(cartOption => cartOption.optionName == option.optionName).optionItems
-                            .find(optionItem => optionItem.customizeOptionItem).isMultiSelect == 1
-                                ?
-                                    currentCartItem.customizeOptions.find(cartOption => cartOption.optionName == option.optionName) &&  
-
-                                        currentCartItem.customizeOptions.find(cartOption => cartOption.optionName == option.optionName).optionItems
-                                        .find(optionItem => optionItem.customizeOptionItem) &&
-                                        currentCartItem.customizeOptions.find(cartOption => cartOption.optionName == option.optionName).optionItems.length + ' Items: '
-                                :
-                            currentCartItem &&
-                            currentCartItem.customizeOptions.find(cartOption => cartOption.optionName == option.optionName) &&
-                            currentCartItem.customizeOptions.find(cartOption => cartOption.optionName == option.optionName).optionItems &&
-                            currentCartItem.customizeOptions.find(cartOption => cartOption.optionName == option.optionName).optionItems
-                            .find(optionItem => optionItem.customizeOptionItem) &&
-                            currentCartItem.customizeOptions.find(cartOption => cartOption.optionName == option.optionName).optionItems
-                            .find(optionItem => optionItem.customizeOptionItem).customizeOptionItem + ': '
-                        }
-                        
-                        {
-                            (currentCartItem &&
-                            currentCartItem.customizeOptions.find(cartOption => cartOption.optionName == option.optionName)) &&
-                            currentCartItem.customizeOptions.find(cartOption => cartOption.optionName == option.optionName).optionItems &&
-
-                            currentCartItem.customizeOptions.find(cartOption => cartOption.optionName == option.optionName).optionItems
-                            .find(optionItem => optionItem.customizeOptionItem) &&
-                            currentCartItem.customizeOptions.find(cartOption => cartOption.optionName == option.optionName).optionItems
-                            .find(optionItem => optionItem.customizeOptionItem).isMultiSelect == 1 
-                                ?
-                                    currentCartItem.customizeOptions.find(cartOption => cartOption.optionName == option.optionName) &&  
-
-                                    currentCartItem.customizeOptions.find(cartOption => cartOption.optionName == option.optionName).optionItems
-                                    .find(optionItem => optionItem.customizeOptionItem) ?
-                                    currentCartItem.customizeOptions.find(cartOption => cartOption.optionName == option.optionName).optionItems
-                                    .filter(optionItem => optionItem.customizeOptionItem).reduce((a, b) => (a + b.price), 0)
-                                    .toLocaleString('us-US', { style: 'currency', currency: 'USD' })
-                                    :
-                                    '(Select)'
-                                :
-                                    (currentCartItem &&
-                                        currentCartItem.customizeOptions.find(cartOption => cartOption.optionName == option.optionName)) &&  
-                                        
-                                        currentCartItem.customizeOptions.find(cartOption => cartOption.optionName == option.optionName).optionItems
-                                        .find(optionItem => optionItem.customizeOptionItem) 
-                                        ?
-                                            currentCartItem.customizeOptions.find(cartOption => cartOption.optionName == option.optionName).optionItems
-                                            .find(optionItem => optionItem.customizeOptionItem).price.toLocaleString('us-US', { style: 'currency', currency: 'USD' }) 
-                                        : 
-                                            '(Select)'
-                        }
-                        </div>
-                    </div>
-                    <div>
-                        {optionSelected && categoryCustomize[0].customizeOption == option.optionName &&
-                        categoryCustomize.map(optionItem => 
-                        <div key={optionItem.customizeOptionItem}
-                            className={currentCartItem && 
-                                currentCartItem.customizeOptions.find(cartOption => cartOption.optionName == optionItem.customizeOption) && 
-                                currentCartItem.customizeOptions.find(cartOption => cartOption.optionName == optionItem.customizeOption).optionItems
-                                .find(cartOptionItem => cartOptionItem.customizeOptionItem == optionItem.customizeOptionItem) &&
-                                currentCartItem.customizeOptions.find(cartOption => cartOption.optionName == optionItem.customizeOption).optionItems
-                                .find(cartOptionItem => cartOptionItem.customizeOptionItem == optionItem.customizeOptionItem).isActive == 1 ? 'customize-option-item-active' : 'customize-option-item' } 
-                                onClick={() => {handleSetCurrentCartItem(optionItem);}}
-                            >
-                            {optionItem.customizeOptionItem} {optionItem.price && optionItem.price.toLocaleString('us-US', { style: 'currency', currency: 'USD' })}
-                        </div>)}  
-                    
-                    </div>
-                </div>
-                )}
-                {optionsValidated &&
-                <button onClick={() => props.addCustomItem(currentCartItem)}>Add to Cart</button>}
-            </div>
-
-        </div>
     )
 }

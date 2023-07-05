@@ -1,3 +1,5 @@
+import Box from '@mui/material/Box';
+
 export function GetPrice(props) { 
     let isOrderPage = false;
     if (props.isOrderPage) {
@@ -13,11 +15,11 @@ export function GetPrice(props) {
     const tax = subtotal * .0725
     const total = subtotal + tax
     return (
-        <div>
-            <div>Subtotal:  {subtotal.toLocaleString('us-US', { style: 'currency', currency: 'USD' })}</div>
+        <Box>
+            <Box>Subtotal:  {subtotal.toLocaleString('us-US', { style: 'currency', currency: 'USD' })}</Box>
             {isOrderPage && <div>Tax (7.25%): {tax.toLocaleString('us-US', { style: 'currency', currency: 'USD' })} </div>}
             {isOrderPage && <div>Total: {total.toLocaleString('us-US', { style: 'currency', currency: 'USD' })} </div>}
-        </div>
+        </Box>
 
     )
 }

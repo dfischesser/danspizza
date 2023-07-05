@@ -14,8 +14,37 @@ td {
     text-align: left;
     border: 2px solid;
 }
+
+.option-group {
+    min-width: 150px;
+    display: flex;
+}
+
+.option-items {
+    min-width: 75px;
+}
+
+.option-name {
+    min-width: 75px;
+    border-radius: 5px;
+}
+
+.BG {
+    background-color: #f0f2e6;
+    min-width: 150px;
+}
+
+.altBG {
+    background-color: green;
+    min-width: 150px;
+}
+
 .account-item {
-    margin-left: 15px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    width: 350px;
+    overflow: hidden;
+    text-align: left;
 }
 
 .order-list {

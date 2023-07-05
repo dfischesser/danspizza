@@ -1,5 +1,9 @@
 // pages/_app.js
-import { useState, useEffect, useReducer } from 'react';
+import { useState, useReducer, useEffect } from 'react';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import { CacheProvider } from '@emotion/react';
+import createEmotionCache from '../components/createEmotionCache';
 import '../css/styles.css'
 import '../css/navbar.css'
 import '../css/index.css'
@@ -8,30 +12,77 @@ import '../css/cart.css'
 import '../css/customize.css'
 import '../css/login.css'
 import '../css/account.css'
-import 'bootstrap/dist/css/bootstrap.min.css';
-import Container from 'react-bootstrap/Container';
 import { Navbar } from '../components/navbar';
-import { useRouter } from 'next/router';
+import { Router, useRouter } from 'next/router';
+import Layout from '../components/layout'
+import theme from '../components/theme';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
+import * as React from 'react';
+import CircularProgress from '@mui/material/CircularProgress';
+import Backdrop from '@mui/material/Backdrop';
+import Container from '@mui/material/Container';
 
-export default function MyApp({ Component, pageProps }) {
-  const customizeData = {"customizePizzaID":"","size":"","style":"","customize":[{"customizeID":1,"customizeName":"Pepperoni","price":2.5},{"customizeID":2,"customizeName":"Sausage","price":2.5},{"customizeID":3,"customizeName":"Ham","price":2.5},{"customizeID":4,"customizeName":"Olives","price":2.5},{"customizeID":5,"customizeName":"Mushrooms","price":2.5},{"customizeID":6,"customizeName":"Pineapple","price":2.5}]}
-  const router = useRouter();
 
+// Client-side cache, shared for the whole session of the user in the browser.
+const clientSideEmotionCache = createEmotionCache();
 
-  console.log('myapp rendered.')
-  //initial topping list
-  const initialIsChecked = customizeData.customize.map((newCustomize) => ({customizeID: newCustomize.customizeID, isChecked: false}))
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
+export default function MyApp({ Component, emotionCache = clientSideEmotionCache, pageProps }) {
+
+  const router = useRouter()
   //set states
   const [openModal, setOpenModal] = useState({cart: false, customize: false, login: false})
   const [cartItems, dispatch] = useReducer(cartItemsReducer, [])
   const [cartID, setCartID] = useState(1)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [hasOrder, setHasOrder] = useState(false)
+  const [isBackOffice, setIsBackOffice] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [logLoad, setLogLoad] = useState(false)
+  const [openLogin, setOpenLogin] = useState(false)
+  useEffect(() => {
+    const handleRouteChange = (url, { shallow }) => {
+      console.log(
+        `App is changing to ${url} ${
+          shallow ? 'with' : 'without'
+        } shallow routing`
+      )
+    }
+    function start() {
+      console.log("start. logload: " + logLoad);
+      if (!logLoad) {
+        setLoading(true);
+        setLogLoad(false)
+      }
+      handleRouteChange;
+    }
+    function end() {
+      console.log("end");
+      setLoading(false);
+      handleRouteChange;
+    }
+    router.events.on('routeChangeStart', start)
+    router.events.on("routeChangeComplete", end)
+    router.events.on("routeChangeError", end)
+    
+
+    return() => {
+      router.events.off("routeChangeStart", start);
+      router.events.off("routeChangeComplete", end);
+      router.events.off("routeChangeError", end);
+    }
+
+  }, [router, loading])
 
   //customize    
   const [foodToCustomize, setfoodToCustomize] = useState({foodID: 0, menuCategoryID: 0, foodName: ''});
-  const [checked, setChecked] = useState(initialIsChecked) 
+  //const [checked, setChecked] = useState(initialIsChecked) 
+  const [open, setOpen] = useState(false);
+  console.log('myapp rendered. isBackOffice: ' + isBackOffice)
 
   //handle functions
   function handleCartClick() {
@@ -61,13 +112,11 @@ export default function MyApp({ Component, pageProps }) {
   function addCustomItem(selectedFoodItem) {
     console.log('app add cust selectedFoodItem: ' + JSON.stringify(selectedFoodItem))
     console.log('app add cust cartitems: ' + JSON.stringify(cartItems))
-    let checkedToppings = checked.filter(customize => customize.isChecked)
-    let checkedcustomizeIDs = checkedToppings.map(customize => customize.customizeID)
-    selectedFoodItem = {...selectedFoodItem, customize: checkedcustomizeIDs}
+
     setfoodToCustomize(selectedFoodItem)
-    setOpenModal({...openModal, customize: false, cart: true})
-    setChecked(initialIsChecked)
+    //setOpenModal({...openModal, customize: false, cart: true})
     handleAddItem(selectedFoodItem)
+    setOpen(true);
   }
 
   //handle functions
@@ -128,65 +177,109 @@ export default function MyApp({ Component, pageProps }) {
       }
     }
   }
+  const handleClose = (event, reason) => {
+    console.log('alert handleclose hit. reason: ' + reason)
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpen(false);
+  };
 
-  const { asPath } = useRouter()
-
+  console.log('asPath: ' + router.asPath)
+  const darkTheme = createTheme({
+    palette: {
+      mode: 'dark',
+    },
+  });
   //Check Login Status
-  return (
-      <Container className="main">
-        <Navbar 
-          isActive={openModal} 
-          setIsActive={(data) => setOpenModal(data)}
-          removeItem={(foodItem) => handleRemoveItem(foodItem)} 
-          currentCartItems={cartItems}
-          addCartCustomize={checked}
-          customizeData={customizeData}
-          isLoggedIn={isLoggedIn}
-          setIsLoggedIn={(data) => setIsLoggedIn(data)}
-          handleAccountInfo={(data) => handleAccountInfo(data)}
-          handleAddOrderClick={() => handleAddOrderClick()}
-          handleCartClick={() => handleCartClick()}
-          hasOrder={hasOrder}
-        />
-        { asPath == '/menu' && 
-          <Component {...pageProps} 
-            currentCartItems={cartItems} 
-            customizeData={customizeData}
-            handleOpenCustomize={(foodItem) => handleOpenCustomize(foodItem)}
-            openModal={openModal}
-            setOpenModal={(data) => setOpenModal(data)}
-            foodToCustomize={foodToCustomize}
-            updateCheckedToppings={(updatedChecked) => setChecked(updatedChecked)}
-            addCustomItem={(foodItem) => addCustomItem(foodItem)}
-            checked={checked}
-          /> 
-        }
-        { asPath == '/' && 
-          <Component {...pageProps}
-          /> 
-        }
-        { asPath == '/order' && 
-          <Component {...pageProps}
-          currentCartItems={cartItems} 
-          removeAllItems={() => handleRemoveAllItems()}
-          removeItem={(foodItem) => handleRemoveItem(foodItem)} 
-          customizeData={customizeData}
-          openModal={openModal}
-          setHasOrder={(data) => setHasOrder(data)}
-          setOpenModal={(data) => setOpenModal(data)}
-          /> 
-        }
-        { asPath == '/account' &&
-          <Component {...pageProps} 
-          isLoggedIn={isLoggedIn}
-          /> 
-        }
-        { asPath == '/manage' &&
-          <Component {...pageProps} 
-          isLoggedIn={isLoggedIn}
-          /> 
-        }
-        
-      </Container>
-  )
+  return (    
+  <CacheProvider value={emotionCache}>
+    <meta name="viewport" content="initial-scale=1, width=device-width" />
+    <link
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
+    />
+    <Layout>
+      {loading && (
+        <Backdrop
+        transitionDuration={3000}
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={true}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
+      )}
+        <Container className="main">
+          <Navbar 
+            isActive={openModal} 
+            setIsActive={(data) => setOpenModal(data)}
+            removeItem={(foodItem) => handleRemoveItem(foodItem)} 
+            currentCartItems={cartItems}
+            isLoggedIn={isLoggedIn}
+            setIsLoggedIn={(data) => setIsLoggedIn(data)}
+            handleAccountInfo={(data) => handleAccountInfo(data)}
+            handleAddOrderClick={() => handleAddOrderClick()}
+            handleCartClick={() => handleCartClick()}
+            hasOrder={hasOrder}
+            isBackOffice={isBackOffice}
+            setIsBackOffice={(data) => setIsBackOffice(data)}
+            setLogLoad={(data) => setLogLoad(data)}
+            setOpen={(data) => setOpenLogin(data)}
+            open={openLogin}
+          />        
+          <ThemeProvider theme={theme}>
+            {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
+            <CssBaseline />
+            { router.asPath == '/menu' && 
+              <Component {...pageProps} 
+                currentCartItems={cartItems} 
+                handleOpenCustomize={(foodItem) => handleOpenCustomize(foodItem)}
+                openModal={openModal}
+                setOpenModal={(data) => setOpenModal(data)}
+                foodToCustomize={foodToCustomize}
+                addCustomItem={(foodItem) => addCustomItem(foodItem)}
+              /> 
+            }
+            { router.asPath == '/' && 
+              <Component {...pageProps}
+              /> 
+            }
+            { router.asPath == '/order' && 
+              <Component {...pageProps}
+              currentCartItems={cartItems} 
+              removeAllItems={() => handleRemoveAllItems()}
+              removeItem={(foodItem) => handleRemoveItem(foodItem)} 
+              openModal={openModal}
+              setHasOrder={(data) => setHasOrder(data)}
+              setOpenModal={(data) => setOpenModal(data)}
+              /> 
+            }
+            { router.asPath == '/account' &&
+              <Component {...pageProps} 
+              isLoggedIn={isLoggedIn}
+              /> 
+            }
+            { router.asPath == '/backoffice/manage' &&
+              <Component {...pageProps} 
+              isLoggedIn={isLoggedIn}
+              /> 
+            }
+            { router.asPath == '/backoffice/editMenu' &&
+              <Component {...pageProps} 
+              isLoggedIn={isLoggedIn}
+              /> 
+            }           
+            
+          <Snackbar anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} open={open} autoHideDuration={2000} onClose={handleClose}>
+            <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+              Added to Cart
+            </Alert>
+          </Snackbar>
+          </ThemeProvider>
+        </Container>
+      </Layout>
+    </CacheProvider>
+)
 }
+
+ 

@@ -5,15 +5,22 @@ import Autocomplete from '@mui/material/Autocomplete'
 import TextField from '@mui/material/TextField'
 import { MuiTelInput, matchIsValidTel } from 'mui-tel-input'
 import { debounce } from '@mui/material/utils';
-import { fetchy } from '../components/fetchy';
+import { fetchy } from '../../components/fetchy';
 import jwt_decode from 'jwt-decode';
-import { createJWT } from './createJWT';
+import { createJWT } from '../createJWT';
+import { getCookie } from '../../components/getCookie';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import ListSubheader from '@mui/material/ListSubheader';
+import PlaceIcon from '@mui/icons-material/Place';
 
-function Header({ title }) {
-    return <h5 className='padding login-header'>{title ? title : 'Default title'}</h5>;
-  }
-
-  export function SearchAddress(props) {
+export function SearchAddress(props) {
     const headers = {'Content-Type': 'application/json'}
     fetch('https://atlas.microsoft.com/search/address/json?api-version=1.0&countrySet=US&subscription-key=nbaeKPTLIg1Yme-hCVAyw0DToUeuljC811pMgXlqbVY&query=' + props.address)
         .then((res) => res.json())
@@ -43,21 +50,6 @@ function Header({ title }) {
 export function CreateStep2Status(props) {
     console.log('step2 post token before: ' + getCookie('token')) 
     console.log('step2 email token before: ' + JSON.stringify(jwt_decode(getCookie('token'))))
-    // var date = new Date()
-    // var tomorrowUnix = (date.setDate(date.getDate() + 1) / 1000) >> 0
-    // const pload = {
-    //     email: jwt_decode(getCookie('token')).email, 
-    //     firstName: props.firstName, role: 'User', 
-    //     userID: jwt_decode(getCookie('token')).userID.toString(), 
-    //     exp: tomorrowUnix, iss: 'danspizza.dev', 
-    //     aud: 'danspizza users'
-    // }
-    
-    // const token = jws.sign({
-    //     header: {alg: 'HS256', typ: "JWT"}, 
-    //     payload: pload,
-    //     secret: 'CR2CQohJrsgoYwMU2lGpQ7BKthH2yYAA',
-    // })
     
     const token = createJWT('', props.firstName, 'User', jwt_decode(getCookie('token')).userID.toString())
 
@@ -88,7 +80,7 @@ export function CreateStep2Status(props) {
             props.setIsCreate(false)
             props.setIsStep2(false)
             props.setIsLoggedIn(true)
-            props.setIsActive({...props.isActive, login: false})
+            props.setOpen(false)
             props.setUserName(props.firstName)
         })
         .catch((error) => {
@@ -98,23 +90,7 @@ export function CreateStep2Status(props) {
         })
 }
 
-function getCookie(cname) {
-    let name = cname + "=";
-    let decodedCookie = decodeURIComponent(document.cookie);
-    let ca = decodedCookie.split(';');
-    for(let i = 0; i <ca.length; i++) {
-      let c = ca[i];
-      while (c.charAt(0) == ' ') {
-        c = c.substring(1);
-      }
-      if (c.indexOf(name) == 0) {
-        return c.substring(name.length, c.length);
-      }
-    }
-    return "";
-  }
-
-export function CreateAccountStep(props) {    
+export function CreateStep2Modal(props) {    
 
     const [addressPosted, setAddressPosted] = useState(false)
     const [createStep2Posted, setCreateStep2Posted] = useState(false)
@@ -134,7 +110,7 @@ export function CreateAccountStep(props) {
         [],
       );
     useEffect(() => {
-        console.log('useeffect hit')
+        console.log('useeffect hit\n phone: ' + isValid.phone + '\n address: ' + isValid.address + '\n firstName: ' + firstName + '\n lastName: ' + lastName)
         if (isValid.phone && isValid.address && firstName && lastName) {
             console.log('all valid')
             setisValid({...isValid, fullyValid: true})
@@ -142,58 +118,102 @@ export function CreateAccountStep(props) {
     }, [isValid.phone, isValid.address, firstName, lastName])
 
     return (
-        <div className='login-wrapper'>
-            <div className='login-body'>
-                <div className='login-segment'>
-                    <div className='login-title'>
-                        <Header title="Create Account"/>
-                    </div>
-                    <div className='login-body'>
-                        <form>
-                            <TextField type='text' id='fname' name='fname' className='create-input' margin='dense' label='First Name' onChange={(e) => {setFirstName(e.target.value)}}></TextField>                            
-                            <TextField type='text' id='lname' name='lname' className='create-input' margin='dense' label='Last Name' onChange={(e) => {setLastName(e.target.value)}}></TextField>                            
-                            <MuiTelInput forceCallingCode defaultCountry='US' value={phone} margin='dense' onChange={(e) => {setPhone(e); setisValid({...isValid, phone: matchIsValidTel(e)})}}></MuiTelInput>
-                            <Autocomplete 
-                                margin='dense'
-                                autoComplete
-                                onChange={(event, newValue) => {
-                                    setValue(newValue);
-                                    console.log('handlechange target value: ' + JSON.stringify(newValue)) 
-                                    
-                                    if (newValue && newValue.streetNumber && newValue.streetName && newValue.city && newValue.state && newValue.zip) {
-                                        setisValid({...isValid, address: true})
-                                        console.log('address is valid')
-                                    }
-                                }}
-                                onInputChange={(event, newInputValue) => {
-                                    setInputValue(newInputValue)
-                                    fetch();
-                                  }}
-                                value={value}
-                                className='create-input'
-                                filterOptions={(x) => x} 
-                                noOptionsText="No locations" 
-                                key={option => option.key}
-                                options={newAddresses ? newAddresses : []} 
-                                getOptionLabel={(option) =>
-                                    typeof option === 'string' ? option : option.address
-                                  }
-                                isOptionEqualToValue={(option, value) => option.id === value.id}
-                                renderInput={(params) => <TextField {...params} label="Address" />}
-                                renderOption={(props, option) => {
-                                    return (
-                                        <li {...props} key={option.key}>
-                                            {option.address}
-                                        </li>
-                                    )
-                                }}
-                            />
-                        </form>
-                        {error && <div>{error}</div>}
-                        <button 
-                        className='login-button' onClick={() => setCreateStep2Posted(true)}>Submit</button>
-                    </div>
-                </div>
+        <>
+            <Typography id="modal-modal-title" variant="h6" component="h2" sx={{textAlign:'center', mb: 3}}>
+            Create Step 2
+            </Typography>
+            <Box>
+                <TextField 
+                    type='text' 
+                    id='fname' 
+                    name='fname' 
+                    className='create-input' 
+                    variant="standard"
+                    margin='dense' 
+                    label='First Name' 
+                    onChange={(e) => {setFirstName(e.target.value)}}
+                />                         
+                <TextField 
+                    type='text' 
+                    id='lname' 
+                    name='lname' 
+                    className='create-input' 
+                    variant="standard"
+                    margin='dense' 
+                    label='Last Name' 
+                    onChange={(e) => {setLastName(e.target.value)}}
+                />
+                <MuiTelInput 
+                    helperText='Phone'
+                    variant='standard' 
+                    forceCallingCode 
+                    defaultCountry='US' 
+                    value={phone} 
+                    margin='normal' 
+                    onChange={(e) => {console.log('phone valid: ' + matchIsValidTel(e)); setPhone(e); setisValid({...isValid, phone: matchIsValidTel(e)})}}
+                />
+                <Autocomplete 
+                sx={{m: 0}}
+                    margin='dense'
+                    autoComplete
+                    onChange={(event, newValue) => {
+                        setValue(newValue);
+                        console.log('handlechange target value: ' + JSON.stringify(newValue)) 
+                        
+                        if (newValue && newValue.streetNumber && newValue.streetName && newValue.city && newValue.state && newValue.zip) {
+                            setisValid({...isValid, address: true})
+                            console.log('address is valid')
+                        }
+                    }}
+                    onInputChange={(event, newInputValue) => {
+                        setInputValue(newInputValue)
+                        fetch();
+                        }}
+                    value={value}
+                    className='create-input'
+                    filterOptions={(x) => x} 
+                    noOptionsText="No locations" 
+                    key={option => option.key}
+                    options={newAddresses ? newAddresses : []} 
+                    getOptionLabel={(option) =>
+                        typeof option === 'string' ? option : option.address
+                        }
+                    isOptionEqualToValue={(option, value) => option.id === value.id}
+                    renderInput={(params) => <TextField {...params} variant='standard' label="Address" />}
+                    renderOption={(props, option) => {
+                        return (
+                                <ListItem {...props} key={option.key} sx={{backgroundColor: 'background.paper'}}>
+                                    <ListItemIcon sx={{minWidth: 40}}>
+                                        <PlaceIcon />
+                                    </ListItemIcon>
+                                    <ListItemText 
+                                        primary={option.streetNumber + ' ' + option.streetName} 
+                                        secondary={option.city + ', ' + option.state + ' ' + option.zip}
+                                    />
+                                </ListItem>
+                        )
+                    }}
+                />
+                {error && <div>{error}</div>}
+                {isValid.fullyValid  ?
+
+                <Button  
+                    sx={{ minWidth: 75, mx: 'auto', display: 'block', mt: 4 }} 
+                    variant="contained" 
+                    onClick={() => setCreateStep2Posted(true)}
+                >
+                    Submit
+                </Button>
+                :
+                <Button  
+                    sx={{ minWidth: 75, mx: 'auto', display: 'block', mt: 4 }} 
+                    variant="contained" 
+                    disabled
+                >
+                    Submit
+                </Button>
+                }
+                
                 {addressPosted && 
                     <SearchAddress 
                         setError={(error) => setError(error)} 
@@ -211,12 +231,12 @@ export function CreateAccountStep(props) {
                         setIsCreate={(data) => props.setIsCreate(data)}
                         setError={(error) => setError(error)} 
                         setCreateStep2Posted={(data) => setCreateStep2Posted(data)} 
-                        setIsActive={(data) => props.setIsActive(data)} 
+                        setOpen={(data) => props.setOpen(data)}
                         setIsLoggedIn={(data) => props.setIsLoggedIn(data)}
                         setIsStep2={(data) => props.setIsStep2(data)}
                         setUserName={(data) => props.setUserName(data)}
                     />}
-            </div>
-        </div>
+            </Box>
+        </>
     )
 }

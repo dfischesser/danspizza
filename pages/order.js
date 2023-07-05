@@ -79,7 +79,6 @@ export default function Order(props) {
             <OrderMap 
                 currentCartItems={props.currentCartItems} 
                 removeItem={(foodItem) => props.removeItem(foodItem)} 
-                customize={props.customizeData.customize} 
                 isOrderPage={true}
             />
             <GetPrice currentCartItems={props.currentCartItems} customizeData={props.customizeData} isOrderPage={true} />
