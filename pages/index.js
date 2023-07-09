@@ -1,5 +1,6 @@
 /* eslint-disable react/prop-types */
 import React from 'react'
+import Grid from '@mui/material/Unstable_Grid2'; // Grid version 2
 
 function Header({ title }) {
   return <h1 className="header-styles">{title ? title : 'Default title'}</h1>;
@@ -40,10 +41,13 @@ export default function HomePage(props) {
 
   console.log('index rendered.')
   return (
-    <>
-      <Header title="Dan's Pizza"/>
-      <Blurb />
-      <Coupons data={props.coupons} />
-    </>
+    <Grid container rowSpacing={1} columnSpacing={2} alignItems={'center'} sx={{mx: 'auto', textAlign:'center'}}>
+      <Grid xs={12} >
+        <Header title="Dan's Pizza"/>
+      </Grid>
+      <Grid xs={12} >
+        <Blurb />
+      </Grid>
+    </Grid>
   );
 }

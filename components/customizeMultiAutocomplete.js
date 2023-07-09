@@ -20,6 +20,7 @@ export function CustomizeMultiAutocomplete({customizeOption, handleChange}) {
       <Autocomplete
         multiple
         disablePortal
+        limitTags={2}
         options={customizeOption.optionItems}
         disableCloseOnSelect
         value={value}
@@ -29,7 +30,7 @@ export function CustomizeMultiAutocomplete({customizeOption, handleChange}) {
         }}
         sx={{ width: 300, mx: 'auto', display: 'block', pt: 2 }}
         getOptionLabel={(option) => option.customizeOptionItem}
-        renderInput={(params) => <TextField {...params} placeholder={customizeOption.optionName} label={customizeOption.optionName} />}
+        renderInput={(params) => <TextField {...params} placeholder={customizeOption.optionName} label={customizeOption.optionName} variant='filled' />}
         renderOption={(props, option, { selected }) => {
             return (
                     <ListItem {...props} key={option.customizeOptionItemID} sx={{backgroundColor: 'background.paper'}} secondaryAction={option.price.toLocaleString('us-US', { style: 'currency', currency: 'USD' })}>

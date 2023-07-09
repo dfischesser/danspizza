@@ -6,9 +6,9 @@ import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import PropTypes from 'prop-types';
 import Typography from '@mui/material/Typography';
-import { getCookie } from '../../components/getCookie';
+import { getCookie } from './getCookie';
 import { useState } from 'react';
-import { fetchy } from '../../components/fetchy';
+import { fetchy } from './fetchy';
 
 function Header({ title }) {
   return <h1 className="header-styles">{title ? title : 'Default title'}</h1>;
@@ -140,7 +140,7 @@ export function SelectFood(props) {
     };
   }
 
-export default function EditMenu(props) {  
+export function EditMenu(props) {  
     const [selectedFoodItem, setSelectedFoodItem] = useState('');
     const [selectedOption, setSelectedOption] = useState('');
     const [foodOptions, setFoodOptions] = useState([]); 
@@ -148,52 +148,47 @@ export default function EditMenu(props) {
     const [optionItemsPosted, setOptionItemsPosted] = useState(false); 
     const [error, setError] = useState(null)
     
-    const [value, setValue] = useState(0);
-    const handleChange = (event, newValue) => {
-        setValue(newValue);
+    const [menuTabValue, setMenuTabValue] = useState(0);
+
+      const handleMenuTabChange = (event, newValue) => {
+        setMenuTabValue(newValue);
       };
+
     console.log('selectedFoodItem is: ' + JSON.stringify(selectedFoodItem) + '. optionItemsPosted is ' + optionItemsPosted)
-    console.log('food items: ' + JSON.stringify(props.items.foodItems))
-    console.log('options: ' + JSON.stringify(props.items.customizeOptions))
+    console.log('food items: ' + JSON.stringify(props.foodItems))
+    console.log('options: ' + JSON.stringify(props.customizeOptions))
     return (
-    <div>
-        <Header title="Edit Menu"/>
+    <Box textAlign={'center'}>
         <Box sx={{ width: '100%', mx: 'auto', maxWidth: 500 }}>
-                <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                    <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
-                    <Tab label="Food Items" {...a11yProps(0)} />
-                    <Tab label="Customize Items" {...a11yProps(1)} />
-                    </Tabs>
-                </Box>
+        <Tabs indicatorColor='secondary' textColor='secondary' value={menuTabValue} onChange={handleMenuTabChange} aria-label="basic tabs example">
+          <Tab label="Food Items" {...a11yProps(0)} sx={{fontSize: '.75rem'}} />
+          <Tab label="Customize Items" {...a11yProps(1)} sx={{fontSize: '.75rem'}} />
+        </Tabs>
+        <TabPanel value={menuTabValue} index={0}>
+            <Box sx={{ mx: 'auto', width: '100%' }}>
+                <SelectFood foodItems={props.foodItems} setSelectedFoodItem={(foodItem) => setSelectedFoodItem(foodItem)}></SelectFood>
+                {selectedFoodItem && 
                 <Box sx={{ mx: 'auto', width: '100%' }}>
-                    <TabPanel value={value} index={0}>
-                        <Box sx={{ mx: 'auto', width: '100%' }}>
-                            <SelectFood foodItems={props.items.foodItems} setSelectedFoodItem={(foodItem) => setSelectedFoodItem(foodItem)}></SelectFood>
-                            {selectedFoodItem && 
-                            <Box sx={{ mx: 'auto', width: '100%' }}>
-                                Food Item set to {selectedFoodItem.foodName}
-                            </Box>}
-                        </Box>
-                    </TabPanel>
-                    <TabPanel value={value} index={1}>
-                        <Box sx={{ mx: 'auto', width: '100%' }}>
-                        <SelectFood setOptionItemsPosted={(data) => setOptionItemsPosted(data)} foodItems={props.items.foodItems} setSelectedFoodItem={(foodItem) => setSelectedFoodItem(foodItem)}></SelectFood>
-                            {selectedFoodItem && 
-                            <Box sx={{ mx: 'auto', width: '100%' }}>
-                                {/* <SelectCustomizeOptions 
-                                    customizeOptions={props.items.customizeOptions} 
-                                    setSelectedOption={(option) => setSelectedOption(option)}
-                                    setOptionItemsPosted={(data) => setOptionItemsPosted(data)} 
-                                /> */}
-                                <Box>
-                                    {foodOptionItems && foodOptions.map((option, index) => <div key={index}>{option}</div>)}
-                                </Box>
-                            </Box>}
-                        </Box>
-                    </TabPanel>
-                    {error && <Box>{error}</Box>}
-                </Box>
+                    Food Item set to {selectedFoodItem.foodName}
+                </Box>}
             </Box>
+        </TabPanel>
+        <TabPanel value={menuTabValue} index={1}>
+          <SelectFood setOptionItemsPosted={(data) => setOptionItemsPosted(data)} foodItems={props.foodItems} setSelectedFoodItem={(foodItem) => setSelectedFoodItem(foodItem)}></SelectFood>
+              {selectedFoodItem && 
+              <Box sx={{ mx: 'auto', width: '100%' }}>
+                  {/* <SelectCustomizeOptions 
+                      customizeOptions={props.items.customizeOptions} 
+                      setSelectedOption={(option) => setSelectedOption(option)}
+                      setOptionItemsPosted={(data) => setOptionItemsPosted(data)} 
+                  /> */}
+                  <Box>
+                      {foodOptionItems && foodOptions.map((option, index) => <div key={index}>{option}</div>)}
+                  </Box>
+              </Box>}
+          </TabPanel>
+            {error && <Box>{error}</Box>}
+        </Box>
             {optionItemsPosted && selectedFoodItem &&
                 <OptionItemsForFood 
                     foodID={selectedFoodItem.foodID} 
@@ -205,6 +200,6 @@ export default function EditMenu(props) {
                 />
             }
             
-    </div>
+    </Box>
   );
 }

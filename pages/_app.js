@@ -22,7 +22,10 @@ import * as React from 'react';
 import CircularProgress from '@mui/material/CircularProgress';
 import Backdrop from '@mui/material/Backdrop';
 import Container from '@mui/material/Container';
-
+import ResponsiveAppBar from '../components/appBar';
+import ResponsiveAppBar2 from '../components/test';
+import Paper from '@mui/material/Paper';
+import Grid from '@mui/material/Unstable_Grid2'; // Grid version 2
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();
@@ -95,7 +98,7 @@ export default function MyApp({ Component, emotionCache = clientSideEmotionCache
   function handleAddOrderClick() {
     console.log('hasorder set')
     setHasOrder(true)
-    setOpenModal({...openModal, cart: false})
+    //setOpenModal({...openModal, cart: false})
   }
 
   function handleOpenCustomize(selectedFoodItem) {
@@ -186,11 +189,6 @@ export default function MyApp({ Component, emotionCache = clientSideEmotionCache
   };
 
   console.log('asPath: ' + router.asPath)
-  const darkTheme = createTheme({
-    palette: {
-      mode: 'dark',
-    },
-  });
   //Check Login Status
   return (    
   <CacheProvider value={emotionCache}>
@@ -200,86 +198,103 @@ export default function MyApp({ Component, emotionCache = clientSideEmotionCache
     href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
     />
     <Layout>
-      {loading && (
-        <Backdrop
-        transitionDuration={3000}
-        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-        open={true}
-      >
-        <CircularProgress color="inherit" />
-      </Backdrop>
-      )}
-        <Container className="main">
-          <Navbar 
-            isActive={openModal} 
-            setIsActive={(data) => setOpenModal(data)}
-            removeItem={(foodItem) => handleRemoveItem(foodItem)} 
-            currentCartItems={cartItems}
-            isLoggedIn={isLoggedIn}
-            setIsLoggedIn={(data) => setIsLoggedIn(data)}
-            handleAccountInfo={(data) => handleAccountInfo(data)}
-            handleAddOrderClick={() => handleAddOrderClick()}
-            handleCartClick={() => handleCartClick()}
-            hasOrder={hasOrder}
-            isBackOffice={isBackOffice}
-            setIsBackOffice={(data) => setIsBackOffice(data)}
-            setLogLoad={(data) => setLogLoad(data)}
-            setOpen={(data) => setOpenLogin(data)}
-            open={openLogin}
-          />        
-          <ThemeProvider theme={theme}>
-            {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
-            <CssBaseline />
-            { router.asPath == '/menu' && 
-              <Component {...pageProps} 
-                currentCartItems={cartItems} 
-                handleOpenCustomize={(foodItem) => handleOpenCustomize(foodItem)}
-                openModal={openModal}
-                setOpenModal={(data) => setOpenModal(data)}
-                foodToCustomize={foodToCustomize}
-                addCustomItem={(foodItem) => addCustomItem(foodItem)}
-              /> 
-            }
-            { router.asPath == '/' && 
-              <Component {...pageProps}
-              /> 
-            }
-            { router.asPath == '/order' && 
-              <Component {...pageProps}
-              currentCartItems={cartItems} 
-              removeAllItems={() => handleRemoveAllItems()}
-              removeItem={(foodItem) => handleRemoveItem(foodItem)} 
-              openModal={openModal}
+      <ThemeProvider theme={theme}>
+        {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
+        <CssBaseline />
+        <Container maxWidth='md' disableGutters>            
+        
+            <ResponsiveAppBar 
+              hasOrder={hasOrder}
+              isLoggedIn={isLoggedIn}
+              open={openLogin}
+              currentCartItems={cartItems}
+              isBackOffice={isBackOffice}
+              setIsBackOffice={(data) => setIsBackOffice(data)}
+              setIsLoggedIn={(data) => setIsLoggedIn(data)}
+              setOpen={(data) => setOpenLogin(data)}
               setHasOrder={(data) => setHasOrder(data)}
-              setOpenModal={(data) => setOpenModal(data)}
-              /> 
-            }
-            { router.asPath == '/account' &&
-              <Component {...pageProps} 
-              isLoggedIn={isLoggedIn}
-              /> 
-            }
-            { router.asPath == '/backoffice/manage' &&
-              <Component {...pageProps} 
-              isLoggedIn={isLoggedIn}
-              /> 
-            }
-            { router.asPath == '/backoffice/editMenu' &&
-              <Component {...pageProps} 
-              isLoggedIn={isLoggedIn}
-              /> 
-            }           
-            
-          <Snackbar anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} open={open} autoHideDuration={2000} onClose={handleClose}>
-            <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
-              Added to Cart
-            </Alert>
-          </Snackbar>
-          </ThemeProvider>
+              removeItem={(foodItem) => handleRemoveItem(foodItem)} 
+              handleAddOrderClick={() => handleAddOrderClick()}
+            />
+            {loading && (
+              <Backdrop
+              transitionDuration={3000}
+              sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+              open={true}
+            >
+              <CircularProgress color="inherit" />
+            </Backdrop>
+            )}
+                <Paper square variant='outlined'>
+                { router.asPath == '/menu' && 
+                  <Component {...pageProps} 
+                    currentCartItems={cartItems} 
+                    handleOpenCustomize={(foodItem) => handleOpenCustomize(foodItem)}
+                    openModal={openModal}
+                    setOpenModal={(data) => setOpenModal(data)}
+                    foodToCustomize={foodToCustomize}
+                    addCustomItem={(foodItem) => addCustomItem(foodItem)}
+                    
+                  /> 
+                }
+                { router.asPath == '/' && 
+                  <Component {...pageProps}
+                  /> 
+                }
+                { router.asPath == '/order' && 
+                  <Component {...pageProps}
+                  currentCartItems={cartItems} 
+                  removeAllItems={() => handleRemoveAllItems()}
+                  removeItem={(foodItem) => handleRemoveItem(foodItem)} 
+                  openModal={openModal}
+                  setHasOrder={(data) => setHasOrder(data)}
+                  setOpenModal={(data) => setOpenModal(data)}
+                  /> 
+                }
+                { router.asPath == '/account' &&
+                  <Component {...pageProps} 
+                  isLoggedIn={isLoggedIn}
+                  /> 
+                }
+                { router.asPath == '/backoffice/manage' &&
+                  <Component {...pageProps} 
+                  isLoggedIn={isLoggedIn}
+                  /> 
+                }
+                { router.asPath == '/backoffice/editSite' &&
+                  <Component {...pageProps} 
+                  isLoggedIn={isLoggedIn}
+                  /> 
+                }           
+                
+              <Snackbar anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} open={open} autoHideDuration={2000} onClose={handleClose}>
+                <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+                  Added to Cart
+                </Alert>
+              </Snackbar>
+              </Paper>
         </Container>
-      </Layout>
-    </CacheProvider>
+      </ThemeProvider>
+    </Layout>
+  </CacheProvider>
 )
 }
+{/* <Navbar 
+  isActive={openModal} 
+  setIsActive={(data) => setOpenModal(data)}
+  removeItem={(foodItem) => handleRemoveItem(foodItem)} 
+  currentCartItems={cartItems}
+  isLoggedIn={isLoggedIn}
+  setIsLoggedIn={(data) => setIsLoggedIn(data)}
+  handleAccountInfo={(data) => handleAccountInfo(data)}
+  handleAddOrderClick={() => handleAddOrderClick()}
+  handleCartClick={() => handleCartClick()}
+  hasOrder={hasOrder}
+  isBackOffice={isBackOffice}
+  setIsBackOffice={(data) => setIsBackOffice(data)}
+  setLogLoad={(data) => setLogLoad(data)}
+  setOpen={(data) => setOpenLogin(data)}
+  open={openLogin}
+/>         */}
 
  

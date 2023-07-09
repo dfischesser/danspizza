@@ -83,10 +83,10 @@ export default function Account(props) {
     console.log('account orderCount: ' + user.orderCount)
 
     return (
-        <>
+        <Box sx={{textAlign: 'center'}}>
             <Header title="Account"/>
                 <TableContainer component={Paper} sx={{width: '100%', mx: 'auto', mb: 5, maxWidth: 400}}>
-                <Table size='small' >
+                <Table size='small' sx={{bgcolor: 'background.account'}}>
                     <TableBody>
                     <TableRow>
                         <TableCell>Name:</TableCell>
@@ -129,7 +129,7 @@ export default function Account(props) {
                 </Box>
             </Box>
             </div>
-        </> 
+        </Box> 
     )
     {/* <div className='order-list'>
                             {user.activeOrders.map(order => 

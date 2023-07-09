@@ -3,6 +3,7 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
+import Grid from '@mui/material/Unstable_Grid2'; // Grid version 2
 import { fetchy } from '../../components/fetchy';
 import { createJWT } from '../createJWT';
 import { useState } from 'react';
@@ -63,23 +64,24 @@ export function LoginModal(props) {
     }    
 
     return (
-        <>
-            <Typography id="modal-modal-title" variant="h6" component="h2" sx={{textAlign:'center'}}>
-            Login
-            </Typography>
-            <Box sx={{textAlign: 'center'}}>
+        <Box sx={{mx: 'auto', textAlign: 'center'}}>
+                <Typography id="modal-modal-title" variant="h6" component="h2" sx={{textAlign:'center'}}>
+                    Login
+                </Typography>
                 <TextField 
+                    autoFocus
+                    fullWidth
                     id="standard-basic-email" 
                     label="Email" 
                     variant="standard" 
                     margin='dense' 
-                    
                     helperText={(isEmailValid !== true && hasAttemptedLogin) ? isEmailValid : false} 
                     error={(isEmailValid !== true && hasAttemptedLogin) ? true : false} 
                     value={login.email} 
-                    onChange={(e) => {validateEmail(e.target.value); setLogin({...login, email: e.target.value})}} /
-                >
+                    onChange={(e) => {validateEmail(e.target.value); setLogin({...login, email: e.target.value})}}  
+                />
                 <TextField 
+                    fullWidth
                     id="standard-basic-password" 
                     label="Password" 
                     variant="standard" 
@@ -87,32 +89,57 @@ export function LoginModal(props) {
                     type='password'
                     value={login.password} 
                     onChange={ e => setLogin({...login, password: e.target.value})} 
+                    onBlur={(e) => {console.log('enter key detected. bubbles: ' + e.bubbles); e.stopPropagation()}}
+                    onKeyDown={(e) => {
+                        console.log('key down detected')
+                        if (e.code === 'Enter') {
+                            console.log('enter key detected.')
+                            if (isEmailValid === true) {
+                                setLoginPosted(true)
+                            }
+                            setHasAttemptedLogin(true)
+                        }
+                    }} 
                 />
                 {error && <Box sx={{textAlign:'center', pt: 1, color: 'red'}}>{error}</Box>}
-                <Box sx={{width: '100%', mx: 'auto', display: 'block', pt: 4}}>
-                    <Button sx={{width: 75, mx: 'auto', display: 'block'}} variant="contained"
+            <Box sx={{width: '100%', mx: 'auto', display: 'block', pt: 4}}>
+                <Button 
+                    sx={{width: 75, mx: 'auto', display: 'block'}} 
+                    variant="contained"
                     className='login-button' 
+                    onBlur={(e) => {e.stopPropagation()}}
+                    onKeyDown={(e) => {
+                        console.log('key down detected')
+                        if (e.code === 'Enter') {
+                        
+                            console.log('enter key detected. email valid: ' + isEmailValid)
+                            if (isEmailValid === true) {
+                                setLoginPosted(true)
+                            }
+                            setHasAttemptedLogin(true)
+                        }
+                    }}
                     onClick={() => {
                         console.log('click is email valid: ' + isEmailValid)
                         if (isEmailValid === true) {
                             setLoginPosted(true)
                         }
                         setHasAttemptedLogin(true)
-                    }}>Login</Button>
-                    <Button sx={{width: '100%', mx: 'auto', display: 'block', pt: 2}} href='' onClick={() => props.setIsCreate(true)}>Create Account</Button>
-                    
-                    {loginPosted && 
-                        <LoginStatus 
-                            login={login} 
-                            setHasCookie={(data) => props.setHasCookie(data)}
-                            setIsLoggedIn={(data) => props.setIsLoggedIn(data)}
-                            setError={(error) => setError(error)} 
-                            setLoginPosted={(data) => setLoginPosted(data)}
-                            setUserName={(data) => props.setUserName(data)} 
-                            setOpen={(data) => props.setOpen(data)}
-                        />}
-                </Box>
+                    }}
+                >Login</Button>
+                <Button sx={{width: '100%', mx: 'auto', display: 'block', pt: 2}} href='' onClick={() => props.setIsCreate(true)}>Create Account</Button>
+                
+                {loginPosted && 
+                    <LoginStatus 
+                        login={login} 
+                        setHasCookie={(data) => props.setHasCookie(data)}
+                        setIsLoggedIn={(data) => props.setIsLoggedIn(data)}
+                        setError={(error) => setError(error)} 
+                        setLoginPosted={(data) => setLoginPosted(data)}
+                        setUserName={(data) => props.setUserName(data)} 
+                        setOpen={(data) => props.setOpen(data)}
+                    />}
             </Box>
-        </>
+        </Box>
     )
 }

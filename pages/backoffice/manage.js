@@ -6,22 +6,6 @@ function Header({ title }) {
   return <h1 className="header-styles">{title ? title : 'Default title'}</h1>;
 }
 
-function getCookie(cname) {
-    let name = cname + "=";
-    let decodedCookie = decodeURIComponent(document.cookie);
-    let ca = decodedCookie.split(';');
-    for(let i = 0; i <ca.length; i++) {
-      let c = ca[i];
-      while (c.charAt(0) == ' ') {
-        c = c.substring(1);
-      }
-      if (c.indexOf(name) == 0) {
-        return c.substring(name.length, c.length);
-      }
-    }
-    return "";
-  }
-
 export const getServerSideProps = async (context) => {
     //console.log('server token:' + context.req.cookies.token)
     try {
@@ -43,11 +27,11 @@ export const getServerSideProps = async (context) => {
 export default function Manage(props) {  
     console.log('manage orders rendered.')
     return (
-    <div>
+    <Box textAlign={'center'}>
         <Header title="Manage Orders"/>
         <Box sx={{ mx: 'auto', width: '100%' }}>
             <FormatOrders userOrders={props.orders.activeOrders} orderCount={props.orders.orderCount} manage={true} />
         </Box>
-    </div>
+    </Box>
   );
 }

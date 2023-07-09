@@ -9,13 +9,13 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Collapse from '@mui/material/Collapse';
-import ToggleOn from '@mui/icons-material/ToggleOn';
-import ToggleOff from '@mui/icons-material/ToggleOff';
-import Circle from '@mui/icons-material/Circle';
+import Divider from '@mui/material/Divider';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
+import Grid from '@mui/material/Unstable_Grid2'; // Grid version 2
+import { Typography } from '@mui/material';
 
 function Header({ title }) {
     return <h1 className="header-padding">{title ? title : 'Default title'}</h1>;
@@ -41,10 +41,11 @@ export default function Menu(props) {
                 .map((food) => ({ isOpen: false, foodID: food.foodID }))
         })
         ))
-    const [selectedIndex, setSelectedIndex] = useState(1);
+    const [selectedIndex, setSelectedIndex] = useState(0);
     const [selectedCustIndex, setSelectedCustIndex] = useState(1);
-    const [buttonText, setButtonText] = useState('Add');
+    const [buttonFocus, setButtonFocus] = useState(0);
     console.log('open: ' + JSON.stringify(open))
+    console.log('buttonFocus: ' + JSON.stringify(buttonFocus))
 
     function handleClick(e, menuCategoryID) {
         console.log('food: ' + menuCategoryID)
@@ -54,7 +55,7 @@ export default function Menu(props) {
         setOpen(open.map((item) =>
         (item.menuCategoryID === menuCategoryID ?
             { ...item, isOpen: item.isOpen = !item.isOpen } :
-            { ...item, isOpen: item.isOpen = item.isOpen })
+            { ...item, isOpen: false})
         )
         )
     }
@@ -68,7 +69,7 @@ export default function Menu(props) {
             ...menuItem, food: menuItem.food.map((item) =>
             (item.foodID === food.foodID ?
                 { ...item, isOpen: item.isOpen = !item.isOpen } :
-                { ...item, isOpen: item.isOpen = false })
+                { ...item, isOpen: false })
             )
         })
         ))
@@ -80,42 +81,61 @@ export default function Menu(props) {
         })))
     }
 
+    function GetIcon({type}) {
+        switch (type) {
+            case 1: {
+                return <Typography fontSize={'25px'}>🍕</Typography>
+            }
+            case 2: {
+                return <Typography fontSize={'25px'}>🍝</Typography>
+            }
+            case 3: {
+                return <Typography fontSize={'25px'}>🥗</Typography>
+            }
+            case 4: {
+                return <Typography fontSize={'25px'}>🥣</Typography>
+            }
+            case 5: {
+                return <Typography fontSize={'25px'}>🍟</Typography>
+            }
+            case 6: {
+                return <Typography fontSize={'25px'}>🍰</Typography>
+            }
+        }
+        return <Box>{type}</Box>
+    }
+
     return (
-        <>
-            <Header title="Menu" />
-            <Box sx={{mx: 'auto', display: 'block',  width: 500}}>
-                <List
-                    sx={{ maxWidth: 350, bgcolor: 'background.paper' }}
-                    component="nav"
-                >
-                    {data.map(item =>
-                        <div key={item.menuCategoryID}>
-                            <ListItemButton selected={selectedIndex === item.menuCategoryID} onClick={(e) => handleClick(e, item.menuCategoryID)}>
-                                <ListItemIcon>
-                                    {/* <GetIcon type={item.menuCategoryID}/> */}
-                                    {open.find((state) => (state.menuCategoryID == item.menuCategoryID)).isOpen ? <ToggleOn /> : <ToggleOff />}
-                                </ListItemIcon>
-                                <ListItemText primary={item.foodType} />
-                                {open.find((state) => (state.menuCategoryID == item.menuCategoryID)).isOpen ? <ExpandLess /> : <ExpandMore />}
-                            </ListItemButton>
-                            <Collapse in={open.find((state) => (state.menuCategoryID == item.menuCategoryID)).isOpen} timeout="auto" unmountOnExit>
-                                <List component="div" disablePadding>
-                                    {item.foodList.map(foodItem => (
-                                        <div key={foodItem.foodID}>
-                                            <ListItemButton sx={{ pl: 4 }}>
-                                                <ListItemText primary={foodItem.foodName} />
-                                                    {open.find(menuItem => menuItem.menuCategoryID === foodItem.menuCategoryID).food
-                                                    .find((state) => (state.foodID == foodItem.foodID)).isOpen ? 
-                                                        <Button
-                                                        onClick={(e) => {
-                                                            console.log('button data: ' + JSON.stringify(foodItem));
-                                                            //props.handleOpenCustomize(foodItem);
-                                                            handleCustomizeClick(e, foodItem)
-                                                            }
-                                                        }
-                                                        variant="contained">
-                                                        Cancel
-                                                        </Button> : <Button
+        <Grid container rowSpacing={1} columnSpacing={2} alignItems={'center'} sx={{margin: '0 auto'}}>
+            <Grid xs={12} textAlign={'center'}> 
+                <Header title="Menu" />
+            </Grid>
+            <Grid xs={12}>
+                    <List
+                        component="nav"
+                    >
+                        {data.map((item, index) =>
+                            <div key={item.menuCategoryID}>
+                                <ListItemButton 
+                                    //autoFocus={(buttonFocus === item.menuCategoryID ? true : false)} 
+                                    onClick={(e) => {handleClick(e, item.menuCategoryID); setButtonFocus(item.menuCategoryID)}}
+                                >
+                                    <ListItemIcon>
+                                        <GetIcon type={item.menuCategoryID}/>
+                                    </ListItemIcon>
+                                    <ListItemText primary={item.foodType} />
+                                    {open.find((state) => (state.menuCategoryID == item.menuCategoryID)).isOpen ? <ExpandLess /> : <ExpandMore />}
+                                </ListItemButton>
+                                {index !== (data.length-1) && <Divider variant='middle' component='li'/>}
+                                <Collapse in={open.find((state) => (state.menuCategoryID == item.menuCategoryID)).isOpen} timeout="auto" unmountOnExit>
+                                    <List component="div" disablePadding>
+                                        {item.foodList.map(foodItem => (
+                                            <div key={foodItem.foodID}>
+                                                <ListItem sx={{ width: '95%', mx: 'auto' }}>
+                                                    <ListItemText primary={foodItem.foodName} />
+                                                        {open.find(menuItem => menuItem.menuCategoryID === foodItem.menuCategoryID).food
+                                                        .find((state) => (state.foodID == foodItem.foodID)).isOpen ? 
+                                                            <Button
                                                             onClick={(e) => {
                                                                 console.log('button data: ' + JSON.stringify(foodItem));
                                                                 //props.handleOpenCustomize(foodItem);
@@ -123,31 +143,40 @@ export default function Menu(props) {
                                                                 }
                                                             }
                                                             variant="contained">
-                                                            Add
-                                                        </Button>
-                                                    }
-                                            </ListItemButton>
-                                            <Collapse in={open.find(menuItem => menuItem.menuCategoryID === foodItem.menuCategoryID).food
-                                                .find((state) => (state.foodID == foodItem.foodID)).isOpen} timeout="auto" unmountOnExit>
-                                                <List component='div' disablePadding>
-                                                    <ListItem>
-                                                        <Customize
-                                                            customizeFood={foodItem}
-                                                            addCustomItem={(foodItem) => props.addCustomItem(foodItem)}
-                                                            collapseCustomizeOnAdd={() => collapseCustomizeOnAdd()}
-                                                        />
-                                                    </ListItem>
-                                                </List>
-                                            </Collapse>
-                                        </div>
-                                    ))}
-                                </List>
-                            </Collapse>
+                                                            Cancel
+                                                            </Button> : <Button
+                                                                onClick={(e) => {
+                                                                    console.log('button data: ' + JSON.stringify(foodItem));
+                                                                    //props.handleOpenCustomize(foodItem);
+                                                                    handleCustomizeClick(e, foodItem)
+                                                                    }
+                                                                }
+                                                                variant="contained">
+                                                                Add
+                                                            </Button>
+                                                        }
+                                                </ListItem>
+                                                <Collapse in={open.find(menuItem => menuItem.menuCategoryID === foodItem.menuCategoryID).food
+                                                    .find((state) => (state.foodID == foodItem.foodID)).isOpen} timeout="auto" unmountOnExit>
+                                                    <List component='div' disablePadding>
+                                                        <ListItem>
+                                                            <Customize
+                                                                customizeFood={foodItem}
+                                                                addCustomItem={(foodItem) => props.addCustomItem(foodItem)}
+                                                                collapseCustomizeOnAdd={() => collapseCustomizeOnAdd()}
+                                                            />
+                                                        </ListItem>
+                                                    </List>
+                                                </Collapse>
+                                            </div>
+                                        ))}
+                                    </List>
+                                </Collapse>
 
-                        </div>
-                    )}
-                </List>
-            </Box>
+                            </div>
+                        )}
+                    </List>
+            </Grid>
             {/* {props.openModal.customize &&
                 <Customize
                     customizeFood={data
@@ -162,6 +191,6 @@ export default function Menu(props) {
                     addCustomItem={(foodItem) => props.addCustomItem(foodItem)}
                 />
             } */}
-        </>
+        </Grid>
     )
 }

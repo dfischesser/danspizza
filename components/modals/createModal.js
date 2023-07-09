@@ -14,20 +14,7 @@ import FormHelperText from '@mui/material/FormHelperText';
 import FormControl from '@mui/material/FormControl';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import Popper from '@mui/material/Popper';
-import Fade from '@mui/material/Fade';
-import Paper from '@mui/material/Paper';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import ListSubheader from '@mui/material/ListSubheader';
-import Divider from '@mui/material/Divider';
-import LockIcon from '@mui/icons-material/Lock';
-import DoneIcon from '@mui/icons-material/Done';
-import CloseIcon from '@mui/icons-material/Close';
-import Stack from '@mui/material/Stack';
+import PasswordPopper from '../../components/passwordPopper';
 
 const style = {
     width: '100%',
@@ -145,22 +132,24 @@ export function CreateModal(props) {
     const id = canBeOpen ? 'transition-popper' : undefined;
 
     return (
-        <>
+        <Box>
             <Typography id="modal-modal-title" variant="h6" component="h2" sx={{ textAlign: 'center', mb: 3 }}>
-                Create
+                Create Account
             </Typography>
             <Box>
-                <TextField
-                    autoFocus
-                    id="standard-basic-email"
-                    label="Email"
-                    variant="standard"
-                    sx={{mb: 2}}
-                    error={(isEmailValid !== true && hasAttemptedLogin) ? true : false}
-                    value={login.email}
-                    onChange={(e) => { validateEmail(e.target.value); setLogin({ ...login, email: e.target.value }) }}
-                />
-                <FormControl variant="standard">
+                <FormControl variant="standard" fullWidth>
+                    <InputLabel htmlFor="standard-basic-email">Email</InputLabel>
+                    <Input 
+                        id="standard-basic-email"
+                        variant="standard"
+                        label="Email"
+                        sx={{mb: 2}}
+                        error={(isEmailValid !== true && hasAttemptedLogin) ? true : false}
+                        value={login.email}
+                        onChange={(e) => { validateEmail(e.target.value); setLogin({ ...login, email: e.target.value }) }}
+                    />
+                </FormControl>
+                <FormControl variant="standard" fullWidth>
                     <InputLabel htmlFor="standard-adornment-password" error={!isPwValid && hasAttemptedLogin}>Password</InputLabel>
                     <Input
                         id="standard-adornment-password"
@@ -191,69 +180,23 @@ export function CreateModal(props) {
                                     </IconButton>
 
                                 }
-                                <IconButton
-                                    color={!isPwValid ? hasAttemptedLogin ? 'error' : 'warning' : 'info'}
-                                    aria-label="toggle pw validation errors"
-                                    onClick={handleClickShowValidation}
-                                    onMouseDown={handleMouseDownPassword}
-                                >
-                                    <ErrorIcon />
-                                    <Popper 
-                                        id={id} 
-                                        open={open} 
-                                        anchorEl={anchorEl} 
-                                        placement='right' 
-                                        sx={{ zIndex: 1301 }} 
-                                        transition>
-                                            {({ TransitionProps }) => (
-                                                <Fade {...TransitionProps} timeout={350}>
-                                                    <Paper component='div'>
-                                                        <List  
-                                                            sx={style}
-                                                            component='div'       
-                                                            subheader={
-                                                                <ListSubheader component='div' id="nested-list-subheader" >
-                                                                <Typography sx={{ pl: 2, pt: 2 }}  component='div'>Password Must:</Typography>
-                                                                </ListSubheader>
-                                                            }>
-                                                            <Typography sx={{ px: 2 }} component='div'>
-                                                            {
-                                                                validationArray.map((val, index) => (
-                                                                    <div key={index}>
-                                                                        <ListItem disableGutters sx={{maxWidth: 175}}>
-                                                                                
-                                                                                {val.active ?
-                                                                                    <ListItemIcon sx={{minWidth:30, color:'red'}}>
-                                                                                        <CloseIcon fontSize='small'/>
-                                                                                    </ListItemIcon> :
-                                                                                    <ListItemIcon sx={{minWidth:30, color:'green'}}>
-                                                                                        <DoneIcon fontSize='small'/>
-                                                                                    </ListItemIcon> 
-                                                                                    
-                                                                                }
-                                                                            
-                                                                                <ListItemText 
-                                                                                    primary={val.text} 
-                                                                                    primaryTypographyProps={{fontSize: '.75rem'}}
-                                                                                />
-                                                                        </ListItem>
-                                                                        {index !== (validationArray.length-1) && <Divider variant='middle' component='li'/>}
-                                                                    </div>
-                                                                ))
-                                                            }
-                                                            </Typography>
-                                                        </List>
-                                                    </Paper>
-                                                </Fade>
-                                            )}
-                                        
-                                    </Popper>
-                                </IconButton>
                             </InputAdornment>
                         }
                     />
                     {!isPwValid && hasAttemptedLogin &&
-                        <FormHelperText error>Check Password Rules</FormHelperText>
+                    <>
+                        <FormHelperText error>
+                            <IconButton
+                                color={!isPwValid ? hasAttemptedLogin ? 'error' : 'warning' : 'info'}
+                                aria-label="toggle pw validation errors"
+                                onClick={handleClickShowValidation}
+                                onMouseDown={handleMouseDownPassword}
+                            >
+                                <ErrorIcon />
+                            </IconButton>Check Password Rules 
+                            <PasswordPopper id={id} open={open} anchorEl={anchorEl} validationArray={validationArray}/>
+                        </FormHelperText>
+                    </>
                     }
                 </FormControl>
                 {error && <div>{error}</div>}
@@ -263,7 +206,7 @@ export function CreateModal(props) {
                         :
                         <Button sx={{ minWidth: 75, mx: 'auto', display: 'block' }} variant="contained" onClick={() => handleClick()}>Create</Button> 
                     }
-                    <Button sx={{ width: '100%', mx: 'auto', display: 'block' }} href='' onClick={() => props.setIsCreate(false)}>Back to Login</Button>
+                    <Button sx={{ width: '100%', mx: 'auto', display: 'block', mt: 3 }} href='' onClick={() => props.setIsCreate(false)}>Back to Login</Button>
                 </Box>
             </Box>
             {createPosted &&
@@ -277,6 +220,15 @@ export function CreateModal(props) {
                     setOpen={(data) => props.setOpen(data)}
                     setIsStep2={(data) => props.setIsStep2(data)}
                 />}
-        </>
+        </Box>
     )
 }
+{/* <TextField
+    autoFocus
+    label="Email"
+    variant="standard"
+    sx={{mb: 2}}
+    error={(isEmailValid !== true && hasAttemptedLogin) ? true : false}
+    value={login.email}
+    onChange={(e) => { validateEmail(e.target.value); setLogin({ ...login, email: e.target.value }) }}
+/> */}

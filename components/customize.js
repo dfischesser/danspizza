@@ -54,6 +54,7 @@ export function Customize(props) {
         console.log('custOptions value: ' + JSON.stringify(customizeOptions))
         console.log('poop')
         console.log('newValue[0]: ' + (newValue.optionItems.length > 0))
+        //here
         if (newValue.optionItems.length > 0) {
             console.log('incoming price: ' + newValue.optionItems.reduce((a, b) => (a + b.price), 0))
             setCustomizeOptions(customizeOptions.map(x => (x.optionID === newValue.optionID) ? {...x, optionItems: newValue.optionItems, price: newValue.optionItems.reduce((a, b) => (a + b.price), 0)} : {...x}))
@@ -69,11 +70,35 @@ export function Customize(props) {
         props.collapseCustomizeOnAdd()
     }
 
+    //Get any defaults if they exist or there is a specified default option set it
+    const defaultValue = (custOption) => {
+        //If there is only one item set 
+            // console.log('defaultValue hit. option items amount : ' + customizeOption.optionItems.length);
+            // console.log('defaultValue hit. is default option : ' + customizeOption.isDefaultOption);
+        if ((custOption.optionItems.length === 1 || custOption.isDefaultOption)) {
+            // console.log('default found. : ' + JSON.stringify(customizeOption))
+            console.log('returning default: ' + JSON.stringify(custOption.optionItems[0].customizeOptionItem));
+            return custOption.optionItems[0].customizeOptionItem
+        }
+        console.log('NO default found. : ' + JSON.stringify(custOption));
+        return ''
+    }
+
     return (
         <Stack sx={{ width: '100%' }}>
             {props.customizeFood.customizeOptions.map(custOption => custOption.isMultiSelect ?
-                <CustomizeMultiAutocomplete key={custOption.optionID} handleChange={(newValue) => handleChange(newValue)} customizeOption={custOption}/> :
-                <CustomizeAutocomplete key={custOption.optionID} handleChange={(newValue) => handleChange(newValue)} customizeOption={custOption} />
+                <CustomizeMultiAutocomplete 
+                    key={custOption.optionID} 
+                    handleChange={(newValue) => handleChange(newValue)} 
+                    customizeOption={custOption} 
+                    defaultValue={defaultValue(custOption)}
+                /> :
+                <CustomizeAutocomplete 
+                    key={custOption.optionID} 
+                    handleChange={(newValue) => handleChange(newValue)} 
+                    customizeOption={custOption} 
+                    defaultValue={defaultValue(custOption)} 
+                />
             )}
             
             {(customizeOptions.every(x => (x.optionItems.length > 0))) ? <Button onClick={() => handleClick()} variant='contained' sx={{ width: 300, mx: 'auto', display: 'block', my: 2 }}>Add To Cart - {price.toLocaleString('us-US', { style: 'currency', currency: 'USD' })}</Button>

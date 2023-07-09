@@ -6,17 +6,15 @@ import { Cart } from '../components/cart';
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import jwt_decode from 'jwt-decode';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import Box from '@mui/material/Box';
 import { Login } from '../components/login';
 import Modal from '@mui/material/Modal';
 import { getCookie } from './getCookie';
 import IconButton from '@mui/material/IconButton';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import Collapse from '@mui/material/Collapse';
 import Popper from '@mui/material/Popper';
 import Fade from '@mui/material/Fade';
-import Fab from '@mui/material/Fab';
-import AddIcon from '@mui/icons-material/Add';
 
 const style = {
   position: 'absolute',

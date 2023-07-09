@@ -1,27 +1,8 @@
-.coupon-container {
-    padding: 20px;
+#lepapier {
+    min-height: 75vh
 }
-
-.blurb {
-    padding: 10px 0px 50px 0px;
-}
-
-.coupon {
-    width: 150px;
-    height: 100px;
-    vertical-align: middle;
-    border: 3px solid;
-    border-radius: 10px;
-    text-align:center;
-    padding: 10px;
-    margin: 10px;
-}
-
-.box {
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-    width: fit-content;
-    margin: auto;
-    position: relative;
-}
+@media only screen and (max-width: 600px) {
+    #lepapier {
+        height: 100vh
+    }
+  }
