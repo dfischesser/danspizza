@@ -63,9 +63,9 @@ export function PostOrder(props) {
     const test = props.currentCartItems
     console.log('formatted order data: ' + JSON.stringify(test) + '. cookie: ' + getCookie('token'))
     const token = getCookie('token')
-    const headers = {'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json'}
+    const headers = {'Content-Type': 'application/json'}
     console.log('headers: ' + JSON.stringify(headers))
-    fetchy('http://localhost:5753/api/Order/Post', 'POST', test, headers)
+    fetchy('http://localhost:18080/api/Order/Post', 'POST', test, headers)
         .then((data) => {
             console.log('handleFetch data: ' + JSON.stringify(data)) 
             props.setOrderPosted(false)
@@ -85,7 +85,7 @@ export function PostOrder(props) {
 export const getServerSideProps = async (context) => {
     console.log('server token:' + context.req.cookies.token)
     try {
-        const res = await fetch('http://localhost:5753/api/User/Account', { headers: {'Authorization': 'Bearer ' + context.req.cookies.token}})
+        const res = await fetch('http://localhost:18080/api/User/Account', { headers: {'Authorization': 'Bearer ' + context.req.cookies.token}})
         if (!res.ok) {
             throw new Error(res.statusText);
         }
@@ -213,12 +213,17 @@ export default function Order(props) {
             
             <Grid xs={12} textAlign={'center'}>
                 {!orderPlaced && <GetPrice currentCartItems={props.currentCartItems} customizeData={props.customizeData} isOrderPage={true} />}
-                {!orderPlaced && 
+                {!orderPlaced && (orderPosted ?
                     <Typography textAlign={'center'} sx={{minWidth: 200, my: 3}} >
-                            <Button onClick={() => setOrderPosted(true)} sx={{mx: 1}} variant='contained'>
-                            Place Order
-                            </Button>
-                    </Typography>}
+                        <Button disabled sx={{mx: 1}} variant='contained'>
+                        Place Order
+                        </Button>
+                    </Typography> :
+                    <Typography textAlign={'center'} sx={{minWidth: 200, my: 3}} >
+                        <Button onClick={() => setOrderPosted(true)} sx={{mx: 1}} variant='contained'>
+                        Place Order
+                        </Button>
+                    </Typography>)}
                 {orderPosted &&
                     <PostOrder 
                         currentCartItems={props.currentCartItems} 
@@ -233,7 +238,7 @@ export default function Order(props) {
                     <Box sx={{my: 3}}>
                         <Typography>
                             Thank you for your order, {props.user.firstName}!<br/>
-                            You can view your order status on your <Link href='/account'>account</Link> page.
+                            You can view your order status on your <Link href='/account' >account</Link> page.
                         </Typography>
                     </Box>}
             </Grid>

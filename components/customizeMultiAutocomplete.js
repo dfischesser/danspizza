@@ -25,7 +25,22 @@ export function CustomizeMultiAutocomplete({customizeOption, handleChange}) {
         disableCloseOnSelect
         value={value}
         onChange={(event, newValue) => {
-          setValue(newValue);
+          if (event.currentTarget) {
+            console.log('change hit. target: ' + event.currentTarget.innerText)
+            console.log('newValue: ' + JSON.stringify(newValue))
+          }
+          if (newValue.find(x => x.customizeOptionItem === 'Cheese')) {
+            console.log('found cheese in array')
+              if (event.currentTarget.innerText.startsWith('Cheese')) {
+                console.log('current target starts with cheese. setting only cheese')
+                setValue(newValue.filter(x => x.customizeOptionItem === 'Cheese'));
+              } else {
+                setValue(newValue.filter(x => x.customizeOptionItem !== 'Cheese'));
+              }
+          }
+         else {
+            setValue(newValue);
+          }
           handleChange({optionItems: newValue, optionID: customizeOption.optionID})
         }}
         sx={{ width: 300, mx: 'auto', display: 'block', pt: 2 }}
@@ -34,6 +49,7 @@ export function CustomizeMultiAutocomplete({customizeOption, handleChange}) {
         renderOption={(props, option, { selected }) => {
             return (
                     <ListItem {...props} key={option.customizeOptionItemID} sx={{backgroundColor: 'background.paper'}} secondaryAction={option.price.toLocaleString('us-US', { style: 'currency', currency: 'USD' })}>
+                            
                             <ListItemText 
                                 primary={
                                   <>

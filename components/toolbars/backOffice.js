@@ -39,7 +39,7 @@ export function BackOfficeToolbar({
     handleCloseUserMenu,
     setIsBackOffice,
     setOpen,
-    hasCookie,
+    isLoggedIn,
     userName,
     role,
     handleCartClick,
@@ -142,7 +142,7 @@ export function BackOfficeToolbar({
                     </Button>
             </Box>
             <Box sx={{ flexGrow: 0  }}>
-            {hasCookie ?
+            {isLoggedIn ?
                 <>
                     <Tooltip title="Open settings">
                         <Button

@@ -24,7 +24,9 @@ const theme = createTheme({
     background: {
       default: 'white',
       paper: '#fcfcf0',
-      account: '#f0f2e6'
+      lightest: '#f7f4e2',
+      grayish: '#e3e5e0',
+      beige: '#dfd7d1'
     }
   },
   components: {

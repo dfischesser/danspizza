@@ -12,7 +12,6 @@ import '../css/cart.css'
 import '../css/customize.css'
 import '../css/login.css'
 import '../css/account.css'
-import { Navbar } from '../components/navbar';
 import { Router, useRouter } from 'next/router';
 import Layout from '../components/layout'
 import theme from '../components/theme';
@@ -55,6 +54,23 @@ export default function MyApp({ Component, emotionCache = clientSideEmotionCache
         } shallow routing`
       )
     }
+    
+    if (window.localStorage.getItem("cart") && cartItems.length === 0) {
+      console.log('local storage cart: ' + window.localStorage.getItem("cart"))
+      console.log('local storage cartID: ' + JSON.parse(window.localStorage.getItem("cart")).findLast(x => x).cartItemID)
+      setCartID(JSON.parse(window.localStorage.getItem("cart")).findLast(x => x).cartItemID + 1)
+      dispatch(
+        {
+          type: 'loaded',
+          cartItems: JSON.parse(window.localStorage.getItem("cart"))
+        }
+      )
+    } else {
+      if (cartItems.length > 0) {
+        window.localStorage.setItem("cart", JSON.stringify(cartItems))
+      }
+    }
+
     function start() {
       console.log("start. logload: " + logLoad);
       if (!logLoad) {
@@ -79,7 +95,7 @@ export default function MyApp({ Component, emotionCache = clientSideEmotionCache
       router.events.off("routeChangeError", end);
     }
 
-  }, [router, loading])
+  }, [router, loading, cartItems])
 
   //customize    
   const [foodToCustomize, setfoodToCustomize] = useState({foodID: 0, menuCategoryID: 0, foodName: ''});
@@ -114,8 +130,7 @@ export default function MyApp({ Component, emotionCache = clientSideEmotionCache
 
   function addCustomItem(selectedFoodItem) {
     console.log('app add cust selectedFoodItem: ' + JSON.stringify(selectedFoodItem))
-    console.log('app add cust cartitems: ' + JSON.stringify(cartItems))
-
+    
     setfoodToCustomize(selectedFoodItem)
     //setOpenModal({...openModal, customize: false, cart: true})
     handleAddItem(selectedFoodItem)
@@ -129,7 +144,7 @@ export default function MyApp({ Component, emotionCache = clientSideEmotionCache
       {
         type: 'added',
         id: cartID,
-        foodItem: selectedFood
+        foodItem: {...selectedFood, price: selectedFood.customizeOptions.reduce((a, b) => (a + b.price), 0)}
       }
     )
   }
@@ -153,10 +168,14 @@ export default function MyApp({ Component, emotionCache = clientSideEmotionCache
         type: 'removedAll'
       }
     )
+    console.log('removeall dispatched. attempting storage clear')
+    if (cartItems.length === 0) {
+      console.log('clearing storage')
+      localStorage.clear();
+    }
   }
 
   function cartItemsReducer(cartItems, action) {
-    console.log('app reducer foodItem: ' + JSON.stringify(action.foodItem))
     switch (action.type) {
       case 'added': {
         action.foodItem = {...action.foodItem, cartItemID: action.id}
@@ -165,14 +184,21 @@ export default function MyApp({ Component, emotionCache = clientSideEmotionCache
           action.foodItem
         ]
       }
+      case 'loaded': {
+        return action.cartItems
+      }
       case 'removed': {
         console.log('removing id: ' + action.id)
-        console.log('removing cartItems: ' + JSON.stringify(cartItems))
-        console.log('removing fooditem: ' + JSON.stringify(action.foodItem))
-        return cartItems.filter(item => item.cartItemID != action.id)      
+        const cart = cartItems.filter(item => item.cartItemID != action.id)
+        if (cart.length === 0) {
+          console.log('clearing storage')
+          localStorage.clear();
+        }
+        return cart      
       }
       case 'removedAll': {
         console.log('Removing all items')
+        localStorage.clear();
         return cartItems = []
       }
       default: {
@@ -189,6 +215,7 @@ export default function MyApp({ Component, emotionCache = clientSideEmotionCache
   };
 
   console.log('asPath: ' + router.asPath)
+  console.log('_app isLoggedIn: ' + isLoggedIn)
   //Check Login Status
   return (    
   <CacheProvider value={emotionCache}>
@@ -200,10 +227,9 @@ export default function MyApp({ Component, emotionCache = clientSideEmotionCache
     <Layout>
       <ThemeProvider theme={theme}>
         {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
-        <CssBaseline />
-        <Container maxWidth='md' disableGutters>            
-        
-            <ResponsiveAppBar 
+          <CssBaseline />
+          <Container maxWidth='md' disableGutters>
+            <ResponsiveAppBar
               hasOrder={hasOrder}
               isLoggedIn={isLoggedIn}
               open={openLogin}
@@ -234,11 +260,12 @@ export default function MyApp({ Component, emotionCache = clientSideEmotionCache
                     setOpenModal={(data) => setOpenModal(data)}
                     foodToCustomize={foodToCustomize}
                     addCustomItem={(foodItem) => addCustomItem(foodItem)}
-                    
                   /> 
                 }
                 { router.asPath == '/' && 
                   <Component {...pageProps}
+                  isLoggedIn={isLoggedIn}
+                  setIsLoggedIn={(data) => setIsLoggedIn(data)}
                   /> 
                 }
                 { router.asPath == '/order' && 

@@ -7,7 +7,6 @@ import { MuiTelInput, matchIsValidTel } from 'mui-tel-input'
 import { debounce } from '@mui/material/utils';
 import { fetchy } from '../../components/fetchy';
 import jwt_decode from 'jwt-decode';
-import { createJWT } from '../createJWT';
 import { getCookie } from '../../components/getCookie';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -19,6 +18,8 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import ListSubheader from '@mui/material/ListSubheader';
 import PlaceIcon from '@mui/icons-material/Place';
+import Grid from '@mui/material/Grid';
+import { useRouter } from 'next/router'
 
 export function SearchAddress(props) {
     const headers = {'Content-Type': 'application/json'}
@@ -48,15 +49,8 @@ export function SearchAddress(props) {
 }
 
 export function CreateStep2Status(props) {
-    console.log('step2 post token before: ' + getCookie('token')) 
-    console.log('step2 email token before: ' + JSON.stringify(jwt_decode(getCookie('token'))))
-    
-    const token = createJWT('', props.firstName, 'User', jwt_decode(getCookie('token')).userID.toString())
-
-    document.cookie = "token=" + token + "; max-age=" + 60*60*24 + ";"
-    console.log('step2 post token after: ' + getCookie('token')) 
-    console.log('step2 email token after: ' + JSON.stringify(jwt_decode(getCookie('token'))))
-    const headers = {'Content-Type': 'application/json','Authorization': 'Bearer ' + token}
+    const router = useRouter();
+    const headers = {'Content-Type': 'application/json'}
     const addies = {
         firstName: props.firstName, 
         lastName: props.lastName, 
@@ -68,20 +62,19 @@ export function CreateStep2Status(props) {
         zip: props.address.zip
     }
     console.log('addies: ' + JSON.stringify(addies))
-    fetchy('http://localhost:5753/api/User/CreateStep2', 'POST', addies, headers)
+    fetchy('http://localhost:18080/api/User/CreateStep2', 'POST', addies, headers)
         .catch((error) => {
                 console.log('API error: ' + JSON.parse(error.message).message)
                 props.setError('API error: ' + JSON.parse(error.message).message)
                 props.setCreateStep2Posted(false)
         })
         .then((data) => {
-            console.log('handleFetch create data: ' + JSON.stringify(data)) 
+            console.log('handleFetch create data: ' + JSON.stringify(data) )
+            document.cookie = "LoggedIn=true"
             props.setCreateStep2Posted(false)
-            props.setIsCreate(false)
-            props.setIsStep2(false)
             props.setIsLoggedIn(true)
             props.setOpen(false)
-            props.setUserName(props.firstName)
+            router.reload()
         })
         .catch((error) => {
             console.log('React fetch error: ' + error.message)
@@ -99,7 +92,7 @@ export function CreateStep2Modal(props) {
     const [firstName, setFirstName] = useState('')
     const [lastName, setLastName] = useState('')
     const [phone, setPhone] = useState('')
-    const [isValid, setisValid] = useState({phone: false, address: false, fullyValid: false})
+    const [isValid, setIsValid] = useState({phone: false, address: false, fName: false, lName: false})
     const [newAddresses, setNewAddresses] = useState([])
     const [error, setError] = useState(null)
     const fetch = React.useMemo(
@@ -109,14 +102,17 @@ export function CreateStep2Modal(props) {
           }, 400),
         [],
       );
-    useEffect(() => {
-        console.log('useeffect hit\n phone: ' + isValid.phone + '\n address: ' + isValid.address + '\n firstName: ' + firstName + '\n lastName: ' + lastName)
-        if (isValid.phone && isValid.address && firstName && lastName) {
-            console.log('all valid')
-            setisValid({...isValid, fullyValid: true})
-        }
-    }, [isValid.phone, isValid.address, firstName, lastName])
+      const charRegex = new RegExp(/^[\s\da-zA-Z0-9!@#$%^&'*]*$/)
+    // useEffect(() => {
+    //     console.log('useeffect hit\n phone: ' + isValid.phone + '\n address: ' + isValid.address + '\n firstName: ' + firstName + '\n lastName: ' + lastName)
+    //     if (isValid.phone && isValid.address && firstName && lastName) {
+    //         console.log('all valid')
+    //         setisValid({...isValid, fullyValid: true})
+    //     }
+    // }, [isValid.phone, isValid.address, firstName, lastName])
 
+    console.log('valid: ' + JSON.stringify(isValid))
+    console.log('all valid: ' + Object.values(isValid).every(Boolean))
     return (
         <>
             <Typography id="modal-modal-title" variant="h6" component="h2" sx={{textAlign:'center', mb: 3}}>
@@ -124,6 +120,7 @@ export function CreateStep2Modal(props) {
             </Typography>
             <Box>
                 <TextField 
+                    autoFocus
                     type='text' 
                     id='fname' 
                     name='fname' 
@@ -131,7 +128,7 @@ export function CreateStep2Modal(props) {
                     variant="standard"
                     margin='dense' 
                     label='First Name' 
-                    onChange={(e) => {setFirstName(e.target.value)}}
+                    onChange={(e) => {setFirstName(e.target.value); setIsValid({...isValid, fName: charRegex.test(e.target.value)})}}
                 />                         
                 <TextField 
                     type='text' 
@@ -141,7 +138,7 @@ export function CreateStep2Modal(props) {
                     variant="standard"
                     margin='dense' 
                     label='Last Name' 
-                    onChange={(e) => {setLastName(e.target.value)}}
+                    onChange={(e) => {setLastName(e.target.value); setIsValid({...isValid, lName: charRegex.test(e.target.value)}); console.log('match? ' + charRegex.test(e.target.value))}}
                 />
                 <MuiTelInput 
                     helperText='Phone'
@@ -150,7 +147,8 @@ export function CreateStep2Modal(props) {
                     defaultCountry='US' 
                     value={phone} 
                     margin='normal' 
-                    onChange={(e) => {console.log('phone valid: ' + matchIsValidTel(e)); setPhone(e); setisValid({...isValid, phone: matchIsValidTel(e)})}}
+                    error={!isValid.phone}
+                    onChange={(e) => {console.log('phone valid: ' + matchIsValidTel(e)); setPhone(e); setIsValid({...isValid, phone: matchIsValidTel(e)})}}
                 />
                 <Autocomplete 
                 sx={{m: 0}}
@@ -161,7 +159,7 @@ export function CreateStep2Modal(props) {
                         console.log('handlechange target value: ' + JSON.stringify(newValue)) 
                         
                         if (newValue && newValue.streetNumber && newValue.streetName && newValue.city && newValue.state && newValue.zip) {
-                            setisValid({...isValid, address: true})
+                            setIsValid({...isValid, address: true})
                             console.log('address is valid')
                         }
                     }}
@@ -182,20 +180,25 @@ export function CreateStep2Modal(props) {
                     renderInput={(params) => <TextField {...params} variant='standard' label="Address" />}
                     renderOption={(props, option) => {
                         return (
-                                <ListItem {...props} key={option.key} sx={{backgroundColor: 'background.paper'}}>
+                                <ListItemButton {...props}>
                                     <ListItemIcon sx={{minWidth: 40}}>
                                         <PlaceIcon />
                                     </ListItemIcon>
-                                    <ListItemText 
+                                    <ListItemText
                                         primary={option.streetNumber + ' ' + option.streetName} 
                                         secondary={option.city + ', ' + option.state + ' ' + option.zip}
                                     />
-                                </ListItem>
+                                </ListItemButton>
                         )
+                    }}
+                    onKeyDown={(e) => {
+                        if (e.code === 'Enter') {
+                            setCreateStep2Posted(true)
+                        }
                     }}
                 />
                 {error && <div>{error}</div>}
-                {isValid.fullyValid  ?
+                {Object.values(isValid).every(Boolean) ?
 
                 <Button  
                     sx={{ minWidth: 75, mx: 'auto', display: 'block', mt: 4 }} 

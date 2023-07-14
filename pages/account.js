@@ -23,7 +23,7 @@ function Header({ title }) {
 export const getServerSideProps = async (context) => {
     //console.log('server token:' + context.req.cookies.token)
     try {
-        const res = await fetch('http://localhost:5753/api/User/Account', { headers: {'Authorization': 'Bearer ' + context.req.cookies.token}})
+        const res = await fetch('http://localhost:18080/api/User/Account', { headers: {'Authorization': 'Bearer ' + context.req.cookies.token}})
         if (!res.ok) {
             throw new Error(res.statusText);
         }
@@ -86,7 +86,7 @@ export default function Account(props) {
         <Box sx={{textAlign: 'center'}}>
             <Header title="Account"/>
                 <TableContainer component={Paper} sx={{width: '100%', mx: 'auto', mb: 5, maxWidth: 400}}>
-                <Table size='small' sx={{bgcolor: 'background.account'}}>
+                <Table size='small' sx={{bgcolor: 'background.lightest'}}>
                     <TableBody>
                     <TableRow>
                         <TableCell>Name:</TableCell>

@@ -31,8 +31,6 @@ export function CustomizeAutocomplete({customizeOption, handleChange, defaultVal
     //console.log('option item 1: ' + JSON.stringify(customizeOption.optionItems[0]))
     //console.log('option item 1 name: ' + JSON.stringify(customizeOption.optionItems[0].customizeOptionItem))
 
-    if (customizeOption.optionItems.length === 1) {
-    }
 
     return (
         <Autocomplete
@@ -61,6 +59,7 @@ export function CustomizeAutocomplete({customizeOption, handleChange, defaultVal
             renderInput={(params) => <TextField {...params} label={customizeOption.optionName} variant='filled'/>}
             renderOption={(props, option) => {
                 return (
+                    
                         <ListItem {...props} key={option.customizeOptionItemID} sx={{backgroundColor: 'background.paper'}} secondaryAction={option.price.toLocaleString('us-US', { style: 'currency', currency: 'USD' })}>
                                 <ListItemText 
                                     primary={option.customizeOptionItem} 

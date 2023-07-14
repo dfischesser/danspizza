@@ -14,19 +14,23 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import Link, { NextLinkComposed } from '../../components/Link'
 import { useState, useRef, useEffect } from 'react';
 import Container from '@mui/material/Container';
-import AdbIcon from '@mui/icons-material/Adb';
-import Avatar from '@mui/material/Avatar';
-import Stack from '@mui/material/Stack';
+import LogoutIcon from '@mui/icons-material/Logout';
+import AccountBoxIcon from '@mui/icons-material/AccountBox';
+import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
+import TuneIcon from '@mui/icons-material/Tune';
+import CottageIcon from '@mui/icons-material/Cottage';
+import RestaurantMenuIcon from '@mui/icons-material/RestaurantMenu';
+import { getCookie } from '../../components/getCookie';
 
 export function Index() {
     return (
         <Button
-        component={NextLinkComposed}
-        to={{
-            pathname: '/',
-        }}
+            component={NextLinkComposed}
+            to={{
+                pathname: '/',
+            }}
         >
-        Button link
+            Button link
         </Button>
     );
 }
@@ -40,6 +44,9 @@ export function MainToolbar({
     handleCloseUserMenu,
     setOpen,
     setIsBackOffice,
+    setIsCreate,
+    setIsStep2,
+    isLoggedIn,
     hasCookie,
     userName,
     role,
@@ -48,20 +55,14 @@ export function MainToolbar({
     open,
 }) {
 
-    const [disableRipple, setDisableRipple] = useState(false);
-
-    const handleBlur = () => {
-        console.log('handling blur: ')
-        console.log('handling blur: ' + rippleRef.current)
-        rippleRef.current.stop()
-    }
-
-    const rippleRef = useRef(null);
+    console.log('isLoggedIn is ' + isLoggedIn)
+    console.log('username is ' + userName)
+    console.log('firstname cookie is ' + (typeof document !== 'undefined') ? 'not defined' : getCookie('firstName'))
     return (
-        
+
         <Container maxWidth="xl">
-        <Toolbar disableGutters>
-            <Typography
+            <Toolbar disableGutters>
+                <Typography
                     variant="h6"
                     noWrap
                     sx={{
@@ -78,39 +79,45 @@ export function MainToolbar({
                     PIZZA
                 </Typography>
 
-            <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-            <IconButton
-              size="large"
-              aria-label="account of current user"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
-              onClick={handleOpenNavMenu}
-              color="inherit"
-            >
-              <MenuIcon />
-            </IconButton>
-                <Menu
-                id="menu-appbar"
-                anchorEl={anchorElNav}
-                anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'left',
-                }}
-                keepMounted
-                transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'left',
-                }}
-                open={Boolean(anchorElNav)}
-                onClose={handleCloseNavMenu}
-                sx={{
-                    display: { xs: 'block', md: 'none' },
-                }}
-                >
-                    <MenuItem component={NextLinkComposed} to='/' onClick={handleCloseNavMenu} sx={{py: 0, my: 0}}>Home</MenuItem>
-                    <MenuItem component={NextLinkComposed} to='/menu' onClick={handleCloseNavMenu} sx={{py: 0, my: 0}}>Menu</MenuItem>
-                </Menu>
-            </Box>
+                <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+                    <IconButton
+                        size="large"
+                        aria-label="account of current user"
+                        aria-controls="menu-appbar"
+                        aria-haspopup="true"
+                        onClick={handleOpenNavMenu}
+                        color="inherit"
+                    >
+                        <MenuIcon />
+                    </IconButton>
+                    <Menu
+                        id="menu-appbar"
+                        anchorEl={anchorElNav}
+                        anchorOrigin={{
+                            vertical: 'bottom',
+                            horizontal: 'left',
+                        }}
+                        keepMounted
+                        transformOrigin={{
+                            vertical: 'top',
+                            horizontal: 'left',
+                        }}
+                        open={Boolean(anchorElNav)}
+                        onClose={handleCloseNavMenu}
+                        sx={{
+                            display: { xs: 'block', md: 'none' },
+                        }}
+                    >
+                        <MenuItem component={NextLinkComposed} to='/' onClick={handleCloseNavMenu} sx={{ py: 0, my: 0 }}>
+                            <CottageIcon sx={{mr:2}}/>
+                            Home
+                        </MenuItem>
+                        <MenuItem component={NextLinkComposed} to='/menu' onClick={handleCloseNavMenu} sx={{ py: 0, my: 0 }}>
+                            <RestaurantMenuIcon sx={{mr:2}}/>
+                            Menu
+                        </MenuItem>
+                    </Menu>
+                </Box>
                 <Typography
                     variant="h6"
                     noWrap
@@ -123,7 +130,7 @@ export function MainToolbar({
                         letterSpacing: '.3rem',
                         color: 'inherit',
                         textDecoration: 'none',
-                      }}
+                    }}
                 >
                     DAN'S PIZZA
                 </Typography>
@@ -144,82 +151,90 @@ export function MainToolbar({
                     >
                         Menu
                     </Button>
-            </Box>
-            <Box sx={{ flexGrow: 0  }}>
-            {hasCookie ?
-                <>
-                    <Tooltip title="Open settings">
-                        <Button
-                            sx={{ color: 'white', p: 0 }}
-                            onClick={handleOpenUserMenu}
-                        >
-                            {userName ? userName : 'Account'}
-                        </Button>
-                    </Tooltip>
+                </Box>
+                <Box sx={{ flexGrow: 0 }}>
+                    {isLoggedIn ?
+                        <>
+                            <Tooltip title="Open settings">
+                                <Button
+                                    sx={{ color: 'white', p: 0 }}
+                                    onClick={handleOpenUserMenu}
+                                >
+                                    {userName ? userName : 'Profile'}
+                                </Button>
+                            </Tooltip>
 
-                    <Menu
-                        sx={{ mt: '45px' }}
-                        id="menu-appbar"
-                        anchorEl={anchorElUser}
-                        anchorOrigin={{
-                            vertical: 'top',
-                            horizontal: 'right',
-                        }}
-                        keepMounted
-                        transformOrigin={{
-                            vertical: 'top',
-                            horizontal: 'right',
-                        }}
-                        open={Boolean(anchorElUser)}
-                        onClose={handleCloseUserMenu}
-                    >
-                        <MenuItem onClick={() => handleCloseUserMenu('Logout')}>
-                                Logout
-                        </MenuItem>
-                        <MenuItem component={NextLinkComposed} to='/account'>
-                                Account
-                        </MenuItem>
-                        {role == 'Employee' &&
-                            <MenuItem onClick={() => {handleCloseUserMenu(''); setIsBackOffice(true)}} component={NextLinkComposed} to={'/backoffice/manage'}>
-                                Back Office
-                            </MenuItem>
-                        }
-                    </Menu>
-                    <IconButton onClick={handleCartClick}>
-                        {(cartHasItems) ?
-                            open ?
-                                <ShoppingCartIcon />
-                                :
-                                <ShoppingCartIcon sx={{ color: '#8d762b' }} /> :
-                            <ShoppingCartIcon sx={{ color: 'white' }} />
-                        }
-                    </IconButton>
-                </>
-                 :
-                <>
-                    <Button
-                        sx={{ color: 'white' }}
-                        onBlur={(e) => {console.log('blur hitt: ' + e.currentTarget); handleBlur}}
-                        touchRippleRef={rippleRef}
-                        focusRipple={false}
-                        onClick={() => {setOpen(true); }}
-                    >
-                        {'Login'}
-                    </Button>
-                
-             <IconButton onClick={handleCartClick}>
-                 {(cartHasItems) ?
-                     open ?
-                         <ShoppingCartIcon />
-                         :
-                         <ShoppingCartIcon sx={{ color: '#8d762b' }} /> :
-                     <ShoppingCartIcon sx={{ color: 'white' }} />
-                 }
-             </IconButton>
-             </>}
-            </Box>
-        
-        </Toolbar>
+                            <Menu
+                                sx={{ mt: '45px' }}
+                                id="menu-appbar"
+                                anchorEl={anchorElUser}
+                                anchorOrigin={{
+                                    vertical: 'top',
+                                    horizontal: 'right',
+                                }}
+                                keepMounted
+                                transformOrigin={{
+                                    vertical: 'top',
+                                    horizontal: 'right',
+                                }}
+                                open={Boolean(anchorElUser)}
+                                onClose={handleCloseUserMenu}
+                                
+                            >
+                                <MenuItem onClick={() => handleCloseUserMenu('Logout')}>
+                                        <LogoutIcon sx={{mr:2}}/>
+                                        Logout
+                                </MenuItem>
+                                {userName ?
+                                    <MenuItem component={NextLinkComposed} to='/account' onClick={() => handleCloseUserMenu('Account')}>
+                                    <AccountBoxIcon sx={{mr:2}}/>
+                                        Account
+                                    </MenuItem> :
+                                    <MenuItem onClick={() => { setIsCreate(true); setIsStep2(true); setOpen(true); handleCloseUserMenu() }}>
+                                    <ManageAccountsIcon sx={{mr:2}}/>   
+                                        Complete <br/> Account
+                                    </MenuItem>
+                                }
+                                {role == 'Employee' &&
+                                    <MenuItem onClick={() => { handleCloseUserMenu(); setIsBackOffice(true)}} component={NextLinkComposed} to={'/backoffice/manage'}>
+                                        <TuneIcon sx={{mr:2}}/> 
+                                        Back Office
+                                    </MenuItem>
+                                }
+                            </Menu>
+                            <IconButton onClick={handleCartClick} sx={{ pl: 3 }}>
+                                {(cartHasItems) ?
+                                    open ?
+                                        <ShoppingCartIcon />
+                                        :
+                                        <ShoppingCartIcon sx={{ color: '#8d762b' }} /> :
+                                    <ShoppingCartIcon sx={{ color: 'white' }} />
+                                }
+                            </IconButton>
+                        </>
+                        :
+                        <>
+                            <Button
+                                sx={{ color: 'white' }}
+                                focusRipple={false}
+                                onClick={() => { setOpen(true); }}
+                            >
+                                {'Login'}
+                            </Button>
+
+                            <IconButton onClick={handleCartClick}>
+                                {(cartHasItems) ?
+                                    open ?
+                                        <ShoppingCartIcon />
+                                        :
+                                        <ShoppingCartIcon sx={{ color: '#8d762b' }} /> :
+                                    <ShoppingCartIcon sx={{ color: 'white' }} />
+                                }
+                            </IconButton>
+                        </>}
+                </Box>
+
+            </Toolbar>
         </Container>
     )
 }

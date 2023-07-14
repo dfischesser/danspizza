@@ -12,6 +12,7 @@ import LocalPizzaIcon from '@mui/icons-material/LocalPizza';
 import Container from '@mui/material/Container';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import Link from 'next/link'
+import { NextLinkComposed } from '../Link';
 
 export function OrderToolbar({
     anchorElNav,
@@ -106,7 +107,7 @@ export function OrderToolbar({
                 LOGO
             </Typography>
             <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-                    <Button
+                    <Button disableRipple
                         sx={{ my: 2, color: 'white', display: 'block' }}
                     >
                         Order
@@ -123,10 +124,10 @@ export function OrderToolbar({
             <Button
                 sx={{ color: 'white' }}
                 onClick={() => setHasOrder(false)}
+                component={NextLinkComposed} 
+                to='/menu' 
             >
-                <Link href='/menu' style={{all: 'unset'}}>
                     Back To Cart
-                </Link>
             </Button>
         </Toolbar>
         </Container>

@@ -36,12 +36,46 @@ export function Customize(props) {
         console.log('setting price: ' + customizeOptions.filter(x => (x.price !== null)).reduce((a, b) => (a + b.price), 0))
         setPrice(customizeOptions.filter(x => (x.price !== null)).reduce((a, b) => (a + b.price), 0))
         console.log('valid: ' + customizeOptions.every(x => (x.optionItems.length > 0)))
+        //Write to session storage
         
     }, [customizeOptions, price])
 
     //console.log('currentCartItem: ' + JSON.stringify(props.customizeFood))
     console.log('customizeOptions: ' + JSON.stringify(customizeOptions))
     console.log('current price: ' + price)
+    // function storageAvailable(type) {
+    //     let storage;
+    //     try {
+    //       storage = window[type];
+    //       const x = "__storage_test__";
+    //       storage.setItem(x, x);
+    //       storage.removeItem(x);
+    //       return true;
+    //     } catch (e) {
+    //         console.error(e)
+    //       return (
+    //         e instanceof DOMException &&
+    //         // everything except Firefox
+    //         (e.code === 22 ||
+    //           // Firefox
+    //           e.code === 1014 ||
+    //           // test name field too, because code might not be present
+    //           // everything except Firefox
+    //           e.name === "QuotaExceededError" ||
+    //           // Firefox
+    //           e.name === "NS_ERROR_DOM_QUOTA_REACHED") &&
+    //         // acknowledge QuotaExceededError only if there's something already stored
+    //         storage &&
+    //         storage.length !== 0
+    //       );
+    //     }
+    //   }
+    //   if (storageAvailable("localStorage")) {
+    //     // Yippee! We can use localStorage awesomeness
+    //     console.log('storing!: ' + JSON.stringify(customizeOptions))
+    //   } else {
+    //     console.log('cant store right now: ' + storageAvailable("sessionStorage"))
+    //   }
 
     let test = customizeOptions.filter(x => (x.price !== null)).reduce((a, b) => (a + b.price), 0)
     if (test.length > 0) {
@@ -57,6 +91,9 @@ export function Customize(props) {
         //here
         if (newValue.optionItems.length > 0) {
             console.log('incoming price: ' + newValue.optionItems.reduce((a, b) => (a + b.price), 0))
+            if (newValue.optionItems.find(x => x.customizeOptionItem === 'Cheese') && newValue.optionItems.length > 1) {
+                newValue.optionItems = newValue.optionItems.filter(x => (x.customizeOptionItem !== 'Cheese'))
+            }
             setCustomizeOptions(customizeOptions.map(x => (x.optionID === newValue.optionID) ? {...x, optionItems: newValue.optionItems, price: newValue.optionItems.reduce((a, b) => (a + b.price), 0)} : {...x}))
         } else {
             setCustomizeOptions(customizeOptions.map(x => (x.optionID === newValue.optionID) ? {...x, optionItems: newValue.optionItems} : {...x}))
@@ -80,7 +117,7 @@ export function Customize(props) {
             console.log('returning default: ' + JSON.stringify(custOption.optionItems[0].customizeOptionItem));
             return custOption.optionItems[0].customizeOptionItem
         }
-        console.log('NO default found. : ' + JSON.stringify(custOption));
+        console.log('NO default found. : ' + JSON.stringify(custOption.optionName));
         return ''
     }
 

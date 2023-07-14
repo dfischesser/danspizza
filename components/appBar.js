@@ -1,21 +1,7 @@
 import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import Menu from '@mui/material/Menu';
-import MenuIcon from '@mui/icons-material/Menu';
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import Tooltip from '@mui/material/Tooltip';
-import MenuItem from '@mui/material/MenuItem';
-import AdbIcon from '@mui/icons-material/Adb';
-import LocalPizzaIcon from '@mui/icons-material/LocalPizza';
-import Link from 'next/link'
-import jwt_decode from 'jwt-decode';
 import Modal from '@mui/material/Modal';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import Popper from '@mui/material/Popper';
 import { useState, useEffect } from 'react';
 import { getCookie } from './getCookie';
@@ -51,7 +37,6 @@ const style = {
 };
 
 export function ResponsiveAppBar(props) {
-  console.log('props:' + JSON.stringify(props))
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
   const [anchorElCart, setAnchorElCart] = useState(null);
@@ -67,36 +52,64 @@ export function ResponsiveAppBar(props) {
   console.log('current path: ' + router.asPath)
 
   useEffect(() => {
-    if (!document.cookie || document.cookie == "token=") {
-      console.log('appbar useeffect hit')
-      setHasCookie(false)
-      props.setIsLoggedIn(false)
-      if (router.asPath !== '/' || '/menu') {
-        props.setIsBackOffice(false)
-        router.push('/')
+    console.log('appbar useeffect hit. isloggedIn: ' + props.isLoggedIn)
+    console.log('appbar useeffect hit. userName: ' + userName)
+    const firstNameToken = getCookie('firstName')
+    const loginToken = getCookie('LoggedIn')
+    setRole(getCookie('role'))
+    setUserName(getCookie('firstName'))
+
+    if (loginToken) {
+      if (loginToken === 'true') {
+        console.log('appbar useeffect setting role and username.')
+        if (!userName) {
+          if (!firstNameToken) {
+            console.log('refreshing with firstname cookie: ' + getCookie('firstName'))
+            router.reload()
+          }
+        }
+        console.log('appbar useeffect setting role and username.' + userName)
+        props.setIsLoggedIn(true)
+      } else if (loginToken === 'create') {
+        console.log('create refreshing with firstname cookie: ' + getCookie('firstName'))
+        //router.reload()
+        props.setIsLoggedIn(true)
+        //maybe open step2 create modal?
+      } else {
+        console.log('logout should be false now. checking path: ' + router.asPath)
+        if (router.asPath !== '/' && !router.asPath.startsWith('/menu')) {
+          console.log('redirecting to index')
+          router.push('/')
+        }
+        console.log('appbar -> no firstname or login token or login is false')
+        props.setIsLoggedIn(false)
       }
-    }
-    else {
-      let token = getCookie('token')
-      console.log('Decoded Token: ' + JSON.stringify(jwt_decode(token)))
-      setUserName(jwt_decode(token).firstName)
-      setRole(jwt_decode(token).role)
-      setHasCookie(true)
-      props.setIsLoggedIn(true)
+      if (router.asPath.startsWith('/backoffice')) {
+        console.log('backoffice detected')
+        props.setIsBackOffice(true)
+      } else {
+        props.setIsBackOffice(false)
+      }
 
     }
-    return () => console.log('cleanup code hit')
-  }, [hasCookie, props.isLoggedIn, userName, props.isBackOffice])
 
+  }, [userName, role, props.isLoggedIn])
   function logOut() {
-    console.log('logout hit! ');
-    console.log('logout state of hasCookie: ' + hasCookie)
-    document.cookie = "token=";
-    setHasCookie(false)
-    props.setIsLoggedIn(false)
-    setIsCreate(false)
-    setIsStep2(false)
+    console.log('logout hit. state of isLoggedIn: ' + props.isLoggedIn)
+    // setHasCookie(false)
+    // props.setIsLoggedIn(false)
+    // setIsCreate(false)
+    // setIsStep2(false)
+    // setUserName(false)
+    document.cookie = "LoggedIn=false"
+    router.reload()
   }
+
+  // const closeLogin = () => {
+  //   props.setIsLoggedIn(true)
+  //   props.setOpen(false)
+  //   router.reload()
+  // }
 
   const handleCartClick = (event) => {
     console.log('Navbar handleClick: ' + event.currentTarget)
@@ -129,12 +142,12 @@ export function ResponsiveAppBar(props) {
     setAnchorElUser(null);
   };
 
-  console.log('anchoreluser: ' + anchorElUser)
+  console.log('appBar username: ' + userName)
   return (
     <ThemeProvider theme={theme}>
-    <AppBar position="static">
-          {props.isBackOffice ?
-            <BackOfficeToolbar
+      <AppBar position="static">
+        {props.isBackOffice ?
+          <BackOfficeToolbar
             anchorElNav={anchorElNav}
             anchorElUser={anchorElUser}
             handleOpenNavMenu={(page) => handleOpenNavMenu(page)}
@@ -145,6 +158,7 @@ export function ResponsiveAppBar(props) {
             setHasOrder={(data) => props.setHasOrder(data)}
             handleCartClick={(e) => handleCartClick(e)}
             setIsBackOffice={(data) => props.setIsBackOffice(data)}
+            isLoggedIn={props.isLoggedIn}
             open={open}
             hasCookie={hasCookie}
             userName={userName}
@@ -176,62 +190,67 @@ export function ResponsiveAppBar(props) {
               handleOpenUserMenu={(setting) => handleOpenUserMenu(setting)}
               handleCloseUserMenu={(setting) => handleCloseUserMenu(setting)}
               setOpen={(data) => props.setOpen(data)}
+              setIsCreate={(data) => setIsCreate(data)}
+              setIsStep2={(data) => setIsStep2(data)}
               handleCartClick={(e) => handleCartClick(e)}
               setIsBackOffice={(data) => props.setIsBackOffice(data)}
               setTest={(data) => setLoginButton(data)}
               isBackOffice={props.isBackOffice}
+              isLoggedIn={props.isLoggedIn}
               open={open}
               hasCookie={hasCookie}
               userName={userName}
               role={role}
               cartHasItems={props.currentCartItems.length > 0}
             />
-          }
-          </AppBar>
-          
-        {!props.hasOrder &&
-          <Popper id={id} open={open} anchorEl={anchorElCart} placement='bottom-end' transition>
-            {({ TransitionProps }) => (
-              <Fade {...TransitionProps} timeout={300}>
-                <Box>
-                  <Cart
-                    open={props.openLogin}
-                    currentCartItems={props.currentCartItems}
-                    setOpenLogin={(data) => props.setOpen(data)}
-                    removeItem={(foodItem) => props.removeItem(foodItem)}
-                    handleAddOrderClick={() => props.handleAddOrderClick()}
-                    setUserName={(data) => setUserName(data)}
-                    setIsCreate={(data) => setIsCreate(data)}
-                    setIsStep2={(data) => setIsStep2(data)}
-                    setAnchorElCart={(data) => setAnchorElCart(data)}
-                    isLoggedIn={props.isLoggedIn}
-                    userName={userName}
-                  />
-                </Box>
-              </Fade>
-            )}
-          </Popper>}
-        <Modal
-          open={props.open}
-          onClose={(e) => {props.setOpen(false); setLoginButton(true)}}
-          aria-labelledby="modal-modal-title"
-          aria-describedby="modal-modal-description"
-        >
-          <Box sx={style}>
-            <Login
-              isLoggedIn={props.isLoggedIn}
-              open={props.open}
-              isCreate={isCreate}
-              isStep2={isStep2}
-              setOpen={(data) => props.setOpen(data)}
-              setIsLoggedIn={(data) => props.setIsLoggedIn(data)}
-              setHasCookie={(data) => setHasCookie(data)}
-              setIsCreate={(data) => setIsCreate(data)}
-              setIsStep2={(data) => setIsStep2(data)}
-              setUserName={(data) => setUserName(data)}
-            />
-          </Box>
-        </Modal>
+        }
+      </AppBar>
+
+      {!props.hasOrder &&
+        <Popper id={id} open={open} anchorEl={anchorElCart} placement='bottom-end' transition>
+          {({ TransitionProps }) => (
+            <Fade {...TransitionProps} timeout={300}>
+              <Box sx={{}}>
+                <Cart
+                  open={props.openLogin}
+                  currentCartItems={props.currentCartItems}
+                  setOpenLogin={(data) => props.setOpen(data)}
+                  removeItem={(foodItem) => props.removeItem(foodItem)}
+                  handleAddOrderClick={() => props.handleAddOrderClick()}
+                  setUserName={(data) => setUserName(data)}
+                  setIsCreate={(data) => setIsCreate(data)}
+                  setIsStep2={(data) => setIsStep2(data)}
+                  setAnchorElCart={(data) => setAnchorElCart(data)}
+                  isLoggedIn={props.isLoggedIn}
+                  userName={userName}
+                />
+              </Box>
+            </Fade>
+          )}
+        </Popper>}
+      <Modal
+        open={props.open}
+        onClose={(e) => { props.setOpen(false) }} //; setLoginButton(true)
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <Login
+            isLoggedIn={props.isLoggedIn}
+            open={props.open}
+            isCreate={isCreate}
+            isStep2={isStep2}
+            setOpen={(data) => props.setOpen(data)}
+            setIsLoggedIn={(data) => props.setIsLoggedIn(data)}
+            setHasCookie={(data) => setHasCookie(data)}
+            setIsCreate={(data) => setIsCreate(data)}
+            setIsStep2={(data) => setIsStep2(data)}
+            setUserName={(data) => setUserName(data)}
+            setRole={(data) => setRole(data)}
+            closeLogin={() => closeLogin()}
+          />
+        </Box>
+      </Modal>
     </ThemeProvider>
   );
 }

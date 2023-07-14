@@ -10,7 +10,6 @@
                 "@emotion/styled": "^11.11.0",
                 "@mui/icons-material": "^5.11.16",
                 "@mui/material": "^5.13.5",
-                "bcryptjs": "^2.4.3",
                 "bootstrap": "^5.2.3",
                 "crypto-js": "^4.1.1",
                 "jws": "^4.0.0",

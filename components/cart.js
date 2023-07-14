@@ -6,8 +6,7 @@ import Box from '@mui/material/Box';
 import { Typography } from '@mui/material';
 import Collapse from '@mui/material/Collapse';
 import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
+import jwt_decode from 'jwt-decode';
 import ListItemText from '@mui/material/ListItemText';
 import ListSubheader from '@mui/material/ListSubheader';
 import List from '@mui/material/List';
@@ -19,9 +18,8 @@ import Grid from '@mui/material/Unstable_Grid2'; // Grid version 2
 import Stack from '@mui/material/Stack';
 import { styled } from '@mui/material/styles';
 import { useState } from 'react';
-import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent';
+import { getCookie } from './getCookie';
+import { NextLinkComposed } from './Link';
 
 const CartItem = styled(Paper)(({ theme }) => ({
     ...theme.typography.body2,
@@ -57,8 +55,12 @@ function OptionsWithPrice(props) {
 
 export function Cart(props) {
     const [expandItem, setExpandItem] = useState(0)
-    console.log('cart props: ' + JSON.stringify(props))
-
+    const [token, setToken] = useState(getCookie('token'))
+    console.log('cart props: ' + JSON.stringify(props)) //jwt_decode(getCookie('token'))
+    console.log('token: ' + token)
+    if (token) {
+        console.log('decoded: ' + JSON.stringify(jwt_decode(getCookie('token'))))
+    }
     const handleExpand = (cartItemID) => {
         console.log('handling expand. id: ' + JSON.stringify(cartItemID))
         if (cartItemID === expandItem) {
@@ -76,6 +78,7 @@ export function Cart(props) {
     }
     console.log('defaultOption: ' + JSON.stringify(defaultOption))
     console.log('expandItem: ' + JSON.stringify(expandItem))
+    console.log('cart items: ' + JSON.stringify(props.currentCartItems))
 
     return (
         <Submit elevation={3} sx={{ width: 300, width: '100%', pb: 2, boxShadow: 5 }}>
@@ -83,6 +86,13 @@ export function Cart(props) {
                 <Box>
                     <List sx={{ p: 1 }}>
                         <Stack spacing={1}>
+                            {(props.currentCartItems.length === 0) &&
+                            <CartItem>
+                            <Typography component={'div'} textAlign={'center'} fontWeight={500} sx={{mt: 2}} >{'No items added'}
+                            </Typography>
+                                <Button component={NextLinkComposed} variant='contained' to='/menu' onClick={() => props.setAnchorElCart(false)} sx={{m:2}}>Go To Menu</Button>
+                            </CartItem>
+                            }
                             {props.currentCartItems.map(
                                 foodItem => <Box key={foodItem.cartItemID}>
                                     <CartItem
@@ -130,10 +140,10 @@ export function Cart(props) {
                                                 </ListItem>
                                                 <Collapse in={expandItem === foodItem.cartItemID} timeout="auto" unmountOnExit>
                                                     {foodItem.customizeOptions.map((option) => (
-                                                        <List subheader={<ListSubheader>{option.optionName}</ListSubheader>}>
-                                                                {option.optionItems.map(item =>
-                                                                    <ListItem sx={{bgcolor: '#e8e9c2', boxShadow: 3, mb: 1, borderRadius: .5}}>
-                                                                        <ListItemText primary={
+                                                        <List key={option.optionID} subheader={<ListSubheader>{option.optionName}</ListSubheader>}>
+                                                            {option.optionItems.map(item =>
+                                                                <ListItem key={item.customizeOptionItemID} sx={{ bgcolor: '#e8e9c2', boxShadow: 3, mb: 1, borderRadius: .5 }}>
+                                                                    <ListItemText primary={
                                                                         <Stack direction={'row'} justifyContent={'space-between'}>
                                                                             <Typography fontSize={'.75rem'}>
                                                                                 {item.customizeOptionItem}
@@ -142,8 +152,8 @@ export function Cart(props) {
                                                                                 {item.price !== 0 && item.price.toLocaleString('us-US', { style: 'currency', currency: 'USD' })}
                                                                             </Typography>
                                                                         </Stack>} />
-                                                                    </ListItem>
-                                                                )}
+                                                                </ListItem>
+                                                            )}
                                                             <Typography fontSize={'.75rem'}><OptionsWithPrice option={option} /></Typography>
                                                         </List>
                                                     ))}
@@ -162,16 +172,15 @@ export function Cart(props) {
                 </Box>
                 <Box>
                     <Typography textAlign={'center'} sx={{ minWidth: 200 }} >
-                        {(props.currentCartItems.length === 0) && 'No items added'}
-                        {!props.isLoggedIn ?
+                        {(!props.isLoggedIn && props.currentCartItems.length > 0) ?
                             <Box sx={{ pt: 3, mx: 3 }}>
-                                <Typography component={'div'}>Create Account to Place Order</Typography>
+                                <Typography>Create Account to Place Order</Typography>
                                 <Button sx={{ mt: 1 }} variant='contained' onClick={() => { props.setIsCreate(true); props.setOpenLogin(true) }}>
                                     Create Account
                                 </Button>
                             </Box>
                             :
-                            !props.userName ?
+                            (!props.userName) ?
                                 <Box sx={{ width: '90%', mx: 'auto' }}>
                                     <Box>
                                         <Button variant='contained' onClick={() => { props.setIsCreate(true); props.setIsStep2(true); props.setOpenLogin(true) }}>
@@ -179,15 +188,15 @@ export function Cart(props) {
                                         </Button></Box>
                                 </Box> :
                                 props.currentCartItems.length > 0 &&
-                                <Link href='/order' style={{ all: 'unset' }} >
-                                    <Button
-                                        sx={{ mx: 'auto', width: '150px', display: 'block', textAlign: 'center' }}
-                                        variant='contained'
-                                        color='secondary'
-                                        onClick={() => { props.setAnchorElCart(null); props.handleAddOrderClick() }}>
-                                        Prepare Order
-                                    </Button>
-                                </Link>
+                                <Button
+                                    component={NextLinkComposed}
+                                    sx={{ mx: 'auto', width: '150px', display: 'block', textAlign: 'center' }}
+                                    variant='contained'
+                                    color='secondary'
+                                    to='/order'
+                                    onClick={() => { props.setAnchorElCart(null); props.handleAddOrderClick() }}>
+                                    Prepare Order
+                                </Button>
                         }
                     </Typography>
                 </Box>

@@ -13,7 +13,9 @@ export function Login(props) {
             setHasCookie={(data) => props.setHasCookie(data)}
             setIsLoggedIn={(data) => props.setIsLoggedIn(data)}
             setUserName={(data) => props.setUserName(data)}
+            setRole={(data) => props.setRole(data)}
             setOpen={(data) => props.setOpen(data)}
+            closeLogin={() => props.closeLogin()}
         /> : !props.isStep2 ?
         <CreateModal 
             setIsCreate={(data) => props.setIsCreate(data)} 

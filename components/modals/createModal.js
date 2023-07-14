@@ -2,7 +2,6 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
-import { createJWT } from '../createJWT';
 import { fetchy } from '../../components/fetchy';
 import { useState, useRef } from 'react'
 import ErrorIcon from '@mui/icons-material/Error';
@@ -20,39 +19,39 @@ const style = {
     width: '100%',
     maxWidth: 360,
     bgcolor: 'background.paper',
-  };
+};
 
 export function CreateStatus(props) {
-    const bcrypt = require('bcryptjs');
-    const salt = bcrypt.genSaltSync(10);
-    const hash = bcrypt.hashSync(props.login.password, salt);
-    console.log('salt: ' + salt);
-    console.log('hash: ' + hash);
 
-    const headers = { 'Content-Type': 'application/json' }
-    fetchy('http://localhost:5753/api/User/Create', 'POST', { email: props.login.email, password: hash }, headers)
+    const headers = { 'content-Type': 'application/json' }
+    fetchy('http://localhost:18080/api/User/Create', 'POST', props.login, headers)
         .catch((error) => {
             console.log('API error: ' + JSON.parse(error.message).message)
             props.setError('API error: ' + JSON.parse(error.message).message)
             props.setCreatePosted(false)
         })
-        .then((userID) => {
-            console.log('handleFetch step 2 data: ' + userID)
-            const token = createJWT(props.login.email, '', '', userID)
-            console.log('handleFetch token: ' + token)
-            document.cookie = "token=" + token + "; max-age=" + 60 * 60 * 24 + ";"
-            console.log('setting isloggedin')
+        .then(() => {
+            document.cookie = "LoggedIn=create"
             props.setIsLoggedIn(true)
-            console.log('setting isstep2')
             props.setIsStep2(true)
-            console.log('setting createposted')
             props.setCreatePosted(false)
-            console.log('everything set')
-
         })
         .catch((error) => {
-            console.log('React fetch error: ' + error.message)
-            props.setError('React fetch error: ' + error.message)
+            if (typeof error.json === "function") {
+                error.json().then(jsonError => {
+                    console.log("Json error from API");
+                    console.log(jsonError);
+                }).catch(genericError => {
+                    console.log("Generic error from API");
+                    console.log(error.statusText);
+                });
+            } else {
+                console.log("Fetch error");
+                console.log(error);
+            }
+            // console.log('React fetch error: ' + JSON.stringify(error.message))
+            // console.log('React fetch error: ' + JSON.stringify(error.cause))
+            // props.setError('React fetch error: ' + error.message)
             props.setCreatePosted(false)
         })
 }
@@ -66,10 +65,11 @@ export function CreateModal(props) {
     const [open, setOpen] = useState(false);
     const [isEmailValid, setIsEmailValid] = useState(false)
     const [createPosted, setCreatePosted] = useState(false)
-    const [isPwMinLength, setIsPwMinLength] = useState({text: 'Be at least 8 characters in length.', active: true})
-    const [isPwMaxLength, setIsPwMaxLength] = useState({text: 'Not exceed 24 characters in length.', active: false})
-    const [isPwNumber, setIsPwNumber] = useState({text: 'Include at least one number.', active: true})
-    const [isPwChar, setIsPwChar] = useState({text: 'Allowed characters: !@#$%^&*', active: true})
+    const [isPwMinLength, setIsPwMinLength] = useState({ text: 'Be at least 8 characters in length.', active: true })
+    const [isPwMaxLength, setIsPwMaxLength] = useState({ text: 'Not exceed 24 characters in length.', active: false })
+    const [isPwNumber, setIsPwNumber] = useState({ text: 'Include at least one number.', active: true })
+    const [isPwChar, setIsPwChar] = useState({ text: 'Allowed characters: !@#$%^&*', active: true })
+
 
     const isPwValid = !isPwMinLength.active && !isPwMaxLength.active && !isPwNumber.active && !isPwChar.active
     let validationArray = [isPwMinLength, isPwMaxLength, isPwNumber, isPwChar]
@@ -86,24 +86,24 @@ export function CreateModal(props) {
         const charRegex = /[a-zA-Z0-9!@#$%^&*]+/
 
         if (pw.length < 8) {
-            setIsPwMinLength({...isPwMinLength, active: true})
+            setIsPwMinLength({ ...isPwMinLength, active: true })
         } else {
-            setIsPwMinLength({...isPwMinLength, active: false})
+            setIsPwMinLength({ ...isPwMinLength, active: false })
         }
         if (pw.length > 24) {
-            setIsPwMaxLength({...isPwMaxLength, active: true})
+            setIsPwMaxLength({ ...isPwMaxLength, active: true })
         } else {
-            setIsPwMaxLength({...isPwMaxLength, active: false})
+            setIsPwMaxLength({ ...isPwMaxLength, active: false })
         }
         if (!pw.match(numRegex)) {
-            setIsPwNumber({...isPwNumber, active: true})
+            setIsPwNumber({ ...isPwNumber, active: true })
         } else {
-            setIsPwNumber({...isPwNumber, active: false})
+            setIsPwNumber({ ...isPwNumber, active: false })
         }
         if (pw.match(charRegex) && pw.match(charRegex).toString().length < pw.length) {
-            setIsPwChar({...isPwChar, active: true})
+            setIsPwChar({ ...isPwChar, active: true })
         } else {
-            setIsPwChar({...isPwChar, active: false})
+            setIsPwChar({ ...isPwChar, active: false })
         }
     }
 
@@ -139,11 +139,12 @@ export function CreateModal(props) {
             <Box>
                 <FormControl variant="standard" fullWidth>
                     <InputLabel htmlFor="standard-basic-email">Email</InputLabel>
-                    <Input 
+                    <Input
+                        autoFocus
                         id="standard-basic-email"
                         variant="standard"
                         label="Email"
-                        sx={{mb: 2}}
+                        sx={{ mb: 2 }}
                         error={(isEmailValid !== true && hasAttemptedLogin) ? true : false}
                         value={login.email}
                         onChange={(e) => { validateEmail(e.target.value); setLogin({ ...login, email: e.target.value }) }}
@@ -156,6 +157,11 @@ export function CreateModal(props) {
                         type={showPassword ? 'text' : 'password'}
                         error={!isPwValid && hasAttemptedLogin}
                         onChange={(e) => { validatePw(e.target.value); setLogin({ ...login, password: e.target.value }) }}
+                        onKeyDown={(e) => {
+                            if (e.code === 'Enter') {
+                                handleClick()
+                            }
+                        }}
                         endAdornment={
                             <InputAdornment position="end">
                                 {!isPwValid && hasAttemptedLogin ?
@@ -184,27 +190,27 @@ export function CreateModal(props) {
                         }
                     />
                     {!isPwValid && hasAttemptedLogin &&
-                    <>
-                        <FormHelperText error>
-                            <IconButton
-                                color={!isPwValid ? hasAttemptedLogin ? 'error' : 'warning' : 'info'}
-                                aria-label="toggle pw validation errors"
-                                onClick={handleClickShowValidation}
-                                onMouseDown={handleMouseDownPassword}
-                            >
-                                <ErrorIcon />
-                            </IconButton>Check Password Rules 
-                            <PasswordPopper id={id} open={open} anchorEl={anchorEl} validationArray={validationArray}/>
-                        </FormHelperText>
-                    </>
+                        <>
+                            <FormHelperText error>
+                                <IconButton
+                                    color={!isPwValid ? hasAttemptedLogin ? 'error' : 'warning' : 'info'}
+                                    aria-label="toggle pw validation errors"
+                                    onClick={handleClickShowValidation}
+                                    onMouseDown={handleMouseDownPassword}
+                                >
+                                    <ErrorIcon />
+                                </IconButton>Check Password Rules
+                                <PasswordPopper id={id} open={open} anchorEl={anchorEl} validationArray={validationArray} />
+                            </FormHelperText>
+                        </>
                     }
                 </FormControl>
                 {error && <div>{error}</div>}
                 <Box sx={{ width: '100%', mx: 'auto', display: 'block', pt: 4 }}>
-                    {createPosted ? 
-                        <Button sx={{ minWidth: 75, mx: 'auto', display: 'block' }} variant="contained" onClick={() => handleClick()} disabled>Create</Button>  
+                    {createPosted ?
+                        <Button sx={{ minWidth: 75, mx: 'auto', display: 'block' }} variant="contained" onClick={() => handleClick()} disabled>Create</Button>
                         :
-                        <Button sx={{ minWidth: 75, mx: 'auto', display: 'block' }} variant="contained" onClick={() => handleClick()}>Create</Button> 
+                        <Button sx={{ minWidth: 75, mx: 'auto', display: 'block' }} variant="contained" onClick={() => handleClick()}>Create</Button>
                     }
                     <Button sx={{ width: '100%', mx: 'auto', display: 'block', mt: 3 }} href='' onClick={() => props.setIsCreate(false)}>Back to Login</Button>
                 </Box>
