@@ -1,8 +1,8 @@
 # Dan's Pizza - Restaurant Order Simulator
 Welcome! This project was created with the intention to learn react and reinforce basic web application development concepts. It consists of this repository plus the following back-end and database repositories:
 
-- [Dan's Pizza API](https://github.com/dfischesser/danspizza-api)
-- [PizzaDB](https://github.com/dfischesser/PizzaDB)
+- [Dan's Pizza API](https://github.com/dfischesser/danspizza-api#readme)
+- [PizzaDB](https://github.com/dfischesser/PizzaDB#readme)
 
 Dan's Pizza is a technical demonstration using React (Next.js framework) and and C# .Net Core Web API backend. Both applications are implemented on Azure using Static Web Apps and App Services
 
