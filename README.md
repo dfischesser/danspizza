@@ -5,6 +5,19 @@ Welcome! This project was created with the intention to learn react and reinforc
 - [PizzaDB](https://github.com/dfischesser/PizzaDB#readme)
 
 Dan's Pizza is a technical demonstration using React (Next.js framework) and and C# .Net Core Web API backend. Both applications are implemented on Azure using Static Web Apps and App Services
+## Services/Frameworks Used
+- ReactJS (With Material UI)
+- NextJS
+- ASP.Net Core Web Api
+- Azure SQL
+- Azure Infrastructure
+  - App Services
+  - Static Web Apps
+  - Azure Maps
+  - Application Insights
+  - Key Vault
+  - Azure SQL
+
 
 ## React Front End
 React code is implemented using Next.js. This application takes advantage of multiple features provided by the react framework.
