@@ -29,7 +29,7 @@ import Modal from '@mui/material/Modal';
 import FloatingActionButtons from '../components/floatyboi';
 //import { ApplicationInsights } from '@microsoft/applicationinsights-web';
 //import { ReactPlugin } from '@microsoft/applicationinsights-react-js';
-import { createBrowserHistory } from "history";
+//import { createBrowserHistory } from "history";
 //import { AppInsightsErrorBoundary } from "@microsoft/applicationinsights-react-js";
 import { WelcomeModalBody } from '../components/welcomeModalBody';
 
@@ -41,29 +41,29 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 });
 
 //const browserHistory = createBrowserHistory({ basename: '' });
-var reactPlugin = new ReactPlugin();
+//var reactPlugin = new ReactPlugin();
 // Add the Click Analytics plug-in.
 /* var clickPluginInstance = new ClickAnalyticsPlugin();
    var clickPluginConfig = {
      autoCapture: true
 }; */
-var appInsights = new ApplicationInsights({
-  config: {
-    connectionString: 'InstrumentationKey=92e06860-77de-4fc0-8aec-702644f32bf1;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/',
-    enableAutoRouteTracking: true,
-    // If you're adding the Click Analytics plug-in, delete the next line.
-    extensions: [reactPlugin],
-    // Add the Click Analytics plug-in.
-    // extensions: [reactPlugin, clickPluginInstance],
-    // extensionConfig: {
-    //   [reactPlugin.identifier]: { history: browserHistory }
-    // Add the Click Analytics plug-in.
-    // [clickPluginInstance.identifier]: clickPluginConfig
-    //}
-  }
-});
-appInsights.loadAppInsights();
-appInsights.trackPageView();
+// var appInsights = new ApplicationInsights({
+//   config: {
+//     connectionString: 'InstrumentationKey=92e06860-77de-4fc0-8aec-702644f32bf1;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/',
+//     enableAutoRouteTracking: true,
+//     // If you're adding the Click Analytics plug-in, delete the next line.
+//     extensions: [reactPlugin],
+//     // Add the Click Analytics plug-in.
+//     // extensions: [reactPlugin, clickPluginInstance],
+//     // extensionConfig: {
+//     //   [reactPlugin.identifier]: { history: browserHistory }
+//     // Add the Click Analytics plug-in.
+//     // [clickPluginInstance.identifier]: clickPluginConfig
+//     //}
+//   }
+// });
+// appInsights.loadAppInsights();
+// appInsights.trackPageView();
 
 export default function MyApp({ Component, emotionCache = clientSideEmotionCache, pageProps }) {
 
@@ -274,7 +274,7 @@ export default function MyApp({ Component, emotionCache = clientSideEmotionCache
         rel="stylesheet"
         href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
       />
-      <AppInsightsErrorBoundary onError={() => <h1>Something went wrong! Report all bugs to report@danspizza.com</h1>} appInsights={reactPlugin}>
+      {/* <AppInsightsErrorBoundary onError={() => <h1>Something went wrong! Report all bugs to report@danspizza.com</h1>} appInsights={reactPlugin}> */}
         <Layout>
           <ThemeProvider theme={theme}>
             <CssBaseline />
@@ -384,7 +384,7 @@ export default function MyApp({ Component, emotionCache = clientSideEmotionCache
             </Container>
           </ThemeProvider>
         </Layout>
-      </AppInsightsErrorBoundary>
+      {/* </AppInsightsErrorBoundary> */}
     </CacheProvider>
   )
 } 
