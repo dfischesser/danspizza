@@ -27,10 +27,10 @@ import Box from '@mui/material/Box';
 import Footer from '../components/footer'
 import Modal from '@mui/material/Modal';
 import FloatingActionButtons from '../components/floatyboi';
-import { ApplicationInsights } from '@microsoft/applicationinsights-web';
-import { ReactPlugin } from '@microsoft/applicationinsights-react-js';
+//import { ApplicationInsights } from '@microsoft/applicationinsights-web';
+//import { ReactPlugin } from '@microsoft/applicationinsights-react-js';
 import { createBrowserHistory } from "history";
-import { AppInsightsErrorBoundary } from "@microsoft/applicationinsights-react-js";
+//import { AppInsightsErrorBoundary } from "@microsoft/applicationinsights-react-js";
 import { WelcomeModalBody } from '../components/welcomeModalBody';
 
 // Client-side cache, shared for the whole session of the user in the browser.

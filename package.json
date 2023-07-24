@@ -8,8 +8,6 @@
         "dependencies": {
                 "@emotion/react": "^11.11.1",
                 "@emotion/styled": "^11.11.0",
-                "@microsoft/applicationinsights-react-js": "^3.4.3",
-                "@microsoft/applicationinsights-web": "^3.0.2",
                 "@mui/icons-material": "^5.11.16",
                 "@mui/material": "^5.13.5",
                 "bootstrap": "^5.2.3",
