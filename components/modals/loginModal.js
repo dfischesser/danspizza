@@ -9,7 +9,7 @@ import { useState } from 'react';
 
 export function LoginStatus(props) {
     const headers = { 'content-Type': 'application/json' }
-    fetchy('http://localhost:18080/api/Login', 'POST', props.login, headers)
+    fetchy(process.env.NODE_ENV === 'development' ? 'http://localhost:18080/api/Login' : 'danspizza-api.azurewebsites.net/api/Login', 'POST', props.login, headers)
         .catch((error) => {
             console.log('API error: ' + JSON.stringify(error.message))
             console.log('API error2: ' + JSON.stringify(props.login))
@@ -18,12 +18,15 @@ export function LoginStatus(props) {
             props.setLoginPosted(false)
         })
         .then((data) => {
-            console.log('login success')
-            console.log('handleFetch login data: ' + JSON.stringify(data))
-            document.cookie = "LoggedIn=true"
+            console.log('message: ' + data.message)
+            if (data.message === 'Login Success') {
+                console.log('login success')
+                console.log('handleFetch login data: ' + JSON.stringify(data))
+                document.cookie = "LoggedIn=true"
+                props.setIsLoggedIn(true)
+                props.setOpen(false)
+            }
             props.setLoginPosted(false)
-            props.setIsLoggedIn(true)
-            props.setOpen(false)
         })
         .catch((error) => {
             console.log('React fetch error: ' + error.message)
@@ -113,7 +116,7 @@ export function LoginModal(props) {
                         setHasAttemptedLogin(true)
                     }}
                 >Login</Button>
-                <Button sx={{ width: '100%', mx: 'auto', display: 'block', pt: 2 }} href='' onClick={() => props.setIsCreate(true)}>Create Account</Button>
+                <Button sx={{ width: '100%', mx: 'auto', display: 'block', mt: 2 }} href='' onClick={() => props.setIsCreate(true)}>Create Account</Button>
 
                 {loginPosted &&
                     <LoginStatus

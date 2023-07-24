@@ -24,7 +24,7 @@ const style = {
 export function CreateStatus(props) {
 
     const headers = { 'content-Type': 'application/json' }
-    fetchy('http://localhost:18080/api/User/Create', 'POST', props.login, headers)
+    fetchy(process.env.NODE_ENV === 'development' ? 'http://localhost:18080/api/User/Create' : 'danspizza-api.azurewebsites.net/api/User/Create', 'POST', props.login, headers)
         .catch((error) => {
             console.log('API error: ' + JSON.parse(error.message).message)
             props.setError('API error: ' + JSON.parse(error.message).message)
@@ -212,7 +212,7 @@ export function CreateModal(props) {
                         :
                         <Button sx={{ minWidth: 75, mx: 'auto', display: 'block' }} variant="contained" onClick={() => handleClick()}>Create</Button>
                     }
-                    <Button sx={{ width: '100%', mx: 'auto', display: 'block', mt: 3 }} href='' onClick={() => props.setIsCreate(false)}>Back to Login</Button>
+                    <Button sx={{ width: '100%', mx: 'auto', display: 'block', mt: 3 }} href='' onClick={() => props.setIsCreate(false)}>Go to Login</Button>
                 </Box>
             </Box>
             {createPosted &&

@@ -24,7 +24,7 @@ function Header({ title }) {
 
 
 export const getStaticProps = async () => {
-    const res = await fetch('http://localhost:18080/api/Menu/Get')
+    const res = await fetch(process.env.NODE_ENV === 'development' ? 'http://localhost:18080/api/Menu/Get' : 'danspizza-api.azurewebsites.net/api/Menu/Get')
     const menu = await res.json()
     console.log('menu food cust menu length: ' + menu.menuCategoryList.length)
     console.log('done.')
@@ -44,7 +44,7 @@ export default function Menu(props) {
         ))
     const [selectedIndex, setSelectedIndex] = useState(0);
     const [selectedCustIndex, setSelectedCustIndex] = useState(1);
-    const [buttonFocus, setButtonFocus] = useState(0);   
+    const [buttonFocus, setButtonFocus] = useState(0);
 
     console.log('buttonFocus: ' + JSON.stringify(buttonFocus))
 
@@ -100,6 +100,9 @@ export default function Menu(props) {
                 return <Typography fontSize={'25px'}>🍟</Typography>
             }
             case 6: {
+                return <Typography fontSize={'25px'}>🥤</Typography>
+            }
+            case 7: {
                 return <Typography fontSize={'25px'}>🍰</Typography>
             }
         }
@@ -107,18 +110,17 @@ export default function Menu(props) {
     }
 
     return (
-        <Grid container rowSpacing={1} columnSpacing={2} alignItems={'center'} sx={{ margin: '0 auto' }}>
+        <Grid container rowSpacing={1} columnSpacing={2}>
             <Grid xs={12} textAlign={'center'}>
                 <Header title="Menu" />
             </Grid>
-            <Grid xs={12}>
+            <Grid xs={10} xsOffset={1}>
                 <List
                     component="nav"
                 >
                     {data.map((item, index) =>
                         <div key={item.menuCategoryID}>
                             <ListItemButton
-                                //autoFocus={(buttonFocus === item.menuCategoryID ? true : false)} 
                                 onClick={(e) => { handleClick(e, item.menuCategoryID); setButtonFocus(item.menuCategoryID) }}
                             >
                                 <ListItemIcon>
@@ -173,20 +175,6 @@ export default function Menu(props) {
                     )}
                 </List>
             </Grid>
-            {/* {props.openModal.customize &&
-                <Customize
-                    customizeFood={data
-                        .find(category => category.menuCategoryID == props.foodToCustomize.menuCategoryID).foodList
-                        .find(foodItem => foodItem.foodID == props.foodToCustomize.foodID)}
-                    openModal={props.openModal}
-                    setOpenModal={(data) => props.setOpenModal(data)}
-                    updateCheckedToppings={(updatedChecked) => props.updateCheckedToppings(updatedChecked)}
-                    checked={props.checked}
-                    customizeFoodCart
-                    foodToCustomize={props.foodToCustomize}
-                    addCustomItem={(foodItem) => props.addCustomItem(foodItem)}
-                />
-            } */}
         </Grid>
     )
 }

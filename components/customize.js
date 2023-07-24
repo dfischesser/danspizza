@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
+import Paper from '@mui/material/Paper';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
@@ -122,7 +123,8 @@ export function Customize(props) {
     }
 
     return (
-        <Stack sx={{ width: '100%' }}>
+        <Paper sx={{ bgcolor: 'background.lightest', mx: 'auto', px:2 }}>
+        <Stack>
             {props.customizeFood.customizeOptions.map(custOption => custOption.isMultiSelect ?
                 <CustomizeMultiAutocomplete 
                     key={custOption.optionID} 
@@ -138,10 +140,14 @@ export function Customize(props) {
                 />
             )}
             
-            {(customizeOptions.every(x => (x.optionItems.length > 0))) ? <Button onClick={() => handleClick()} variant='contained' sx={{ width: 300, mx: 'auto', display: 'block', my: 2 }}>Add To Cart - {price.toLocaleString('us-US', { style: 'currency', currency: 'USD' })}</Button>
-            : <Button disabled variant='contained' sx={{ width: 300, mx: 'auto', display: 'block', my: 2 }}>Add To Cart</Button>}
+            {(customizeOptions.every(x => (x.optionItems.length > 0))) ? 
+                <Button onClick={() => handleClick()} variant='contained' sx={{ width: 250, mx: 'auto', display: 'block', my: 2 }}>
+                    Add To Cart - {price.toLocaleString('us-US', { style: 'currency', currency: 'USD' })}
+                </Button>
+                : <Button disabled variant='contained' sx={{ width: 250, mx: 'auto', display: 'block', my: 2 }}>Add To Cart</Button>
+            }
             
         </Stack>
-
+        </Paper>
     )
 }

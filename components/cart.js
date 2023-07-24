@@ -87,11 +87,11 @@ export function Cart(props) {
                     <List sx={{ p: 1 }}>
                         <Stack spacing={1}>
                             {(props.currentCartItems.length === 0) &&
-                            <CartItem>
-                            <Typography component={'div'} textAlign={'center'} fontWeight={500} sx={{mt: 2}} >{'No items added'}
-                            </Typography>
-                                <Button component={NextLinkComposed} variant='contained' to='/menu' onClick={() => props.setAnchorElCart(false)} sx={{m:2}}>Go To Menu</Button>
-                            </CartItem>
+                                <CartItem>
+                                    <Typography component={'div'} textAlign={'center'} fontWeight={500} sx={{ mt: 2 }} >{'No items added'}
+                                    </Typography>
+                                    <Button component={NextLinkComposed} variant='contained' to='/menu' onClick={() => props.setAnchorElCart(false)} sx={{ m: 2 }}>Go To Menu</Button>
+                                </CartItem>
                             }
                             {props.currentCartItems.map(
                                 foodItem => <Box key={foodItem.cartItemID}>
@@ -131,8 +131,8 @@ export function Cart(props) {
                                                                     }
                                                                     </Typography>
                                                                 </Grid>
-                                                                <Grid xs={2} xsOffset={1}>
-                                                                    <Typography ><FoodItemWithPrice foodItem={foodItem} /></Typography>
+                                                                <Grid xs={2}>
+                                                                    <Typography><FoodItemWithPrice foodItem={foodItem} /></Typography>
                                                                 </Grid>
                                                             </Grid>
                                                         }
@@ -140,21 +140,27 @@ export function Cart(props) {
                                                 </ListItem>
                                                 <Collapse in={expandItem === foodItem.cartItemID} timeout="auto" unmountOnExit>
                                                     {foodItem.customizeOptions.map((option) => (
-                                                        <List key={option.optionID} subheader={<ListSubheader>{option.optionName}</ListSubheader>}>
-                                                            {option.optionItems.map(item =>
-                                                                <ListItem key={item.customizeOptionItemID} sx={{ bgcolor: '#e8e9c2', boxShadow: 3, mb: 1, borderRadius: .5 }}>
-                                                                    <ListItemText primary={
-                                                                        <Stack direction={'row'} justifyContent={'space-between'}>
-                                                                            <Typography fontSize={'.75rem'}>
-                                                                                {item.customizeOptionItem}
-                                                                            </Typography>
-                                                                            <Typography fontSize={'.75rem'}>
-                                                                                {item.price !== 0 && item.price.toLocaleString('us-US', { style: 'currency', currency: 'USD' })}
-                                                                            </Typography>
-                                                                        </Stack>} />
-                                                                </ListItem>
-                                                            )}
-                                                            <Typography fontSize={'.75rem'}><OptionsWithPrice option={option} /></Typography>
+                                                        <List key={option.optionID} disablePadding dense>
+                                                            <ListItem sx={{ bgcolor: 'background.light', boxShadow: 3, mb: 1, borderRadius: .5 }}>
+                                                                <ListItemText primary={
+                                                                    <Stack direction={'row'} justifyContent={'space-between'} width={'100%'}>
+                                                                        <Typography component={'div'} fontSize={'.75rem'} >
+                                                                            <Stack direction={'row'} justifyContent={'space-between'} width={'100%'}>
+                                                                                <Box minWidth={75}>
+                                                                                    <b>{option.optionName === foodItem.foodName ? 'Base Item: ' : option.optionName + ': '}</b>
+                                                                                </Box>
+                                                                                <Box fontSize={'.75rem'}>
+                                                                                    {option.optionItems.map(x => x.customizeOptionItem).join(', ')}
+                                                                                </Box>
+                                                                            </Stack>
+                                                                        </Typography>
+                                                                        <Typography component={'div'} fontSize={'.75rem'}>
+                                                                            <OptionsWithPrice option={option} />
+                                                                            {/* {item.price !== 0 && item.price.toLocaleString('us-US', { style: 'currency', currency: 'USD' })} */}
+                                                                        </Typography>
+                                                                    </Stack>
+                                                                } />
+                                                            </ListItem>
                                                         </List>
                                                     ))}
                                                 </Collapse>

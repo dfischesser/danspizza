@@ -23,7 +23,7 @@ function Header({ title }) {
 export const getServerSideProps = async (context) => {
     //console.log('server token:' + context.req.cookies.token)
     try {
-        const res = await fetch('http://localhost:18080/api/User/Account', { headers: {'Authorization': 'Bearer ' + context.req.cookies.token}})
+        const res = await fetch(process.env.NODE_ENV === 'development' ? 'http://localhost:18080/api/User/Account' : 'danspizza-api.azurewebsites.net/api/User/Account', { headers: {'Authorization': 'Bearer ' + context.req.cookies.token}})
         if (!res.ok) {
             throw new Error(res.statusText);
         }
@@ -52,7 +52,7 @@ function TabPanel(props) {
       >
         {value === index && (
           <Box sx={{ p: 3}}>
-            <Typography component='div'>{children}</Typography>
+            {children}
           </Box>
         )}
       </div>
@@ -73,7 +73,7 @@ function TabPanel(props) {
 
 export default function Account(props) {
     const user = props.user
-    console.log('user: ' + JSON.stringify(user))
+    //console.log('user: ' + JSON.stringify(user))
     
     const [value, setValue] = useState(0);
 
@@ -112,7 +112,7 @@ export default function Account(props) {
                 </Table> 
                 </TableContainer>
             <div>
-            <Box sx={{ width: '100%', mx: 'auto', maxWidth: 500 }}>
+            <Box sx={{ width: '100%', mx: 'auto', px:5}}>
                 <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                     <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
                     <Tab label="Active Orders" {...a11yProps(0)} />

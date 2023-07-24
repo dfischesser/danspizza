@@ -50,16 +50,16 @@ export function OrderPageStatus(props) {
     console.log('manage: ' + props.manage)
     let url
     if (props.manage) {
-        url = 'http://localhost:18080/api/Order/OrderPage'
+        url = process.env.NODE_ENV === 'development' ? 'http://localhost:18080/api/Order/OrderPage' : 'danspizza-api.azurewebsites.net/api/Order/OrderPage'
     } else {
-        url = 'http://localhost:18080/api/User/OrderPage'
+        url = process.env.NODE_ENV === 'development' ? 'http://localhost:18080/api/User/OrderPage' : 'danspizza-api.azurewebsites.net/api/Order/OrderPage'
     }
-    const headers = { 'Content-Type': 'application/json'}
+    const headers = { 'Content-Type': 'application/json' }
     fetchy(url, 'POST', props.page, headers)
         .catch((error) => {
             console.log('API error: ' + error.message)
-            console.log('API error: ' + JSON.parse(error.message).message)
-            props.setError('API error: ' + JSON.parse(error.message).message)
+            //console.log('API error: ' + JSON.parse(error.message).message)
+            //props.setError('API error: ' + JSON.parse(error.message).message)
             props.setOrderPagePosted(false)
         })
         .then((data) => {
@@ -79,16 +79,16 @@ export function OrderPageStatus(props) {
 }
 
 export function PostFulfill(props) {
-    const headers = { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + getCookie('token') }
-    fetchy('http://localhost:18080/api/Order/Fulfill', 'POST', props.fulfillPosted, headers)
+    const headers = { 'Content-Type': 'application/json' }
+    fetchy(process.env.NODE_ENV === 'development' ? 'http://localhost:18080/api/Order/Fulfill' : 'danspizza-api.azurewebsites.net/api/Order/Fulfill', 'POST', props.fulfillPosted, headers)
         .catch((error) => {
             console.log('API error: ' + error.message)
-            console.log('API error: ' + JSON.parse(error.message).message)
-            props.setError('API error: ' + JSON.parse(error.message).message)
+            //console.log('API error: ' + JSON.parse(error.message).message)
+            //props.setError('API error: ' + JSON.parse(error.message).message)
             props.setFulfillPosted(false)
         })
         .then((newOrders) => {
-            console.log('handleFetch data: ' + JSON.stringify(newOrders))
+            //console.log('handleFetch order count: ' + JSON.stringify(newOrders.foodItems.length))
             props.setOpen(newOrders.map((order) => ({ isOpen: false, orderID: order.orderID })))
             props.setFulfillPosted(false)
             props.setOrders(newOrders)
@@ -113,9 +113,9 @@ export function FormatOrders({ userOrders, active, orderCount, manage }) {
 
     console.log('order count: ' + orderCount)
 
-    function handleFulFill() {
+    function handleFulFill(orderID) {
         setSelectedIndex(orderID)
-        setFulfillPosted(true)
+        setFulfillPosted(orderID)
     }
 
     function handleClick(e, orderID) {
@@ -138,26 +138,24 @@ export function FormatOrders({ userOrders, active, orderCount, manage }) {
 
     return (
 
-        <Paper elevation={5} sx={{ mx: 5 }}>
+        <Paper elevation={5} sx={{ mx: {sm: 2, md: 15}, mb:3 }}>
             <List
-                sx={{ bgcolor: 'background.beige', pb: 2 }}
+                sx={{ bgcolor: 'background.beige', p: 2 }}
                 component="div"
                 aria-labelledby="nested-list-subheader"
                 disablePadding
             >
-                {(orderPagePosted) ? //<Skeleton variant="rounded" width='100%' height={600} />
+                {(orderPagePosted) ? 
                     <Box sx={{ width: '100%', height: '600px', top: '50%', transform: 'translateY(+50%)' }}>
                         <Box>
                             <CircularProgress />
                         </Box>
                     </Box> :
-                    <Grid container sx={{ px: 3 }}>
-                        <Grid xs={12}>
-                            {orders.map(order =>
-                                <Box key={order.orderID}>
+                            orders.map(order =>
+                                <Box key={order.orderID} sx={fulfillPosted && {pointerEvents: 'none'}}>
                                     {(selectedIndex === order.orderID && fulfillPosted) ?
-                                        <Skeleton variant="rounded" width='100%' height='85px' sx={{ mt: 2 }} /> :
-                                        <Box>
+                                        <Skeleton variant="rounded" width='100%' height='95px' sx={{ mt: 2 }} /> :
+                                        <>
                                             <ListItemButton
                                                 sx={selectedIndex === order.orderID ? { boxShadow: 1, borderRadius: 1, mt: 2 } : { boxShadow: 3, borderRadius: 1, mt: 2, bgcolor: 'background.lightest' }}
                                                 selected={selectedIndex === order.orderID}
@@ -167,45 +165,97 @@ export function FormatOrders({ userOrders, active, orderCount, manage }) {
                                                 <ListItemText
                                                     className='account-item'
                                                     primary={
-                                                        <Stack justifyContent={'space-between'} direction={'row'} sx={{ width: '100%' }}>
-                                                            <Box sx={{ my: 'auto' }}>
-                                                                {getOrderDate(order)}
-                                                            </Box>
-                                                            <Stack justifyContent={'space-between'} direction={'row'}>
-                                                                <Box>
-                                                                    {order.totalPrice.toLocaleString('us-US', { style: 'currency', currency: 'USD' })}
+                                                        <Grid container>
+                                                            <Grid xs={9} md={10}>
+                                                                <Box sx={{ my: 'auto' }}>
+                                                                    {getOrderDate(order)}
                                                                 </Box>
-                                                                <Box>{manage &&
-                                                                    <Box sx={{ ml: 5 }}>
-                                                                        <Button variant="contained" onClick={(e) => { e.stopPropagation(); handleFulFill(order.orderID) }}>Fulfill</Button>
-                                                                    </Box>}
-                                                                </Box>
-
-
-                                                            </Stack>
-                                                        </Stack>
+                                                            </Grid>
+                                                            {manage &&
+                                                            <Grid xs={3} md={1}>
+                                                                    <Button disabled={fulfillPosted} variant="contained" onClick={(e) => { e.stopPropagation(); handleFulFill(order.orderID) }}>Fulfill</Button>
+                                                            </Grid>}
+                                                        </Grid>
                                                     }
                                                     secondary={
-                                                        <>
-                                                            <Box className='account-item'>
-                                                                {order.foodItems.map(foodItem => (foodItem.foodName)).join(', ')}
-                                                            </Box>
-
-                                                        </>
+                                                        <Grid container>
+                                                            <Grid xs={9}>
+                                                            <Box className='account-item' textAlign={'left'}>
+                                                            <b>{order.totalPrice.toLocaleString('us-US', { style: 'currency', currency: 'USD' })}</b> - {order.foodItems.map(foodItem => (foodItem.foodName)).join(', ')}
+                                                             </Box>
+                                                            </Grid>
+                                                            <Grid xs={3}>
+                                                                 <Box sx={{ my: 'auto', display: {xs: 'none', md: 'block'}}}>
+                                                                 <b>{order.account.firstName}</b>: {order.account.phone}
+                                                             </Box>
+                                                            </Grid>
+                                                        </Grid>
                                                     }
-                                                    primaryTypographyProps={{ sx: { display: 'flex', justifyContent: 'space-between', mr: 2 } }}
-                                                    secondaryTypographyProps={{ sx: { display: 'flex', justifyContent: 'space-between', mr: 2 }, component: 'div' }}
+                                                    secondaryTypographyProps={{component:'div', mt:1}}
                                                 />
                                             </ListItemButton>
                                             <Collapse in={open.find((state) => (state.orderID == order.orderID)).isOpen} timeout="auto" unmountOnExit>
                                                 <List component="div">
+                                                    {manage &&
+                                                    
+                                                    <Box
+                                                    sx={{ mt: 1, ml: 2, width: '95%', boxShadow: 3, borderRadius: 1, backgroundColor: '#f2f2ed' }}
+                                                >
+                                                        <ListItem>
+                                                            <ListItemText primary={
+                                                                <Grid container textAlign={'center'}>
+                                                                    <Grid xs={6} md={1}>
+                                                                        <Typography sx={{fontWeight: 700}}>ID</Typography>
+                                                                        <Typography>{order.account.userID}</Typography>
+                                                                    </Grid>
+                                                                    <Grid xs={6} md={3}>
+                                                                        <Typography sx={{fontWeight: 700}}>Name</Typography>
+                                                                        <Typography>{order.account.firstName} {order.account.lastName}</Typography>
+                                                                    </Grid>
+                                                                    <Grid xs={6} md={4}>
+                                                                        <Typography sx={{fontWeight: 700}}>Phone</Typography>
+                                                                        <Typography sx={{
+                                                                            whiteSpace: 'nowrap',
+                                                                            overflow: 'auto hidden',
+                                                                            '&::-webkit-scrollbar': { height: 10, WebkitAppearance: 'none' },
+                                                                            '&::-webkit-scrollbar-thumb': {
+                                                                                borderRadius: 8,
+                                                                                border: '2px solid',
+                                                                                borderColor: 'background.lightest',
+                                                                                backgroundColor: 'background.beige',
+                                                                            }
+                                                                        }} >
+                                                                            {order.account.phone}
+                                                                        </Typography>
+                                                                    </Grid>
+                                                                    <Grid xs={6} md={4}>
+                                                                        <Typography sx={{fontWeight: 700}}>Email</Typography>
+                                                                        <Typography sx={{
+                                                                            overflow: 'auto hidden',
+                                                                            '&::-webkit-scrollbar': { height: 10, WebkitAppearance: 'none' },
+                                                                            '&::-webkit-scrollbar-thumb': {
+                                                                                borderRadius: 8,
+                                                                                border: '2px solid',
+                                                                                borderColor: 'background.lightest',
+                                                                                backgroundColor: 'background.beige',
+                                                                            }
+                                                                        }} >
+                                                                            {order.account.email}
+                                                                        </Typography>
+                                                                    </Grid>
+                                                                </Grid>
+                                                            }
+                                                            />
+                                                        </ListItem>
+                                                        </Box>
+                                                    }
                                                     {order.foodItems.map((foodItem, index) =>
                                                     (
                                                         <Box
                                                             key={foodItem.orderItemID}
                                                             sx={(index % 2 === 1) ?
-                                                                { mt: 1, ml: 2, width: '95%', boxShadow: 3, borderRadius: 2, backgroundColor: '#f2f2ed' } :
-                                                                { mt: 1, ml: 2, width: '95%', boxShadow: 3, borderRadius: 2, backgroundColor: '#f0f2e6' }}
+                                                                { mt: 1, ml: 2, width: '95%', boxShadow: 3, borderRadius: 1, backgroundColor: '#f2f2ed' } :
+                                                                { mt: 1, ml: 2, width: '95%', boxShadow: 3, borderRadius: 1, backgroundColor: '#f0f2e6' }}
                                                         >
                                                             <ListItem
                                                                 sx={{ pl: 3, py: 2 }} >
@@ -240,27 +290,33 @@ export function FormatOrders({ userOrders, active, orderCount, manage }) {
                                                     }
                                                 </List>
                                             </Collapse>
-                                        </Box>
+                                        </>
                                     }
                                 </Box>
 
-                            )}
-                        </Grid>
-                    </Grid>
+                            )
                 }
-                
-                {(orders.length === 0 && active) && <Typography> {'No Active Orders'} </Typography>}
-                {(orders.length === 0 && !active) && 
-                <ListItemButton sx={{ boxShadow: 3, borderRadius: 1, mx:2, mt: 2, bgcolor: 'background.lightest' }}>
-                    <ListItemText primary={
-                    <Typography> 
-                        {'No Past Orders'} 
-                    </Typography>
-                } />
-                    
-                </ListItemButton>}
+
+                {(orders.length === 0 && active) &&
+                    <ListItemButton sx={{ boxShadow: 3, borderRadius: 1, mx: 2, mt: 2, bgcolor: 'background.lightest' }}>
+                        <ListItemText primary={
+                            <Typography>
+                                {'No Active Orders'}
+                            </Typography>
+                        } />
+
+                    </ListItemButton>}
+                {(orders.length === 0 && !active) &&
+                    <ListItemButton sx={{ boxShadow: 3, borderRadius: 1, mx: 2, mt: 2, bgcolor: 'background.lightest' }}>
+                        <ListItemText primary={
+                            <Typography>
+                                {'No Past Orders'}
+                            </Typography>
+                        } />
+
+                    </ListItemButton>}
                 {(!active && orderCount > 5) &&
-                    <Pagination sx={{ mt: 1 }} count={Math.floor(orderCount / 5)} page={page} onChange={handlePageChange} />}
+                    <Pagination sx={{ mt: 1 }} count={Math.ceil(orderCount / 5)} page={page} onChange={handlePageChange} />}
 
             </List>
             <Box>
@@ -283,7 +339,6 @@ export function FormatOrders({ userOrders, active, orderCount, manage }) {
                     />}
                 {error && <div>{error}</div>}
             </Box>
-            {error && <div>{error}</div>}
         </Paper>
 
     )

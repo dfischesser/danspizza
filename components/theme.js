@@ -21,12 +21,20 @@ const theme = createTheme({
     error: {
       main: '#951c22',
     },
+    whitey: {
+      main: 'white'
+    },
     background: {
       default: 'white',
       paper: '#fcfcf0',
-      lightest: '#f7f4e2',
+      light: '#fffce7',
+      lightest: '#f6f6e7',
       grayish: '#e3e5e0',
-      beige: '#dfd7d1'
+      beige: '#fff3e2',
+      beiger: '#ffdfb7',
+      hover: '#712d0e',
+      pink: '#f8e1e1',
+      lightblue: '#d3f4ff'
     }
   },
   components: {

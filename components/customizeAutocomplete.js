@@ -53,7 +53,7 @@ export function CustomizeAutocomplete({customizeOption, handleChange, defaultVal
             getOptionLabel={(option) =>
                 typeof option === 'string' ? option : option.customizeOptionItem
                 }
-            sx={ customizeOption.optionItems.length === 1 ? { display: 'none' } : { width: 300, mx: 'auto', display: 'block', pt: 2, }}
+            sx={ customizeOption.optionItems.length === 1 ? { display: 'none' } : { minWidth: 300, mx: 'auto', display: 'block', pt: 2, }}
             key={customizeOption.optionID}
             isOptionEqualToValue={(option, value) => option.optionItemID === value.optionItemID}
             renderInput={(params) => <TextField {...params} label={customizeOption.optionName} variant='filled'/>}

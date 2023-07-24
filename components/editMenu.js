@@ -24,7 +24,7 @@ function Header({ title }) {
 export const getServerSideProps = async (context) => {
   //console.log('server token:' + context.req.cookies.token)
   try {
-    const res = await fetch('http://localhost:18080/api/EditMenu/Food/Get', { headers: { 'Authorization': 'Bearer ' + context.req.cookies.token } })
+    const res = await fetch(process.env.NODE_ENV === 'development' ? 'http://localhost:18080/api/EditMenu/Food/Get' : 'danspizza-api.azurewebsites.net/api/EditMenu/Food/Get', { headers: { 'Authorization': 'Bearer ' + context.req.cookies.token } })
     if (!res.ok) {
       throw new Error(res.statusText);
     }
@@ -116,7 +116,7 @@ export function SelectCategory(props) {
 export function OptionItemsForFood(props) {
   console.log('fetching food item: ' + props.foodID)
   const headers = { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + getCookie('token') }
-  fetchy('http://localhost:18080/api/EditMenu/OptionItems/Get', 'POST', props.foodID, headers)
+  fetchy(process.env.NODE_ENV === 'development' ? 'http://localhost:18080/api/EditMenu/OptionItems/Get' : 'danspizza-api.azurewebsites.net/api/EditMenu/OptionItems/Get', 'POST', props.foodID, headers)
     .catch((error) => {
       console.log('API error: ' + error)
       console.log('API error: ' + error.message)

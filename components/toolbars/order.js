@@ -47,10 +47,10 @@ export function OrderToolbar({
                         color: 'inherit',
                         textDecoration: 'none',
                     }}
-                >
-                    DAN'S<br />PIZZA
+                >   DANS
+                    <LocalPizzaIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
+                    PIZZA
                 </Typography>
-            <LocalPizzaIcon sx={{ fontSize: '40px', mr: 2 }} />
 
             <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
                 <IconButton
@@ -107,18 +107,7 @@ export function OrderToolbar({
                 LOGO
             </Typography>
             <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-                    <Button disableRipple
-                        sx={{ my: 2, color: 'white', display: 'block' }}
-                    >
-                        Order
-                    </Button>
-            </Box>
-            <Box sx={{ flexGrow: 0 }}>
-                    <Button
-                        sx={{ color: 'white' }}
-                    >
-                        {userName ? userName : 'Account'}
-                    </Button>
+                    
             </Box>
             
             <Button

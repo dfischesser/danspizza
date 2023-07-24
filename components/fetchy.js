@@ -2,7 +2,7 @@ export async function fetchy(url, method, postData, headers) {
     //console.log('url: ' + url) 
     //console.log('method: ' + method) 
     //console.log('postData: ' + JSON.stringify(postData)) 
-    //console.log('headers: ' + JSON.stringify(headers))
+    console.log('headers: ' + JSON.stringify(headers))
     console.log('1')
 
     const res = await fetch(url, {
@@ -12,10 +12,11 @@ export async function fetchy(url, method, postData, headers) {
         credentials: 'include'
     });
     if (!res.ok) {
-        //console.log('2')
+        console.log('2')
         const text = await res.text()
         throw new Error(text);
     } 
+    console.log('fetchy headers: ')
     console.log(...res.headers)
     return res.json()
 }

@@ -20,7 +20,11 @@ import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import TuneIcon from '@mui/icons-material/Tune';
 import CottageIcon from '@mui/icons-material/Cottage';
 import RestaurantMenuIcon from '@mui/icons-material/RestaurantMenu';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import { getCookie } from '../../components/getCookie';
+import LoginIcon from '@mui/icons-material/Login';
+import { forwardRef } from 'react';
+import { Refresh } from '@mui/icons-material';
 
 export function Index() {
     return (
@@ -58,10 +62,13 @@ export function MainToolbar({
     console.log('isLoggedIn is ' + isLoggedIn)
     console.log('username is ' + userName)
     console.log('firstname cookie is ' + (typeof document !== 'undefined') ? 'not defined' : getCookie('firstName'))
+    const riffReff = useRef(null)
+    console.log('main ref is ' + riffReff.current)
+
     return (
 
         <Container maxWidth="xl">
-            <Toolbar disableGutters>
+            <Toolbar disableGutters ref={riffReff}>
                 <Typography
                     variant="h6"
                     noWrap
@@ -109,11 +116,11 @@ export function MainToolbar({
                         }}
                     >
                         <MenuItem component={NextLinkComposed} to='/' onClick={handleCloseNavMenu} sx={{ py: 0, my: 0 }}>
-                            <CottageIcon sx={{mr:2}}/>
+                            <CottageIcon sx={{ mr: 2 }} />
                             Home
                         </MenuItem>
                         <MenuItem component={NextLinkComposed} to='/menu' onClick={handleCloseNavMenu} sx={{ py: 0, my: 0 }}>
-                            <RestaurantMenuIcon sx={{mr:2}}/>
+                            <RestaurantMenuIcon sx={{ mr: 2 }} />
                             Menu
                         </MenuItem>
                     </Menu>
@@ -139,7 +146,7 @@ export function MainToolbar({
                         component={NextLinkComposed}
                         onClick={handleCloseNavMenu}
                         to='/'
-                        sx={{ my: 2, color: 'white', display: 'block' }}
+                        sx={{ my: 2, color: 'white', display: 'block', textAlign: 'center', '&:hover': {bgcolor: 'background.hover'}  }}
                     >
                         Home
                     </Button>
@@ -147,7 +154,7 @@ export function MainToolbar({
                         component={NextLinkComposed}
                         onClick={handleCloseNavMenu}
                         to='/menu'
-                        sx={{ my: 2, color: 'white', display: 'block' }}
+                        sx={{ my: 2, color: 'white', display: 'block', textAlign: 'center', '&:hover': {bgcolor: 'background.hover'} }}
                     >
                         Menu
                     </Button>
@@ -179,25 +186,25 @@ export function MainToolbar({
                                 }}
                                 open={Boolean(anchorElUser)}
                                 onClose={handleCloseUserMenu}
-                                
+
                             >
                                 <MenuItem onClick={() => handleCloseUserMenu('Logout')}>
-                                        <LogoutIcon sx={{mr:2}}/>
-                                        Logout
+                                    <LogoutIcon sx={{ mr: 2 }} />
+                                    Logout
                                 </MenuItem>
                                 {userName ?
                                     <MenuItem component={NextLinkComposed} to='/account' onClick={() => handleCloseUserMenu('Account')}>
-                                    <AccountBoxIcon sx={{mr:2}}/>
+                                        <AccountBoxIcon sx={{ mr: 2 }} />
                                         Account
                                     </MenuItem> :
                                     <MenuItem onClick={() => { setIsCreate(true); setIsStep2(true); setOpen(true); handleCloseUserMenu() }}>
-                                    <ManageAccountsIcon sx={{mr:2}}/>   
-                                        Complete <br/> Account
+                                        <ManageAccountsIcon sx={{ mr: 2 }} />
+                                        Complete <br /> Account
                                     </MenuItem>
                                 }
                                 {role == 'Employee' &&
-                                    <MenuItem onClick={() => { handleCloseUserMenu(); setIsBackOffice(true)}} component={NextLinkComposed} to={'/backoffice/manage'}>
-                                        <TuneIcon sx={{mr:2}}/> 
+                                    <MenuItem onClick={() => { handleCloseUserMenu(); }} component={NextLinkComposed} to={'/backoffice/manage'}>
+                                        <TuneIcon sx={{ mr: 2 }} />
                                         Back Office
                                     </MenuItem>
                                 }
@@ -215,14 +222,23 @@ export function MainToolbar({
                         :
                         <>
                             <Button
-                                sx={{ color: 'white' }}
+                                sx={{ color: 'white', textAlign: 'center', '&:hover': {bgcolor: 'background.hover'}, mr:2  }}
                                 focusRipple={false}
-                                onClick={() => { setOpen(true); }}
+                                onClick={() => { setIsCreate(true); setOpen(true); }}
                             >
+                            <PersonAddIcon sx={{mr:1}}/>
+                                {'Create'}
+                            </Button>
+                            <Button
+                                sx={{ color: 'white', textAlign: 'center', '&:hover': {bgcolor: 'background.hover'}, mr:2  }}
+                                focusRipple={false}
+                                onClick={() => { setIsCreate(false); setOpen(true); }}
+                            >
+                                <LoginIcon sx={{mr:1}}/>
                                 {'Login'}
                             </Button>
 
-                            <IconButton onClick={handleCartClick}>
+                            <IconButton onClick={handleCartClick} sx={{'&:hover': {bgcolor: 'background.hover'}}}>
                                 {(cartHasItems) ?
                                     open ?
                                         <ShoppingCartIcon />
