@@ -1,5 +1,4 @@
 /* eslint-disable react/prop-types */
-import Accordion from 'react-bootstrap/Accordion';
 import { Customize } from '../components/customize'
 import { useState, useEffect } from 'react';
 import ListSubheader from '@mui/material/ListSubheader';
