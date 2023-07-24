@@ -1,0 +1,14 @@
+{
+  "/_app": "pages/_app.js",
+  "/_error": "pages/_error.js",
+  "/_document": "pages/_document.js",
+  "/changelog": "pages/changelog.html",
+  "/": "pages/index.html",
+  "/backoffice/sales": "pages/backoffice/sales.js",
+  "/backoffice/manage": "pages/backoffice/manage.js",
+  "/account": "pages/account.js",
+  "/backoffice/editSite": "pages/backoffice/editSite.js",
+  "/menu": "pages/menu.js",
+  "/order": "pages/order.js",
+  "/404": "pages/404.html"
+}
