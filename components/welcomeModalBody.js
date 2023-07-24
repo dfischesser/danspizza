@@ -25,7 +25,7 @@ export function WelcomeModalBody({handleCloseWelcome}) {
             <Grid container spacing={2}>
                 <Grid xs={12} textAlign={'center'}>
                 <Typography
-                    variant="h4"
+                    variant="h5"
                     sx={{
                         fontFamily: 'fantasy',
                         fontWeight: 500,
@@ -34,10 +34,10 @@ export function WelcomeModalBody({handleCloseWelcome}) {
                         textDecoration: 'none',
                     }}
                 >   DANS
-                    <LocalPizzaIcon sx={{ fontSize:40, ml: 1, mr: 1.5 }} />
+                    <LocalPizzaIcon sx={{ fontSize: '2rem', ml: 1, mr: 1.5 }} />
                     PIZZA
                 </Typography>
-                <Typography id="modal-modal-title" color="text.secondary" variant="subtitle1" sx={{fontFamily: 'fantasy', letterSpacing: '.05rem'}}>
+                <Typography id="modal-modal-title" color="text.secondary" variant="subtitle2" sx={{fontFamily: 'fantasy', letterSpacing: '.05rem'}}>
                     Simulated Restaurant Order App
                 </Typography>
                 </Grid>
@@ -123,9 +123,6 @@ export function WelcomeModalBody({handleCloseWelcome}) {
                             </Button>
                         </Grid>
                     </Paper>
-                    <Grid xs={12}>
-                        <Footer/>
-                    </Grid>
                 </Grid>
             </Grid>
     )

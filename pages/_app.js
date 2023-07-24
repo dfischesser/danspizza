@@ -27,6 +27,8 @@ import Box from '@mui/material/Box';
 import Footer from '../components/footer'
 import Modal from '@mui/material/Modal';
 import FloatingActionButtons from '../components/floatyboi';
+import DialogTitle from '@mui/material/DialogTitle';
+import Dialog from '@mui/material/Dialog';
 //import { ApplicationInsights } from '@microsoft/applicationinsights-web';
 //import { ReactPlugin } from '@microsoft/applicationinsights-react-js';
 //import { createBrowserHistory } from "history";
@@ -84,13 +86,13 @@ export default function MyApp({ Component, emotionCache = clientSideEmotionCache
   const [userName, setUserName] = useState(false)
 
   const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 500,
+    // position: 'absolute',
+    // top: '50%',
+    // left: '50%',
+    // transform: 'translate(-50%, -50%)',
+    width: {xs: '75vw', md: '25vw',},
+    //height: {xs: '80vh', md: '75vh',},
     bgcolor: 'background.paper',
-    border: '2px solid #000',
     boxShadow: 24,
     p: 4,
 };
@@ -370,7 +372,8 @@ export default function MyApp({ Component, emotionCache = clientSideEmotionCache
                   </Alert>
                 </Snackbar>
               </Paper>
-              <Modal
+              <Dialog
+              
                 open={openWelcome}
                 onClose={handleCloseWelcome}
                 aria-labelledby="modal-modal-title"
@@ -379,7 +382,7 @@ export default function MyApp({ Component, emotionCache = clientSideEmotionCache
                 <Box sx={style}>
                   <WelcomeModalBody handleCloseWelcome={handleCloseWelcome}/>
                 </Box>
-              </Modal>
+              </Dialog>
               <Footer/>
             </Container>
           </ThemeProvider>
