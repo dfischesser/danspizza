@@ -9,7 +9,7 @@ import { useState } from 'react';
 
 export function LoginStatus(props) {
     const headers = { 'content-Type': 'application/json' }
-    fetchy(process.env.NODE_ENV === 'development' ? 'http://localhost:18080/api/Login' : 'danspizza-api.azurewebsites.net/api/Login', 'POST', props.login, headers)
+    fetchy(process.env.NODE_ENV === 'development' ? 'http://localhost:18080/api/Login' : 'https://danspizza-api.azurewebsites.net/api/Login', 'POST', props.login, headers)
         .catch((error) => {
             console.log('API error: ' + JSON.stringify(error.message))
             console.log('API error2: ' + JSON.stringify(props.login))

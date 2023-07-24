@@ -62,7 +62,7 @@ export function CreateStep2Status(props) {
         zip: props.address.zip
     }
     console.log('addies: ' + JSON.stringify(addies))
-    fetchy(process.env.NODE_ENV === 'development' ? 'http://localhost:18080/api/User/CreateStep2' : 'danspizza-api.azurewebsites.net/api/User/CreateStep2', 'POST', addies, headers)
+    fetchy(process.env.NODE_ENV === 'development' ? 'http://localhost:18080/api/User/CreateStep2' : 'https://danspizza-api.azurewebsites.net/api/User/CreateStep2', 'POST', addies, headers)
         .catch((error) => {
                 console.log('API error: ' + JSON.parse(error.message).message)
                 props.setError('API error: ' + JSON.parse(error.message).message)

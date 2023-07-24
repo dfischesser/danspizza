@@ -7,7 +7,7 @@ import { NextLinkComposed } from './Link';
 export function LiveStatus(props) {
     console.log('fetching youtube')
     const headers = { 'Content-Type': 'application/json' }
-    fetch(process.env.NODE_ENV === 'development' ? 'http://localhost:18080/api/User/Live' : 'danspizza-api.azurewebsites.net/api/User/Live', {headers: headers})
+    fetch(process.env.NODE_ENV === 'development' ? 'http://localhost:18080/api/User/Live' : 'https://danspizza-api.azurewebsites.net/api/User/Live', {headers: headers})
         .catch((error) => {
             console.log('API error: ' + JSON.stringify(error.message))
             props.setDataPosted(false)

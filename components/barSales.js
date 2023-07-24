@@ -9,7 +9,7 @@ import { RestartAlt } from '@mui/icons-material';
 
 export function DataStatus(props) {
     const headers = { 'content-Type': 'application/json' }
-    fetch(process.env.NODE_ENV === 'development' ? 'http://localhost:18080/api/Sales/Daily?days=' + props.period : 'danspizza-api.azurewebsites.net/api/Sales/Daily?days=' + props.period, headers)
+    fetch(process.env.NODE_ENV === 'development' ? 'http://localhost:18080/api/Sales/Daily?days=' + props.period : 'https://danspizza-api.azurewebsites.net/api/Sales/Daily?days=' + props.period, headers)
         .catch((error) => {
             console.log('API error: ' + JSON.stringify(error.message))
             props.setDataPosted(false)

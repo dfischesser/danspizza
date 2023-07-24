@@ -22,7 +22,7 @@ export function LoginStatus(props) {
     const headers = { 'content-Type': 'application/json' }
     const role = props.employee ? 2 : 1
     //const roleName = props.employee ? 'Employee' : 'User'
-    fetchy(process.env.NODE_ENV === 'development' ? 'http://localhost:18080/api/User/CreateRandom' : 'danspizza-api.azurewebsites.net/api/User/CreateRandom', 'POST', role, headers)
+    fetchy(process.env.NODE_ENV === 'development' ? 'http://localhost:18080/api/User/CreateRandom' : 'https://danspizza-api.azurewebsites.net/api/User/CreateRandom', 'POST', role, headers)
         .catch((error) => {
             console.log('API error: ' + JSON.stringify(error.message))
             props.setLoginPosted(false)
