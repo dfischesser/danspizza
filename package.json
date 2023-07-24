@@ -1,7 +1,7 @@
 {
         "scripts": {
                 "dev": "next dev",
-                "build": "next build",
+                "build": "next build && rm -rf ./.next/cache",
                 "start": "next start",
                 "lint": "next lint"
         },
@@ -10,7 +10,6 @@
                 "@emotion/styled": "^11.11.0",
                 "@mui/icons-material": "^5.11.16",
                 "@mui/material": "^5.13.5",
-                "bootstrap": "^5.2.3",
                 "chart.js": "^4.3.0",
                 "crypto-js": "^4.1.1",
                 "jws": "^4.0.0",
@@ -19,7 +18,6 @@
                 "mui-tel-input": "^3.2.0",
                 "next": "^13.3.0",
                 "react": "^18.2.0",
-                "react-bootstrap": "^2.7.4",
                 "react-chartjs-2": "^5.2.0",
                 "react-cookie": "^4.1.1",
                 "react-dom": "^18.2.0",
