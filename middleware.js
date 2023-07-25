@@ -1,8 +1,8 @@
-// import { NextResponse, NextRequest } from 'next/server';
-// import jwtDecode from 'jwt-decode';
+ import { NextResponse, NextRequest } from 'next/server';
+ import jwtDecode from 'jwt-decode';
 
 // // This function can be marked `async` if using `await` inside
-// export function middleware(request) {
+ export function middleware(request) {
 //   let response = NextResponse.next()
 //   const hasToken = request.cookies.has('token')
 //   const hasLogin = request.cookies.has('LoggedIn')
@@ -89,4 +89,5 @@
 
 // //   response.cookies.delete('LoggedIn')
 // //   return response
-// // }
+return NextResponse.next()
+ }
