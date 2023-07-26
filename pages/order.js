@@ -75,7 +75,7 @@ export function PostOrder(props) {
     const token = getCookie('token')
     const headers = { 'Content-Type': 'application/json' }
     console.log('headers: ' + JSON.stringify(headers))
-    fetchy(process.env.NODE_ENV === 'development' ? 'http://localhost:18080/api/Order/Post' : 'https://danspizza-api.azurewebsites.net/api/Order/Post', 'POST', test, headers)
+    fetchy(process.env.NODE_ENV === 'development' ? 'http://localhost:18080/api/Order/Post' : 'https://www.danspizza.dev/api/Order/Post', 'POST', test, headers)
         .then((data) => {
             console.log('handleFetch data: ' + JSON.stringify(data))
             props.setOrderPosted(false)
@@ -95,7 +95,7 @@ export function PostOrder(props) {
 export const getServerSideProps = async (context) => {
     console.log('server token:' + context.req.cookies.token)
     try {
-        const res = await fetch(process.env.NODE_ENV === 'development' ? 'http://localhost:18080/api/User/Account' : 'https://danspizza-api.azurewebsites.net/api/User/Account', { headers: { 'Authorization': 'Bearer ' + context.req.cookies.token } })
+        const res = await fetch(process.env.NODE_ENV === 'development' ? 'http://localhost:18080/api/User/Account' : 'https://www.danspizza.dev/api/User/Account', { headers: { 'Authorization': 'Bearer ' + context.req.cookies.token } })
         if (!res.ok) {
             throw new Error(res.statusText);
         }

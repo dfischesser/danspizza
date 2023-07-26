@@ -24,7 +24,7 @@ const style = {
 export function CreateStatus(props) {
 
     const headers = { 'content-Type': 'application/json' }
-    fetchy(process.env.NODE_ENV === 'development' ? 'http://localhost:18080/api/User/Create' : 'https://danspizza-api.azurewebsites.net/api/User/Create', 'POST', props.login, headers)
+    fetchy(process.env.NODE_ENV === 'development' ? 'http://localhost:18080/api/User/Create' : 'https://www.danspizza.dev/api/User/Create', 'POST', props.login, headers)
         .catch((error) => {
             console.log('API error: ' + JSON.parse(error.message).message)
             props.setError('API error: ' + JSON.parse(error.message).message)

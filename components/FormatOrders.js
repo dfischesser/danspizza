@@ -50,9 +50,9 @@ export function OrderPageStatus(props) {
     console.log('manage: ' + props.manage)
     let url
     if (props.manage) {
-        url = process.env.NODE_ENV === 'development' ? 'http://localhost:18080/api/Order/OrderPage' : 'https://danspizza-api.azurewebsites.net/api/Order/OrderPage'
+        url = process.env.NODE_ENV === 'development' ? 'http://localhost:18080/api/Order/OrderPage' : 'https://www.danspizza.dev/api/Order/OrderPage'
     } else {
-        url = process.env.NODE_ENV === 'development' ? 'http://localhost:18080/api/User/OrderPage' : 'https://danspizza-api.azurewebsites.net/api/Order/OrderPage'
+        url = process.env.NODE_ENV === 'development' ? 'http://localhost:18080/api/User/OrderPage' : 'https://www.danspizza.dev/api/Order/OrderPage'
     }
     const headers = { 'Content-Type': 'application/json' }
     fetchy(url, 'POST', props.page, headers)
@@ -80,7 +80,7 @@ export function OrderPageStatus(props) {
 
 export function PostFulfill(props) {
     const headers = { 'Content-Type': 'application/json' }
-    fetchy(process.env.NODE_ENV === 'development' ? 'http://localhost:18080/api/Order/Fulfill' : 'https://danspizza-api.azurewebsites.net/api/Order/Fulfill', 'POST', props.fulfillPosted, headers)
+    fetchy(process.env.NODE_ENV === 'development' ? 'http://localhost:18080/api/Order/Fulfill' : 'https://www.danspizza.dev/api/Order/Fulfill', 'POST', props.fulfillPosted, headers)
         .catch((error) => {
             console.log('API error: ' + error.message)
             //console.log('API error: ' + JSON.parse(error.message).message)

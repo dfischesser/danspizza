@@ -21,7 +21,7 @@ function Header({ title }) {
 }
 
 export const getStaticProps = async () => {
-    const res = await fetch(process.env.NODE_ENV === 'development' ? 'http://localhost:18080/api/Menu/Get' : 'https://danspizza-api.azurewebsites.net/api/Menu/Get')
+    const res = await fetch(process.env.NODE_ENV === 'development' ? 'http://localhost:18080/api/Menu/Get' : 'https://www.danspizza.dev/api/Menu/Get')
     const menu = await res.json()
     console.log('menu food cust menu length: ' + menu.menuCategoryList.length)
     console.log('done.')

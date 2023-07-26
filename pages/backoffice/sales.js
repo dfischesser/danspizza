@@ -16,7 +16,7 @@ export const getServerSideProps = async (context) => {
           }
     }
     try {
-        const res = await fetch(process.env.NODE_ENV === 'development' ? 'http://localhost:18080/api/Sales/Daily' : 'https://danspizza-api.azurewebsites.net/api/Sales/Daily', { headers: { 'Authorization': 'Bearer ' + context.req.cookies.token } })
+        const res = await fetch(process.env.NODE_ENV === 'development' ? 'http://localhost:18080/api/Sales/Daily' : 'https://www.danspizza.dev/api/Sales/Daily', { headers: { 'Authorization': 'Bearer ' + context.req.cookies.token } })
         if (!res.ok) {
             throw new Error(res.statusText);
         }

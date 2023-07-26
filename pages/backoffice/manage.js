@@ -21,7 +21,7 @@ export const getServerSideProps = async (context) => {
     }
     const token = context.req.cookies.token
     try {
-        const res = await fetch(process.env.NODE_ENV === 'development' ? 'http://localhost:18080/api/Order/Latest' : 'https://danspizza-api.azurewebsites.net/api/Order/Latest', { headers: {'Authorization': 'Bearer ' + context.req.cookies.token}})
+        const res = await fetch(process.env.NODE_ENV === 'development' ? 'http://localhost:18080/api/Order/Latest' : 'https://www.danspizza.dev/api/Order/Latest', { headers: {'Authorization': 'Bearer ' + context.req.cookies.token}})
         //const res = await fetch('http://localhost:18080/api/Order/Latest', { headers: { 'content-Type': 'application/json' }, credentials: 'include'}) //{ 'content-Type': 'application/json' }
         if (!res.ok) {
             throw new Error(res.statusText);
