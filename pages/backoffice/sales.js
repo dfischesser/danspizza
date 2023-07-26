@@ -7,7 +7,14 @@ import ButtonGroup from '@mui/material/ButtonGroup';
 import { Typography } from '@mui/material';
 
 export const getServerSideProps = async (context) => {
-    //console.log('server token:' + context.req.cookies.token)
+    if (!context.req.cookies.token) {
+        return {
+            redirect: {
+              destination: '/',
+              permanent: false,
+            },
+          }
+    }
     try {
         const res = await fetch(process.env.NODE_ENV === 'development' ? 'http://localhost:18080/api/Sales/Daily' : 'https://danspizza-api.azurewebsites.net/api/Sales/Daily', { headers: { 'Authorization': 'Bearer ' + context.req.cookies.token } })
         if (!res.ok) {

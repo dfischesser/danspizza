@@ -10,6 +10,15 @@ function Header({ title }) {
 
 export const getServerSideProps = async (context) => {
     console.log('server token:' + JSON.stringify(context.req.cookies.token))
+    if (!context.req.cookies.token) {
+        console.log('made it!')
+        return {
+            redirect: {
+              destination: '/',
+              permanent: false,
+            },
+          }
+    }
     const token = context.req.cookies.token
     try {
         const res = await fetch(process.env.NODE_ENV === 'development' ? 'http://localhost:18080/api/Order/Latest' : 'https://danspizza-api.azurewebsites.net/api/Order/Latest', { headers: {'Authorization': 'Bearer ' + context.req.cookies.token}})

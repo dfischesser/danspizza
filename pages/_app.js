@@ -90,27 +90,28 @@ export default function MyApp({ Component, emotionCache = clientSideEmotionCache
     // top: '50%',
     // left: '50%',
     // transform: 'translate(-50%, -50%)',
-    width: {xs: '75vw', md: '25vw',},
+    width: { xs: '75vw', md: '25vw', },
     //height: {xs: '80vh', md: '75vh',},
     bgcolor: 'background.paper',
     boxShadow: 24,
     p: 4,
-};
-const handleCloseWelcome = (event, reason) => {
-  console.log('welcome handleclose hit. reason: ' + reason)
-  if (reason === 'clickaway') {
-    console.log('clickaway')
-    return;
-  }
-  if (reason === 'backdropClick') {
-    console.log('backdropClick')
-    return;
-  }
-  console.log('setting setOpenWelcome')
-  localStorage.setItem('welcomeModalClosed','true')
-  setOpenWelcome(false);
-  return
-};
+  };
+
+  const handleCloseWelcome = (event, reason) => {
+    console.log('welcome handleclose hit. reason: ' + reason)
+    if (reason === 'clickaway') {
+      console.log('clickaway')
+      return;
+    }
+    if (reason === 'backdropClick') {
+      console.log('backdropClick')
+      return;
+    }
+    console.log('setting setOpenWelcome')
+    localStorage.setItem('welcomeModalClosed', 'true')
+    setOpenWelcome(false);
+    return
+  };
 
   useEffect(() => {
     const handleRouteChange = (url, { shallow }) => {
@@ -149,7 +150,7 @@ const handleCloseWelcome = (event, reason) => {
     } else {
       setIsBackOffice(false)
     }
-    
+
     const firstNameToken = getCookie('firstName')
     const roleToken = getCookie('role')
 
@@ -304,116 +305,116 @@ const handleCloseWelcome = (event, reason) => {
         href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
       />
       {/* <AppInsightsErrorBoundary onError={() => <h1>Something went wrong! Report all bugs to report@danspizza.com</h1>} appInsights={reactPlugin}> */}
-        <Layout>
-          <ThemeProvider theme={theme}>
-            <CssBaseline />
-            <Container maxWidth='md' disableGutters>
-              <ResponsiveAppBar
-                hasOrder={hasOrder}
-                isLoggedIn={isLoggedIn}
-                open={openLogin}
-                currentCartItems={cartItems}
-                isBackOffice={isBackOffice}
-                role={role}
-                userName={userName}
-                setUserName={(data) => setUserName(data)}
-                setRole={(data) => setRole(data)}
-                setIsBackOffice={(data) => setIsBackOffice(data)}
-                setIsLoggedIn={(data) => setIsLoggedIn(data)}
-                setOpen={(data) => setOpenLogin(data)}
-                setHasOrder={(data) => setHasOrder(data)}
-                removeItem={(foodItem) => handleRemoveItem(foodItem)}
-                handleAddOrderClick={() => handleAddOrderClick()}
-              />
-              {loading && (
-                <Backdrop
-                  transitionDuration={3000}
-                  sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-                  open={true}
-                >
-                  <CircularProgress color="inherit" />
-                </Backdrop>
-              )}
-              <Paper id={'lepapier'} square variant='outlined'>
-                {router.asPath == '/menu' &&
-                  <Component {...pageProps}
-                    currentCartItems={cartItems}
-                    handleOpenCustomize={(foodItem) => handleOpenCustomize(foodItem)}
-                    openModal={openModal}
-                    setOpenModal={(data) => setOpenModal(data)}
-                    foodToCustomize={foodToCustomize}
-                    addCustomItem={(foodItem) => addCustomItem(foodItem)}
-                  />
-                }
-                {router.asPath == '/' &&
-                  <Component {...pageProps}
-                    isLoggedIn={isLoggedIn}
-                    role={role}
-                    userName={userName}
-                    setUserName={(data) => setUserName(data)}
-                    setIsLoggedIn={(data) => setIsLoggedIn(data)}
-                  />
-                }
-                {router.asPath == '/order' &&
-                  <Component {...pageProps}
-                    currentCartItems={cartItems}
-                    removeAllItems={() => handleRemoveAllItems()}
-                    removeItem={(foodItem) => handleRemoveItem(foodItem)}
-                    openModal={openModal}
-                    setHasOrder={(data) => setHasOrder(data)}
-                    setOpenModal={(data) => setOpenModal(data)}
-                  />
-                }
-                {router.asPath == '/account' &&
-                  <Component {...pageProps}
-                    isLoggedIn={isLoggedIn}
-                  />
-                }
-                {router.asPath == '/backoffice/manage' &&
-                  <Component {...pageProps}
-                    isLoggedIn={isLoggedIn}
-                  />
-                }
-                {router.asPath == '/backoffice/editSite' &&
-                  <Component {...pageProps}
-                    isLoggedIn={isLoggedIn}
-                  />
-                }
-                {router.asPath == '/backoffice/sales' &&
-                  <Component {...pageProps}
-                    isLoggedIn={isLoggedIn}
-                  />
-                }
-                {router.asPath == '/changelog' &&
-                  <Component {...pageProps}
-                    isLoggedIn={isLoggedIn}
-                  />
-                }
-
-                <Box sx={{ textAlign: 'right', position: 'fixed', right: { xs: '0vw', md: '10vw', lg: '13vw', xl: '27vw' }, bottom: { xs: '0vh', sm: '15vh', md: '15vh', lg: '15vh', xl: '20vh' } }} >
-                  <FloatingActionButtons setIsLoggedIn={(data) => setIsLoggedIn(data)} />
-                </Box>
-                <Snackbar anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} open={open} autoHideDuration={2000} onClose={handleClose}>
-                  <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
-                    Added to Cart
-                  </Alert>
-                </Snackbar>
-              </Paper>
-              <Dialog
-              
-                open={openWelcome}
-                onClose={handleCloseWelcome}
-                aria-labelledby="modal-modal-title"
-                aria-describedby="modal-modal-description"
+      <Layout>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <Container maxWidth='md' disableGutters>
+            <ResponsiveAppBar
+              hasOrder={hasOrder}
+              isLoggedIn={isLoggedIn}
+              open={openLogin}
+              currentCartItems={cartItems}
+              isBackOffice={isBackOffice}
+              role={role}
+              userName={userName}
+              setUserName={(data) => setUserName(data)}
+              setRole={(data) => setRole(data)}
+              setIsBackOffice={(data) => setIsBackOffice(data)}
+              setIsLoggedIn={(data) => setIsLoggedIn(data)}
+              setOpen={(data) => setOpenLogin(data)}
+              setHasOrder={(data) => setHasOrder(data)}
+              removeItem={(foodItem) => handleRemoveItem(foodItem)}
+              handleAddOrderClick={() => handleAddOrderClick()}
+            />
+            {loading && (
+              <Backdrop
+                transitionDuration={3000}
+                sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={true}
               >
-                <Box sx={style}>
-                  <WelcomeModalBody handleCloseWelcome={handleCloseWelcome}/>
-                </Box>
-              </Dialog>
-              <Footer/>
-            </Container>
-          </ThemeProvider>
-        </Layout>
+                <CircularProgress color="inherit" />
+              </Backdrop>
+            )}
+            <Paper id={'lepapier'} square variant='outlined'>
+              {router.asPath == '/menu' &&
+                <Component {...pageProps}
+                  currentCartItems={cartItems}
+                  handleOpenCustomize={(foodItem) => handleOpenCustomize(foodItem)}
+                  openModal={openModal}
+                  setOpenModal={(data) => setOpenModal(data)}
+                  foodToCustomize={foodToCustomize}
+                  addCustomItem={(foodItem) => addCustomItem(foodItem)}
+                />
+              }
+              {router.asPath == '/' &&
+                <Component {...pageProps}
+                  isLoggedIn={isLoggedIn}
+                  role={role}
+                  userName={userName}
+                  setUserName={(data) => setUserName(data)}
+                  setIsLoggedIn={(data) => setIsLoggedIn(data)}
+                />
+              }
+              {router.asPath == '/order' &&
+                <Component {...pageProps}
+                  currentCartItems={cartItems}
+                  removeAllItems={() => handleRemoveAllItems()}
+                  removeItem={(foodItem) => handleRemoveItem(foodItem)}
+                  openModal={openModal}
+                  setHasOrder={(data) => setHasOrder(data)}
+                  setOpenModal={(data) => setOpenModal(data)}
+                />
+              }
+              {router.asPath == '/account' &&
+                <Component {...pageProps}
+                  isLoggedIn={isLoggedIn}
+                />
+              }
+              {router.asPath == '/backoffice/manage' &&
+                <Component {...pageProps}
+                  isLoggedIn={isLoggedIn}
+                />
+              }
+              {router.asPath == '/backoffice/editSite' &&
+                <Component {...pageProps}
+                  isLoggedIn={isLoggedIn}
+                />
+              }
+              {router.asPath == '/backoffice/sales' &&
+                <Component {...pageProps}
+                  isLoggedIn={isLoggedIn}
+                />
+              }
+              {router.asPath == '/changelog' &&
+                <Component {...pageProps}
+                  isLoggedIn={isLoggedIn}
+                />
+              }
+
+              <Box sx={{ textAlign: 'right', position: 'fixed', right: { xs: '0vw', md: '10vw', lg: '13vw', xl: '27vw' }, bottom: { xs: '0vh', sm: '15vh', md: '15vh', lg: '15vh', xl: '20vh' } }} >
+                <FloatingActionButtons setIsLoggedIn={(data) => setIsLoggedIn(data)} />
+              </Box>
+              <Snackbar anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} open={open} autoHideDuration={2000} onClose={handleClose}>
+                <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+                  Added to Cart
+                </Alert>
+              </Snackbar>
+            </Paper>
+            <Dialog
+
+              open={openWelcome}
+              onClose={handleCloseWelcome}
+              aria-labelledby="modal-modal-title"
+              aria-describedby="modal-modal-description"
+            >
+              <Box sx={style}>
+                <WelcomeModalBody handleCloseWelcome={handleCloseWelcome} />
+              </Box>
+            </Dialog>
+            <Footer />
+          </Container>
+        </ThemeProvider>
+      </Layout>
       {/* </AppInsightsErrorBoundary> */}
     </CacheProvider>
   )
