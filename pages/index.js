@@ -6,6 +6,7 @@ import Box from '@mui/material/Box'
 import Link from '@mui/material/Link'
 import Paper from '@mui/material/Paper';
 import { NextLinkComposed } from '../components/Link';
+import LocalPizzaIcon from '@mui/icons-material/LocalPizza';
 
 export default function HomePage(props) {
   console.log('index rendered. all props: ' + JSON.stringify(props))
@@ -14,16 +15,17 @@ export default function HomePage(props) {
     <Box sx={{ minHeight: 450 }}>
       <Grid container rowSpacing={1} columnSpacing={2} alignItems={'center'} sx={{ mx: 'auto', textAlign: 'center' }}>
         <Grid xs={12} >
-          <Typography variant='h4' 
+          <Typography variant='h1' 
                     sx={{
                         fontFamily: 'fantasy',
+                        fontSize: '3rem',
                         fontWeight: 500,
                         letterSpacing: '.3rem',
                         color: 'inherit',
                         textDecoration: 'none',
                         mt: 6,
                         mb: 3
-                    }}>DAN'S PIZZA</Typography>
+                    }}>DAN'S <LocalPizzaIcon fontSize={'3rem'}/> PIZZA</Typography>
         </Grid>
         <Grid xs={12} >
           <Typography> Excellence in a Pie.</Typography>

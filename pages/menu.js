@@ -20,8 +20,6 @@ function Header({ title }) {
     return <h1 className="header-padding">{title ? title : 'Default title'}</h1>;
 }
 
-
-
 export const getStaticProps = async () => {
     const res = await fetch(process.env.NODE_ENV === 'development' ? 'http://localhost:18080/api/Menu/Get' : 'https://danspizza-api.azurewebsites.net/api/Menu/Get')
     const menu = await res.json()

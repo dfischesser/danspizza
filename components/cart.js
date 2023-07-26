@@ -177,7 +177,7 @@ export function Cart(props) {
                         </Typography>}
                 </Box>
                 <Box>
-                    <Typography textAlign={'center'} sx={{ minWidth: 200 }} >
+                    <Typography component={'div'} textAlign={'center'} sx={{ minWidth: 200 }} >
                         {(!props.isLoggedIn && props.currentCartItems.length > 0) ?
                             <Box sx={{ pt: 3, mx: 3 }}>
                                 <Typography>Create Account to Place Order</Typography>

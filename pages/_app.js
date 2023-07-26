@@ -25,7 +25,7 @@ import ResponsiveAppBar from '../components/appBar';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 import Footer from '../components/footer'
-import Modal from '@mui/material/Modal';
+import { getCookie } from '../components/getCookie';
 import FloatingActionButtons from '../components/floatyboi';
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
@@ -96,21 +96,21 @@ export default function MyApp({ Component, emotionCache = clientSideEmotionCache
     boxShadow: 24,
     p: 4,
 };
-  const handleCloseWelcome = (event, reason) => {
-    console.log('welcome handleclose hit. reason: ' + reason)
-    if (reason === 'clickaway') {
-      console.log('clickaway')
-      return;
-    }
-    if (reason === 'backdropClick') {
-      console.log('backdropClick')
-      return;
-    }
-    console.log('setting setOpenWelcome')
-    localStorage.setItem('welcomeModalClosed','true')
-    setOpenWelcome(false);
-    return
-  };
+const handleCloseWelcome = (event, reason) => {
+  console.log('welcome handleclose hit. reason: ' + reason)
+  if (reason === 'clickaway') {
+    console.log('clickaway')
+    return;
+  }
+  if (reason === 'backdropClick') {
+    console.log('backdropClick')
+    return;
+  }
+  console.log('setting setOpenWelcome')
+  localStorage.setItem('welcomeModalClosed','true')
+  setOpenWelcome(false);
+  return
+};
 
   useEffect(() => {
     const handleRouteChange = (url, { shallow }) => {
@@ -148,6 +148,33 @@ export default function MyApp({ Component, emotionCache = clientSideEmotionCache
       console.log('backoffice set 1: ' + isBackOffice)
     } else {
       setIsBackOffice(false)
+    }
+    
+    const firstNameToken = getCookie('firstName')
+    const roleToken = getCookie('role')
+
+    console.log('app useeffect role: ' + role)
+    console.log('app useeffect userName: ' + userName)
+
+    if (typeof roleToken !== 'undefined') {
+      console.log('app useeffect role token: ' + roleToken)
+      console.log('app useeffect fName token: ' + firstNameToken)
+    }
+
+    if (roleToken) {
+      setRole(roleToken)
+      setIsLoggedIn(true)
+    }
+
+    if (firstNameToken) {
+      setUserName(firstNameToken)
+    }
+
+    if (router.isReady && router.asPath.startsWith('/order')) {
+      console.log('app useeffect hasOrder: ' + hasOrder)
+      if (!hasOrder) {
+        router.push('/')
+      }
     }
 
     function start() {

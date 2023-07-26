@@ -152,7 +152,7 @@ export function FormatOrders({ userOrders, active, orderCount, manage }) {
                         </Box>
                     </Box> :
                             orders.map(order =>
-                                <Box key={order.orderID} sx={fulfillPosted && {pointerEvents: 'none'}}>
+                                <Box key={order.orderID} sx={fulfillPosted ? {pointerEvents: 'none'} : {}}>
                                     {(selectedIndex === order.orderID && fulfillPosted) ?
                                         <Skeleton variant="rounded" width='100%' height='95px' sx={{ mt: 2 }} /> :
                                         <>

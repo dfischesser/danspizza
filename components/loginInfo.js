@@ -32,7 +32,6 @@ export function LoginStatus(props) {
             if (data.message === 'Login Success') {
                 console.log('login success')
                 console.log('handleFetch login data: ' + JSON.stringify(data))
-                document.cookie = "LoggedIn=true"
             }
             props.setLoginPosted(false)
             props.setEmail(data.email)

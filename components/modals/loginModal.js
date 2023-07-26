@@ -6,8 +6,10 @@ import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Unstable_Grid2'; // Grid version 2
 import { fetchy } from '../../components/fetchy';
 import { useState } from 'react';
+import { useRouter } from 'next/router';
 
 export function LoginStatus(props) {
+    const router = useRouter();
     const headers = { 'content-Type': 'application/json' }
     fetchy(process.env.NODE_ENV === 'development' ? 'http://localhost:18080/api/Login' : 'https://danspizza-api.azurewebsites.net/api/Login', 'POST', props.login, headers)
         .catch((error) => {
@@ -22,9 +24,8 @@ export function LoginStatus(props) {
             if (data.message === 'Login Success') {
                 console.log('login success')
                 console.log('handleFetch login data: ' + JSON.stringify(data))
-                document.cookie = "LoggedIn=true"
                 props.setIsLoggedIn(true)
-                props.setOpen(false)
+                router.reload()
             }
             props.setLoginPosted(false)
         })

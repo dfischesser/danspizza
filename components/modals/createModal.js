@@ -31,7 +31,7 @@ export function CreateStatus(props) {
             props.setCreatePosted(false)
         })
         .then(() => {
-            document.cookie = "LoggedIn=create"
+            
             props.setIsLoggedIn(true)
             props.setIsStep2(true)
             props.setCreatePosted(false)

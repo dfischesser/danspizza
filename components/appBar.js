@@ -4,7 +4,6 @@ import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import Popper from '@mui/material/Popper';
 import { useState, useEffect, useLayoutEffect, useRef } from 'react';
-import { getCookie } from './getCookie';
 import { Login } from '../components/login';
 import { Cart } from '../components/cart';
 import Fade from '@mui/material/Fade';
@@ -53,50 +52,38 @@ export function ResponsiveAppBar(props) {
   console.log('isBackOffice: ' + props.isBackOffice)
   //console.log('ref: ' + ref.current)
 
-  useEffect(() => {
-    console.log('appbar useeffect hit. isloggedIn: ' + props.isLoggedIn)
-    console.log('appbar useeffect hit. userName: ' + props.userName)
-    const firstNameToken = getCookie('firstName')
-    const loginToken = getCookie('LoggedIn')
-    props.setRole(getCookie('role'))
-    props.setUserName(getCookie('firstName'))
+  // useEffect(() => {
+  //   console.log('appbar useeffect hit. isloggedIn: ' + props.isLoggedIn)
+  //   console.log('appbar useeffect hit. userName: ' + props.userName)
+  //   const firstNameToken = getCookie('firstName')
+  //   const roleToken = getCookie('role')
+  //   const loginToken = getCookie('LoggedIn')
+  //   props.setRole(getCookie('role'))
+  //   props.setUserName(firstNameToken)
 
-    if (loginToken) {
-      if (loginToken === 'true') {
-        console.log('appbar useeffect setting role and username.')
-        if (!props.userName) {
-          if (!firstNameToken) {
-            console.log('refreshing with firstname cookie: ' + getCookie('firstName'))
-            router.reload()
-          }
-        }
-        console.log('appbar useeffect setting role and username.' + props.userName)
-        props.setIsLoggedIn(true)
-      } else if (loginToken === 'create') {
-        //router.reload()
-        props.setIsLoggedIn(true)
-        //maybe open step2 create modal?
-      } else {
-        console.log('logout should be false now. checking path: ' + router.asPath)
-        if (router.asPath !== '/' && !router.asPath.startsWith('/menu')) {
-          console.log('redirecting to index')
-          router.push('/')
-        }
-        console.log('appbar -> no firstname or login token or login is false')
-        props.setIsLoggedIn(false)
-      }
-      console.log('backoffice set: ' + props.isBackOffice)
-    }
-    if (router.isReady && router.asPath.startsWith('/order')) {
-      if (props.hasOrder === false) {
-        router.push('/')
-      }
-    }
+  //   if (roleToken) {
+  //     props.setIsLoggedIn(true)
+  //     if (loginToken === 'true') {
+  //       console.log('logout should be false now. checking path: ' + router.asPath)
+  //       if (router.asPath !== '/' && !router.asPath.startsWith('/menu')) {
+  //         console.log('redirecting to index')
+  //         router.push('/')
+  //       }
+  //       console.log('appbar -> no firstname or login token or login is false')
+  //       props.setIsLoggedIn(false)
+  //     }
+  //     console.log('backoffice set: ' + props.isBackOffice)
+  //   }
+  //   if (router.isReady && router.asPath.startsWith('/order')) {
+  //     if (props.hasOrder === false) {
+  //       router.push('/')
+  //     }
+  //   }
 
-  }, [props.userName, props.role, props.isLoggedIn, props.isBackOffice])
+  // }, [props.userName, props.role, props.isLoggedIn, props.isBackOffice])
   function logOut() {
     console.log('logout hit. state of isLoggedIn: ' + props.isLoggedIn)
-    document.cookie = "LoggedIn=false"
+    document.cookie = "logout=true"
     router.reload()
   }
 
@@ -123,9 +110,6 @@ export function ResponsiveAppBar(props) {
     switch (setting) {
       case 'Logout': {
         logOut()
-      }
-      case 'Account': {
-        return;
       }
     }
     setAnchorElUser(null);

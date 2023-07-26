@@ -70,7 +70,6 @@ export function CreateStep2Status(props) {
         })
         .then((data) => {
             console.log('handleFetch create data: ' + JSON.stringify(data) )
-            document.cookie = "LoggedIn=true"
             props.setCreateStep2Posted(false)
             props.setIsLoggedIn(true)
             props.setOpen(false)
