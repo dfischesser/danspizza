@@ -116,7 +116,7 @@ export default function MyApp({ Component, emotionCache = clientSideEmotionCache
   useEffect(() => {
     if (typeof window !== 'undefined') {
       console.log('location: ' + window.location)
-      if (location.toString().startsWith('http://localhost:3000')) {
+      if (location.toString().startsWith('https://danspizza.dev')) {
         location.replace(`https://www.danspizza.dev${location.pathname}`);
       }
     }
