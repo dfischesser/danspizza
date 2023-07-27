@@ -19,7 +19,7 @@ import { useState, useEffect } from 'react';
 
 export function LoginStatus(props) {
     console.log('employee: ' + props.employee)
-    const headers = { 'content-Type': 'application/json' }
+    const headers = { 'content-type': 'application/json' }
     const role = props.employee ? 2 : 1
     //const roleName = props.employee ? 'Employee' : 'User'
     fetchy(process.env.NODE_ENV === 'development' ? 'http://localhost:18080/api/User/CreateRandom' : 'https://www.danspizza.dev/api/User/CreateRandom', 'POST', role, headers)
