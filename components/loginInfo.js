@@ -29,9 +29,10 @@ export function LoginStatus(props) {
         })
         .then((data) => {
             console.log('message: ' + data.message)
-            if (data.message === 'Login Success') {
+            console.log('handleFetch login data: ' + JSON.stringify(data))
+            if (data.firstName) {
                 console.log('login success')
-                console.log('handleFetch login data: ' + JSON.stringify(data))
+
             }
             props.setLoginPosted(false)
             props.setEmail(data.email)
@@ -117,7 +118,6 @@ export function LoginInfo(props) {
                 <LoginStatus
                     employee={employee}
                     setLoginPosted={(data) => setLoginPosted(data)}
-                    setIsLoggedIn={(data) => props.setIsLoggedIn(data)}
                     setInfoDrawer={(data) => setInfoDrawer(data)}
                     loginPosted={loginPosted}
                     setError={(data) => setError(data)}

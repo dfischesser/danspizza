@@ -128,8 +128,8 @@ export default function MyApp({ Component, emotionCache = clientSideEmotionCache
     }
 
     if (window.localStorage.getItem("cart") && cartItems.length === 0) {
-      console.log('local storage cart: ' + window.localStorage.getItem("cart"))
-      console.log('local storage cartID: ' + JSON.parse(window.localStorage.getItem("cart")).findLast(x => x).cartItemID)
+      //console.log('local storage cart: ' + window.localStorage.getItem("cart"))
+      //console.log('local storage cartID: ' + JSON.parse(window.localStorage.getItem("cart")).findLast(x => x).cartItemID)
       setCartID(JSON.parse(window.localStorage.getItem("cart")).findLast(x => x).cartItemID + 1)
       dispatch(
         {
@@ -144,9 +144,9 @@ export default function MyApp({ Component, emotionCache = clientSideEmotionCache
     }
 
     if (router.isReady && router.asPath.startsWith('/backoffice')) {
-      console.log('backoffice detected')
+      //console.log('backoffice detected')
       setIsBackOffice(true)
-      console.log('backoffice set 1: ' + isBackOffice)
+      //console.log('backoffice set 1: ' + isBackOffice)
     } else {
       setIsBackOffice(false)
     }
@@ -154,13 +154,8 @@ export default function MyApp({ Component, emotionCache = clientSideEmotionCache
     const firstNameToken = getCookie('firstName')
     const roleToken = getCookie('role')
 
-    console.log('app useeffect role: ' + role)
-    console.log('app useeffect userName: ' + userName)
-
-    if (typeof roleToken !== 'undefined') {
-      console.log('app useeffect role token: ' + roleToken)
-      console.log('app useeffect fName token: ' + firstNameToken)
-    }
+    //console.log('app useeffect role: ' + role)
+    //console.log('app useeffect userName: ' + userName)
 
     if (roleToken) {
       setRole(roleToken)
@@ -171,12 +166,12 @@ export default function MyApp({ Component, emotionCache = clientSideEmotionCache
       setUserName(firstNameToken)
     }
 
-    if (router.isReady && router.asPath.startsWith('/order')) {
-      console.log('app useeffect hasOrder: ' + hasOrder)
-      if (!hasOrder) {
-        router.push('/')
-      }
-    }
+    // if (router.isReady && !router.asPath.startsWith('/order')) {
+    //   console.log('app useeffect hasOrder: ' + hasOrder)
+    //   if (hasOrder) {
+    //     router.push('/')
+    //   }
+    // }
 
     function start() {
       setLoading(true);
@@ -201,20 +196,19 @@ export default function MyApp({ Component, emotionCache = clientSideEmotionCache
   }, [router, loading, cartItems, isBackOffice, openWelcome])
 
   function handleAddOrderClick() {
-    console.log('hasorder set')
     setHasOrder(true)
     //setOpenModal({...openModal, cart: false})
   }
 
   function handleOpenCustomize(selectedFoodItem) {
-    console.log('customize modal open. selected food item: ' + JSON.stringify(selectedFoodItem))
+    //console.log('customize modal open. selected food item: ' + JSON.stringify(selectedFoodItem))
     setfoodToCustomize({ ...selectedFoodItem, customizeOptions: null })
     setOpenModal({ ...openModal, customize: !openModal.customize })
   }
 
 
   function addCustomItem(selectedFoodItem) {
-    console.log('app add cust selectedFoodItem: ' + JSON.stringify(selectedFoodItem))
+    //console.log('app add cust selectedFoodItem: ' + JSON.stringify(selectedFoodItem))
 
     setfoodToCustomize(selectedFoodItem)
     //setOpenModal({...openModal, customize: false, cart: true})
@@ -392,7 +386,11 @@ export default function MyApp({ Component, emotionCache = clientSideEmotionCache
               }
 
               <Box sx={{ textAlign: 'right', position: 'fixed', right: { xs: '0vw', md: '10vw', lg: '13vw', xl: '27vw' }, bottom: { xs: '0vh', sm: '15vh', md: '15vh', lg: '15vh', xl: '20vh' } }} >
-                <FloatingActionButtons setIsLoggedIn={(data) => setIsLoggedIn(data)} />
+                <FloatingActionButtons
+                  setIsLoggedIn={(data) => setIsLoggedIn(data)}
+                  setUserName={(data) => setUserName(data)}
+                  setRole={(data) => setRole(data)}
+                />
               </Box>
               <Snackbar anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} open={open} autoHideDuration={2000} onClose={handleClose}>
                 <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>

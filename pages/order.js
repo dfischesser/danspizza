@@ -93,9 +93,9 @@ export function PostOrder(props) {
 }
 
 export const getServerSideProps = async (context) => {
-    console.log('server token:' + context.req.cookies.token)
+    console.log('server token:' + context.req.cookies.serverToken)
     try {
-        const res = await fetch(process.env.NODE_ENV === 'development' ? 'http://localhost:18080/api/User/Account' : 'https://www.danspizza.dev/api/User/Account', { headers: { 'Authorization': 'Bearer ' + context.req.cookies.token } })
+        const res = await fetch(process.env.NODE_ENV === 'development' ? 'http://localhost:18080/api/User/Account' : 'https://www.danspizza.dev/api/User/Account', { headers: { 'Authorization': 'Bearer ' + context.req.cookies.serverToken } })
         if (!res.ok) {
             throw new Error(res.statusText);
         }

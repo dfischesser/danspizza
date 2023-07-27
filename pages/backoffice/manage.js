@@ -9,8 +9,8 @@ function Header({ title }) {
 }
 
 export const getServerSideProps = async (context) => {
-    console.log('server token:' + JSON.stringify(context.req.cookies.token))
-    if (!context.req.cookies.token) {
+    console.log('server token:' + JSON.stringify(context.req.cookies.serverToken))
+    if (!context.req.cookies.serverToken) {
         console.log('made it!')
         return {
             redirect: {
@@ -19,9 +19,9 @@ export const getServerSideProps = async (context) => {
             },
           }
     }
-    const token = context.req.cookies.token
+    const token = context.req.cookies.serverToken
     try {
-        const res = await fetch(process.env.NODE_ENV === 'development' ? 'http://localhost:18080/api/Order/Latest' : 'https://www.danspizza.dev/api/Order/Latest', { headers: {'Authorization': 'Bearer ' + context.req.cookies.token}})
+        const res = await fetch(process.env.NODE_ENV === 'development' ? 'http://localhost:18080/api/Order/Latest' : 'https://www.danspizza.dev/api/Order/Latest', { headers: {'Authorization': 'Bearer ' + context.req.cookies.serverToken}})
         //const res = await fetch('http://localhost:18080/api/Order/Latest', { headers: { 'content-Type': 'application/json' }, credentials: 'include'}) //{ 'content-Type': 'application/json' }
         if (!res.ok) {
             throw new Error(res.statusText);

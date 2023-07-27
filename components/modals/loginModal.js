@@ -11,7 +11,7 @@ import { useRouter } from 'next/router';
 export function LoginStatus(props) {
     const router = useRouter();
     const headers = { 'content-Type': 'application/json' }
-    fetchy(process.env.NODE_ENV === 'development' ? 'http://localhost:18080/api/Login' : 'https://www.danspizza.dev/api/Login', 'POST', props.login, headers)
+    fetchy(process.env.NODE_ENV === 'development' ? 'http://localhost:18080/api/Login/Post' : 'https://www.danspizza.dev/api/Login/Post', 'POST', props.login, headers)
         .catch((error) => {
             console.log('API error: ' + JSON.stringify(error.message))
             console.log('API error2: ' + JSON.stringify(props.login))
@@ -20,8 +20,8 @@ export function LoginStatus(props) {
             props.setLoginPosted(false)
         })
         .then((data) => {
-            console.log('message: ' + data.message)
-            if (data.message === 'Login Success') {
+            console.log('role: ' + data.role)
+            if (data.role) {
                 console.log('login success')
                 console.log('handleFetch login data: ' + JSON.stringify(data))
                 props.setIsLoggedIn(true)

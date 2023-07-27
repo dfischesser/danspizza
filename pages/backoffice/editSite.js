@@ -24,7 +24,7 @@ function Header({ title }) {
 }
 
 export const getServerSideProps = async (context) => {
-  if (!context.req.cookies.token) {
+  if (!context.req.cookies.serverToken) {
       return {
           redirect: {
             destination: '/',
@@ -33,7 +33,7 @@ export const getServerSideProps = async (context) => {
         }
   }
   try {
-    const res = await fetch(process.env.NODE_ENV === 'development' ? 'http://localhost:18080/api/EditMenu/Food/Get' : 'https://www.danspizza.dev/api/EditMenu/Food/Get', { headers: { 'Authorization': 'Bearer ' + context.req.cookies.token } })
+    const res = await fetch(process.env.NODE_ENV === 'development' ? 'http://localhost:18080/api/EditMenu/Food/Get' : 'https://www.danspizza.dev/api/EditMenu/Food/Get', { headers: { 'Authorization': 'Bearer ' + context.req.cookies.serverToken } })
     if (!res.ok) {
       throw new Error(res.statusText);
     }

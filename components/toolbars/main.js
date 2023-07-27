@@ -59,16 +59,11 @@ export function MainToolbar({
     open,
 }) {
 
-    console.log('isLoggedIn is ' + isLoggedIn)
-    console.log('username is ' + userName)
-    console.log('firstname cookie is ' + (typeof document !== 'undefined') ? 'not defined' : getCookie('firstName'))
-    const riffReff = useRef(null)
-    console.log('main ref is ' + riffReff.current)
 
     return (
 
         <Container maxWidth="xl">
-            <Toolbar disableGutters ref={riffReff}>
+            <Toolbar disableGutters>
                 <Typography
                     variant="h6"
                     noWrap
@@ -146,7 +141,7 @@ export function MainToolbar({
                         component={NextLinkComposed}
                         onClick={handleCloseNavMenu}
                         to='/'
-                        sx={{ my: 2, color: 'white', display: 'block', textAlign: 'center', '&:hover': {bgcolor: 'background.hover'}  }}
+                        sx={{ my: 2, color: 'white', display: 'block', textAlign: 'center', '&:hover': { bgcolor: 'background.hover' } }}
                     >
                         Home
                     </Button>
@@ -154,7 +149,7 @@ export function MainToolbar({
                         component={NextLinkComposed}
                         onClick={handleCloseNavMenu}
                         to='/menu'
-                        sx={{ my: 2, color: 'white', display: 'block', textAlign: 'center', '&:hover': {bgcolor: 'background.hover'} }}
+                        sx={{ my: 2, color: 'white', display: 'block', textAlign: 'center', '&:hover': { bgcolor: 'background.hover' } }}
                     >
                         Menu
                     </Button>
@@ -221,32 +216,64 @@ export function MainToolbar({
                         </>
                         :
                         <>
-                            <Button
-                                sx={{ color: 'white', textAlign: 'center', '&:hover': {bgcolor: 'background.hover'}, mr:2  }}
-                                focusRipple={false}
-                                onClick={() => { setIsCreate(true); setOpen(true); }}
-                            >
-                            <PersonAddIcon sx={{mr:1}}/>
-                                {'Create'}
-                            </Button>
-                            <Button
-                                sx={{ color: 'white', textAlign: 'center', '&:hover': {bgcolor: 'background.hover'}, mr:2  }}
-                                focusRipple={false}
-                                onClick={() => { setIsCreate(false); setOpen(true); }}
-                            >
-                                <LoginIcon sx={{mr:1}}/>
-                                {'Login'}
-                            </Button>
-
-                            <IconButton onClick={handleCartClick} sx={{'&:hover': {bgcolor: 'background.hover'}}}>
-                                {(cartHasItems) ?
-                                    open ?
-                                        <ShoppingCartIcon />
-                                        :
-                                        <ShoppingCartIcon sx={{ color: '#8d762b' }} /> :
-                                    <ShoppingCartIcon sx={{ color: 'white' }} />
-                                }
-                            </IconButton>
+                            <Box sx={{
+                                display: { xs: 'none', md: 'flex' },
+                                flexGrow: 1,
+                            }}>
+                                <Button
+                                    sx={{ color: 'white', textAlign: 'center', '&:hover': { bgcolor: 'background.hover' }, mr: 2 }}
+                                    focusRipple={false}
+                                    onClick={() => { setIsCreate(true); setOpen(true); }}
+                                >
+                                    <PersonAddIcon sx={{ mr: 1 }} />
+                                    {'Create'}
+                                </Button>
+                                <Button
+                                    sx={{ color: 'white', textAlign: 'center', '&:hover': { bgcolor: 'background.hover' }, mr: 2 }}
+                                    focusRipple={false}
+                                    onClick={() => { setIsCreate(false); setOpen(true); }}
+                                >
+                                    <LoginIcon sx={{ mr: 1 }} />
+                                    {'Login'}
+                                </Button>
+                                <IconButton onClick={handleCartClick} sx={{ '&:hover': { bgcolor: 'background.hover' } }}>
+                                    {(cartHasItems) ?
+                                        open ?
+                                            <ShoppingCartIcon />
+                                            :
+                                            <ShoppingCartIcon sx={{ color: '#8d762b' }} /> :
+                                        <ShoppingCartIcon sx={{ color: 'white' }} />
+                                    }
+                                </IconButton>
+                            </Box>
+                            <Box sx={{
+                                display: { xs: 'flex', md: 'none' },
+                                flexGrow: 1,
+                            }}>
+                                <IconButton
+                                    sx={{ color: 'white', textAlign: 'center', '&:hover': { bgcolor: 'background.hover' } }}
+                                    focusRipple={false}
+                                    onClick={() => { setIsCreate(true); setOpen(true); }}
+                                >
+                                    <PersonAddIcon/>
+                                </IconButton>
+                                <IconButton
+                                    sx={{ color: 'white', textAlign: 'center', '&:hover': { bgcolor: 'background.hover' } }}
+                                    focusRipple={false}
+                                    onClick={() => { setIsCreate(false); setOpen(true); }}
+                                >
+                                    <LoginIcon sx={{ mr: 1 }} />
+                                </IconButton>
+                                <IconButton onClick={handleCartClick} sx={{ '&:hover': { bgcolor: 'background.hover' }}}>
+                                    {(cartHasItems) ?
+                                        open ?
+                                            <ShoppingCartIcon />
+                                            :
+                                            <ShoppingCartIcon sx={{ color: '#8d762b' }} /> :
+                                        <ShoppingCartIcon sx={{ color: 'white' }} />
+                                    }
+                                </IconButton>
+                            </Box>
                         </>}
                 </Box>
 

@@ -89,7 +89,10 @@ export default function FloatingActionButtons(props) {
                             </ListItem>
                             <Collapse in={openU} timeout="auto" unmountOnExit>
                                 <ListItem target='_blank'>
-                                    <LoginInfo hasLoggedOn={hasLoggedOn} setHasLoggedOn={(data) => setHasLoggedOn(data)} />
+                                    <LoginInfo 
+                                        hasLoggedOn={hasLoggedOn} 
+                                        setHasLoggedOn={(data) => setHasLoggedOn(data)} 
+                                    />
                                 </ListItem> 
                             </Collapse>
                         </Paper>

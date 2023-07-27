@@ -7,7 +7,7 @@ import ButtonGroup from '@mui/material/ButtonGroup';
 import { Typography } from '@mui/material';
 
 export const getServerSideProps = async (context) => {
-    if (!context.req.cookies.token) {
+    if (!context.req.cookies.serverToken) {
         return {
             redirect: {
               destination: '/',
@@ -16,7 +16,7 @@ export const getServerSideProps = async (context) => {
           }
     }
     try {
-        const res = await fetch(process.env.NODE_ENV === 'development' ? 'http://localhost:18080/api/Sales/Daily' : 'https://www.danspizza.dev/api/Sales/Daily', { headers: { 'Authorization': 'Bearer ' + context.req.cookies.token } })
+        const res = await fetch(process.env.NODE_ENV === 'development' ? 'http://localhost:18080/api/Sales/Daily' : 'https://www.danspizza.dev/api/Sales/Daily', { headers: { 'Authorization': 'Bearer ' + context.req.cookies.serverToken } })
         if (!res.ok) {
             throw new Error(res.statusText);
         }

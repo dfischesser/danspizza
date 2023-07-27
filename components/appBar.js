@@ -13,6 +13,7 @@ import { MainToolbar } from '../components/toolbars/main';
 import { OrderToolbar } from '../components/toolbars/order';
 import { BackOfficeToolbar } from '../components/toolbars/backOffice';
 import { useRouter } from 'next/router'
+import { fetchy } from '../components/fetchy';
 
 const style = {
   position: 'absolute',
@@ -35,19 +36,46 @@ const style = {
   pb: 1
 };
 
+
+export function LogoutStatus(props) {
+  const router = useRouter();
+  const headers = { 'content-Type': 'application/json' }
+  fetchy(process.env.NODE_ENV === 'development' ? 'http://localhost:18080/api/Login/Logout' : 'https://www.danspizza.dev/api/Login/Logout', 'POST', "", headers)
+    .catch((error) => {
+      console.log('API error: ' + JSON.stringify(error.message))
+      props.setLoginPosted(false)
+    })
+    .then((data) => {
+      console.log('message: ' + data.message)
+      console.log('handleFetch login data: ' + JSON.stringify(data))
+      if (data.message == "logout success") {
+        router.reload();
+      }
+      props.setLoginPosted(false)
+    })
+    .catch((error) => {
+      console.log('React fetch error: ' + error.message)
+      //console.log('React fetch error: Username/Password combination does not match')
+      props.setError('Logout Failed')
+      props.setLoginPosted(false)
+    })
+}
+
 export function ResponsiveAppBar(props) {
-  const [anchorElNav, setAnchorElNav] = useState(null);
-  const [anchorElUser, setAnchorElUser] = useState(null);
-  const [anchorElCart, setAnchorElCart] = useState(null);
+  const [anchorElNav, setAnchorElNav] = useState(null)
+  const [anchorElUser, setAnchorElUser] = useState(null)
+  const [anchorElCart, setAnchorElCart] = useState(null)
   const [hasCookie, setHasCookie] = useState(false)
   const [isCreate, setIsCreate] = useState(false)
   const [isStep2, setIsStep2] = useState(false)
+  const [logoutPosted, setLogoutPosted] = useState(false)
+  const [error, setError] = useState(false)
 
   //const ref = useRef(0)
+  const router = useRouter();
 
   const open = Boolean(anchorElCart);
   const id = open ? 'simple-popper' : undefined;
-  const router = useRouter();
   console.log('current path: ' + router.asPath)
   console.log('isBackOffice: ' + props.isBackOffice)
   //console.log('ref: ' + ref.current)
@@ -83,8 +111,7 @@ export function ResponsiveAppBar(props) {
   // }, [props.userName, props.role, props.isLoggedIn, props.isBackOffice])
   function logOut() {
     console.log('logout hit. state of isLoggedIn: ' + props.isLoggedIn)
-    document.cookie = "logout=true"
-    router.reload()
+    setLogoutPosted(true)
   }
 
   const handleCartClick = (event) => {
@@ -175,7 +202,7 @@ export function ResponsiveAppBar(props) {
               userName={props.userName}
               role={props.role}
               cartHasItems={props.currentCartItems.length > 0}
-              //riffRef={ref}
+            //riffRef={ref}
             />
         }
       </AppBar>
@@ -202,6 +229,7 @@ export function ResponsiveAppBar(props) {
             </Fade>
           )}
         </Popper>}
+      {logoutPosted && <LogoutStatus setLoginPosted={(data) => setLogoutPosted(data)} setError={(data) => setError(data)} />}
       <Modal
         open={props.open}
         onClose={(e) => { props.setOpen(false) }} //; setLoginButton(true)
