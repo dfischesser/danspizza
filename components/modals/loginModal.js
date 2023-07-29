@@ -3,7 +3,13 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
-import Grid from '@mui/material/Unstable_Grid2'; // Grid version 2
+import IconButton from '@mui/material/IconButton';
+import Input from '@mui/material/Input';
+import InputLabel from '@mui/material/InputLabel';
+import InputAdornment from '@mui/material/InputAdornment';
+import FormControl from '@mui/material/FormControl';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { fetchy } from '../../components/fetchy';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
@@ -37,13 +43,21 @@ export function LoginStatus(props) {
         })
 }
 
+
 export function LoginModal(props) {
     const [login, setLogin] = useState({ email: '', password: '' })
     const [error, setError] = useState(null)
     const [hasAttemptedLogin, setHasAttemptedLogin] = useState(false)
     const [isEmailValid, setIsEmailValid] = useState(false)
     const [loginPosted, setLoginPosted] = useState(false)
+    const [showPassword, setShowPassword] = useState(false);
 
+    const handleClickShowPassword = () => setShowPassword((show) => !show);
+
+    const handleMouseDownPassword = (event) => {
+        event.preventDefault();
+    };
+    
     function validateEmail(email) {
         const regex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/
 
@@ -55,7 +69,7 @@ export function LoginModal(props) {
 
     return (
         <Box sx={{ mx: 'auto', textAlign: 'center' }}>
-            <Typography id="modal-modal-title" variant="h6" component="h2" sx={{ textAlign: 'center' }}>
+            <Typography id="modal-modal-title" variant="h6" component="h2" sx={{ color:'primary.main', textAlign: 'center', mb: 3, fontSize: '1.5rem', fontWeight: 500, letterSpacing: '.1rem' }}>
                 Login
             </Typography>
             <TextField
@@ -70,27 +84,30 @@ export function LoginModal(props) {
                 value={login.email}
                 onChange={(e) => { validateEmail(e.target.value); setLogin({ ...login, email: e.target.value }) }}
             />
-            <TextField
-                fullWidth
-                id="standard-basic-password"
-                label="Password"
-                variant="standard"
-                margin='dense'
-                type='password'
-                value={login.password}
-                onChange={e => setLogin({ ...login, password: e.target.value })}
-                onBlur={(e) => { console.log('enter key detected. bubbles: ' + e.bubbles); e.stopPropagation() }}
-                onKeyDown={(e) => {
-                    console.log('key down detected')
-                    if (e.code === 'Enter') {
-                        console.log('enter key detected.')
-                        if (isEmailValid === true) {
-                            setLoginPosted(true)
+            <FormControl variant="standard" fullWidth>
+                    <InputLabel htmlFor="standard-adornment-password">Password</InputLabel>
+                    <Input
+                        id="standard-adornment-password"
+                        type={showPassword ? 'text' : 'password'}
+                        onChange={(e) => { setLogin({ ...login, password: e.target.value }) }}
+                        onKeyDown={(e) => {
+                            if (e.code === 'Enter') {
+                                handleClick()
+                            }
+                        }}
+                        endAdornment={
+                            <InputAdornment position="end">
+                                    <IconButton
+                                        aria-label="toggle password visibility"
+                                        onClick={handleClickShowPassword}
+                                        onMouseDown={handleMouseDownPassword}
+                                    >
+                                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                                    </IconButton>
+                            </InputAdornment>
                         }
-                        setHasAttemptedLogin(true)
-                    }
-                }}
-            />
+                    />
+                </FormControl>
             {error && <Box sx={{ textAlign: 'center', pt: 1, color: 'red' }}>{error}</Box>}
             <Box sx={{ width: '100%', mx: 'auto', display: 'block', pt: 4 }}>
                 <Button

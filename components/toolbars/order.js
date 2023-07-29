@@ -59,7 +59,7 @@ export function OrderToolbar({
                         textDecoration: 'none',
                     }}
                 >   DANS
-                    <LocalPizzaIcon sx={{ display: { xs: 'none', md: 'flex' }, mx: .5 }} />
+                    <LocalPizzaIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: .5 }} />
                     PIZZA
                 </Typography>
 

@@ -18,8 +18,15 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import ListSubheader from '@mui/material/ListSubheader';
 import PlaceIcon from '@mui/icons-material/Place';
-import Grid from '@mui/material/Grid';
+import { Abril_Fatface } from 'next/font/google';
 import { useRouter } from 'next/router'
+
+export const abrilFatFace = Abril_Fatface({
+    weight: ['400'],
+    subsets: ['latin'],
+    display: 'swap',
+    fallback: ['Helvetica', 'Arial', 'sans-serif'],
+  });
 
 export function SearchAddress(props) {
     const headers = { 'Content-Type': 'application/json' }
@@ -92,6 +99,9 @@ export function CreateStep2Modal(props) {
     const [lastName, setLastName] = useState('')
     const [validFirstName, setValidFirstName] = useState(false)
     const [validLastName, setValidLastName] = useState(false)
+    const [firstNameChanged, setFirstNameChanged] = useState(false)
+    const [lastNameChanged, setLastNameChanged] = useState(false)
+    const [phoneChanged, setPhoneChanged] = useState(false)
     const [phone, setPhone] = useState('')
     const [isValid, setIsValid] = useState({ phone: false, address: false, fName: false, lName: false })
     const [newAddresses, setNewAddresses] = useState([])
@@ -113,6 +123,8 @@ export function CreateStep2Modal(props) {
         if (validChar && validCharNum) {
             setFirstName(e.target.value);
             setIsValid({ ...isValid, fName: true })
+        } else {
+            setIsValid({ ...isValid, fName: false })
         }
     }
 
@@ -124,6 +136,8 @@ export function CreateStep2Modal(props) {
         if (validChar && validCharNum) {
             setLastName(e.target.value);
             setIsValid({ ...isValid, lName: true })
+        } else {
+            setIsValid({ ...isValid, lName: false })
         }
     }
 
@@ -131,8 +145,8 @@ export function CreateStep2Modal(props) {
     console.log('all valid: ' + Object.values(isValid).every(Boolean))
     return (
         <>
-            <Typography id="modal-modal-title" variant="h6" component="h2" sx={{ textAlign: 'center', mb: 3 }}>
-                Create Step 2
+            <Typography id="modal-modal-title"  component="h2" sx={{ color:'primary.main', textAlign: 'center', mb: 3, fontSize: '1.5rem', fontWeight: 500, letterSpacing: '.1rem' }}>
+                CREATE
             </Typography>
             <Box>
                 <TextField
@@ -145,8 +159,8 @@ export function CreateStep2Modal(props) {
                     variant="standard"
                     margin='dense'
                     label='First Name'
-                    onChange={(e) => { handleFirstNameChange(e) }}
-                    error={ !validFirstName }
+                    onChange={(e) => { handleFirstNameChange(e); setFirstNameChanged(true) }}
+                    error={ !validFirstName && firstNameChanged }
                 />
                 <TextField
                     fullWidth
@@ -157,8 +171,8 @@ export function CreateStep2Modal(props) {
                     variant="standard"
                     margin='dense'
                     label='Last Name'
-                    onChange={(e) => {  handleLastNameChange(e) }}
-                    error={ !validLastName }
+                    onChange={(e) => {  handleLastNameChange(e); setLastNameChanged(true) }}
+                    error={ !validLastName && lastNameChanged }
                 />
                 <MuiTelInput
                     helperText='Phone'
@@ -167,8 +181,8 @@ export function CreateStep2Modal(props) {
                     defaultCountry='US'
                     value={phone}
                     margin='normal'
-                    error={!isValid.phone}
-                    onChange={(e) => { console.log('phone valid: ' + matchIsValidTel(e)); setPhone(e); setIsValid({ ...isValid, phone: matchIsValidTel(e) }) }}
+                    error={!isValid.phone && phoneChanged}
+                    onChange={(e) => { console.log('phone valid: ' + matchIsValidTel(e)); setPhone(e); setIsValid({ ...isValid, phone: matchIsValidTel(e) }); setPhoneChanged(true) }}
                 />
                 <Autocomplete
                     sx={{ m: 0 }}
@@ -184,7 +198,7 @@ export function CreateStep2Modal(props) {
                         }
                     }}
                     onInputChange={(event, newInputValue) => {
-                        setInputValue(newInputValue)
+                        setInputValue(newInputValue) 
                         fetch();
                     }}
                     value={value}
@@ -197,7 +211,7 @@ export function CreateStep2Modal(props) {
                         typeof option === 'string' ? option : option.address
                     }
                     isOptionEqualToValue={(option, value) => option.id === value.id}
-                    renderInput={(params) => <TextField {...params} variant='standard' label="Address" error={!value} />}
+                    renderInput={(params) => <TextField {...params} variant='standard' label="Address" />}
                     renderOption={(props, option) => {
                         return (
                             <ListItemButton {...props}>

@@ -13,7 +13,8 @@ import FormHelperText from '@mui/material/FormHelperText';
 import FormControl from '@mui/material/FormControl';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import PasswordPopper from '../../components/passwordPopper';
+import Popover from '@mui/material/Popover';
+import PasswordPopover from '../../components/passwordPopover';
 
 const style = {
     width: '100%',
@@ -31,7 +32,7 @@ export function CreateStatus(props) {
             props.setCreatePosted(false)
         })
         .then(() => {
-            
+
             props.setIsLoggedIn(true)
             props.setIsStep2(true)
             props.setCreatePosted(false)
@@ -62,14 +63,14 @@ export function CreateModal(props) {
     const [hasAttemptedLogin, setHasAttemptedLogin] = useState(false)
     const [showPassword, setShowPassword] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
-    const [open, setOpen] = useState(false);
     const [isEmailValid, setIsEmailValid] = useState(false)
     const [createPosted, setCreatePosted] = useState(false)
-    const [isPwMinLength, setIsPwMinLength] = useState({ text: 'Be at least 8 characters in length.', active: true })
-    const [isPwMaxLength, setIsPwMaxLength] = useState({ text: 'Not exceed 24 characters in length.', active: false })
-    const [isPwNumber, setIsPwNumber] = useState({ text: 'Include at least one number.', active: true })
+    const [isPwMinLength, setIsPwMinLength] = useState({ text: 'At least 8 characters in length.', active: true })
+    const [isPwMaxLength, setIsPwMaxLength] = useState({ text: 'Does not exceed 24 characters in length.', active: false })
+    const [isPwNumber, setIsPwNumber] = useState({ text: 'Includes at least one number.', active: true })
     const [isPwChar, setIsPwChar] = useState({ text: 'Allowed characters: !@#$%^&*', active: true })
 
+    const riffRef = useRef(0);
 
     const isPwValid = !isPwMinLength.active && !isPwMaxLength.active && !isPwNumber.active && !isPwChar.active
     let validationArray = [isPwMinLength, isPwMaxLength, isPwNumber, isPwChar]
@@ -116,36 +117,39 @@ export function CreateModal(props) {
         }
     }
 
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
     const handleClickShowPassword = () => setShowPassword((show) => !show);
 
     const handleClickShowValidation = (event) => {
-        console.log('current target: ' + event.currentTarget)
-        setAnchorEl(anchorEl ? null : event.currentTarget);
-        setOpen((previousOpen) => !previousOpen);
+        console.log('current target: ' + event.currentTarget.innerHTML)
+        setAnchorEl(event.currentTarget);
     }
 
     const handleMouseDownPassword = (event) => {
         event.preventDefault();
     };
 
-    const canBeOpen = open && anchorEl && Boolean(anchorEl);
-    const id = canBeOpen ? 'transition-popper' : undefined;
+    const open = Boolean(anchorEl);
+    const id = open ? 'simple-popover' : undefined;
 
     return (
         <Box>
-            <Typography id="modal-modal-title" variant="h6" component="h2" sx={{ textAlign: 'center', mb: 3 }}>
+            <Typography id="modal-modal-title" variant="h6" component="h2" sx={{ color: 'primary.main', textAlign: 'center', mb: 3, fontSize: '1.5rem', fontWeight: 500, letterSpacing: '.1rem' }}>
                 Create Account
             </Typography>
             <Box>
                 <FormControl variant="standard" fullWidth>
-                    <InputLabel htmlFor="standard-basic-email">Email</InputLabel>
+                    <InputLabel htmlFor="standard-basic-email" error={!isEmailValid && hasAttemptedLogin}>Email</InputLabel>
                     <Input
                         autoFocus
                         id="standard-basic-email"
                         variant="standard"
                         label="Email"
                         sx={{ mb: 2 }}
-                        error={(isEmailValid !== true && hasAttemptedLogin) ? true : false}
+                        error={!isEmailValid && hasAttemptedLogin}
                         value={login.email}
                         onChange={(e) => { validateEmail(e.target.value); setLogin({ ...login, email: e.target.value }) }}
                     />
@@ -190,8 +194,9 @@ export function CreateModal(props) {
                         }
                     />
                     {!isPwValid && hasAttemptedLogin &&
-                        <>
-                            <FormHelperText error>
+                            <FormHelperText 
+                                error
+                            >
                                 <IconButton
                                     color={!isPwValid ? hasAttemptedLogin ? 'error' : 'warning' : 'info'}
                                     aria-label="toggle pw validation errors"
@@ -200,10 +205,23 @@ export function CreateModal(props) {
                                 >
                                     <ErrorIcon />
                                 </IconButton>Check Password Rules
-                                <PasswordPopper id={id} open={open} anchorEl={anchorEl} validationArray={validationArray} />
+                                
+                            <Popover 
+                                id={id} 
+                                open={open} 
+                                onClose={handleClose}
+                                anchorEl={anchorEl} 
+                                anchorOrigin={{vertical: 'bottom', horizontal: 'right'}}
+                                transformOrigin={{vertical: 'top', horizontal: 'left'}}
+                                sx={{ zIndex: 1301 }} 
+                                children={riffRef}
+                            >
+                                <Box ref={riffRef}>
+                                    <PasswordPopover validationArray={validationArray} />
+                                </Box>
+                            </Popover>
                             </FormHelperText>
-                        </>
-                    }
+}
                 </FormControl>
                 {error && <div>{error}</div>}
                 <Box sx={{ width: '100%', mx: 'auto', display: 'block', pt: 4 }}>

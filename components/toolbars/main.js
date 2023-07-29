@@ -85,7 +85,7 @@ export function MainToolbar({
                         textDecoration: 'none',
                     }}
                 >   DANS
-                    <LocalPizzaIcon sx={{ display: { xs: 'none', md: 'flex' }, mx: .5 }} />
+                    <LocalPizzaIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: .5 }} />
                     PIZZA
                 </Typography>
 
@@ -232,7 +232,7 @@ export function MainToolbar({
                                     focusRipple={false}
                                     onClick={() => { setIsCreate(true); setOpen(true); }}
                                 >
-                                    <PersonAddIcon sx={{ mr: 1 }} />
+                                    <PersonAddIcon fontSize='small' sx={{ mr: 1 }} />
                                     {'Create'}
                                 </Button>
                                 <Button
@@ -240,7 +240,7 @@ export function MainToolbar({
                                     focusRipple={false}
                                     onClick={() => { setIsCreate(false); setOpen(true); }}
                                 >
-                                    <LoginIcon sx={{ mr: 1 }} />
+                                    <LoginIcon fontSize='small' sx={{ mr: 1 }} />
                                     {'Login'}
                                 </Button>
                                 <Badge badgeContent={cartItemCount} max={10} color='secondary' overlap='circular' sx={{pl: {sm: 0, md: 2}}}>
