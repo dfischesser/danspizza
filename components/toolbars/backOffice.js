@@ -20,18 +20,26 @@ import CottageIcon from '@mui/icons-material/Cottage';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import ReceiptIcon from '@mui/icons-material/Receipt';
 import BarChartIcon from '@mui/icons-material/BarChart';
+import { Abril_Fatface } from 'next/font/google';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import { useRouter } from 'next/router'
 
-export function Index() {
-    return (
-        <Button
-            component={NextLinkComposed}
-            to={{
-                pathname: '/',
-            }}
-        >
-            Button link
-        </Button>
-    );
+export const abrilFatFace = Abril_Fatface({
+    weight: ['400'],
+    subsets: ['latin'],
+    display: 'swap',
+    fallback: ['Helvetica', 'Arial', 'sans-serif'],
+});
+
+const style = {
+    my: 'auto',
+    color: 'white',
+    '&:hover': { bgcolor: '#3c3c3c' }
+}
+const activeStyle = {
+    my: 'auto',
+    color: 'background.beiger',
+    '&:hover': { bgcolor: '#3c3c3c' }
 }
 
 export function BackOfficeToolbar({
@@ -50,23 +58,23 @@ export function BackOfficeToolbar({
     cartHasItems,
     open }) {
 
+    const router = useRouter();
     return (
         <Container maxWidth="xl" sx={{ bgcolor: 'black' }}>
             <Toolbar disableGutters>
                 <Typography
+                    fontFamily={abrilFatFace.style.fontFamily}
                     variant="h6"
                     noWrap
                     sx={{
-                        mr: 2,
+                        mr: 7,
                         display: { xs: 'none', md: 'flex' },
-                        fontFamily: 'fantasy',
-                        fontWeight: 500,
-                        letterSpacing: '.3rem',
+                        letterSpacing: '.2rem',
                         color: 'inherit',
                         textDecoration: 'none',
                     }}
                 >   BACK
-                    <LocalPizzaIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
+                    <LocalPizzaIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: .5 }} />
                     OFFICE
                 </Typography>
 
@@ -119,75 +127,77 @@ export function BackOfficeToolbar({
                 </Box>
                 <Typography
                     variant="h6"
+                    fontFamily={abrilFatFace.style.fontFamily}
                     noWrap
                     sx={{
-                        mr: 2,
                         display: { xs: 'flex', md: 'none' },
                         flexGrow: 1,
-                        fontFamily: 'fantasy',
-                        fontWeight: 500,
-                        letterSpacing: '.3rem',
+                        letterSpacing: '.2rem',
                         color: 'inherit',
                         textDecoration: 'none',
                     }}
                 >
-                    DAN'S PIZZA
+                    BACK OFFICE
                 </Typography>
-                <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, justifyContent:'space-evenly' }}>
-                    <Box>
+                <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, justifyContent: 'space-between' }}>
                     <Tooltip title={'Store Front'} >
-                    <Button
-                        component={NextLinkComposed}
-                        onClick={() => { handleCloseNavMenu('');}}
-                        to='/'
-                        sx={{ ml: 2, my: 'auto', color: 'white', '&:hover': {bgcolor: '#3c3c3c'}  }}
-                    >
-                    <CottageIcon sx={{ mx:'auto',  width: '100%' }} />
-                    </Button>
+                        <Button
+                            component={NextLinkComposed}
+                            onClick={() => { handleCloseNavMenu(''); }}
+                            to='/'
+                            sx={style}
+                        >
+                            <CottageIcon fontSize='small' sx={{mr:1}} />
+                            Home
+                        </Button>
                     </Tooltip>
                     <Tooltip title={'Manage Orders'} >
-                    <Button
-                        component={NextLinkComposed}
-                        onClick={handleCloseNavMenu}
-                        to='/backoffice/manage'
-                        sx={{ my: 'auto', color: 'white', '&:hover': {bgcolor: '#3c3c3c'} }}
-                    >
-                    <ReceiptIcon sx={{ mx:'auto', width: '100%' }} />
-                    </Button>
+                        <Button
+                            component={NextLinkComposed}
+
+                            onClick={handleCloseNavMenu}
+                            to='/backoffice/manage'
+                            sx={router.asPath.endsWith('manage') ? activeStyle : style}
+                        >
+                            <ReceiptIcon fontSize='small' sx={{mr:1}} />
+                            Manage
+                        </Button>
                     </Tooltip>
                     <Tooltip title={'Edit Site'} >
-                    <Button
-                        component={NextLinkComposed}
-                        onClick={handleCloseNavMenu}
-                        to='/backoffice/editSite'
-                        sx={{ my: 'auto', color: 'white', '&:hover': {bgcolor: '#3c3c3c'}  }}
-                    >
-                        <ModeEditIcon sx={{mx:'auto', width: '100%' }} />
-                        
-                    </Button>
+                        <Button
+                            component={NextLinkComposed}
+                            onClick={handleCloseNavMenu}
+                            to='/backoffice/editSite'
+                            sx={router.asPath.endsWith('editSite') ? activeStyle : style}
+                        >
+                            <ModeEditIcon fontSize='small' sx={{mr:1}} />
+                            Edit Site
+                        </Button>
                     </Tooltip>
                     <Tooltip title={'Sales'} >
-                    <Button
-                        component={NextLinkComposed}
-                        onClick={handleCloseNavMenu}
-                        to='/backoffice/sales'
-                        sx={{ my: 'auto', color: 'white', '&:hover': {bgcolor: '#3c3c3c'} }}
-                    >
-                        <BarChartIcon sx={{ mx:'auto', width: '100%' }} />
-                        
-                    </Button>
+                        <Button
+                            component={NextLinkComposed}
+                            onClick={handleCloseNavMenu}
+                            to='/backoffice/sales'
+                            sx={router.asPath.endsWith('sales') ? activeStyle : style}
+                        >
+                            <BarChartIcon fontSize='small' sx={{mr:1}} />
+                            Sales
+                        </Button>
                     </Tooltip>
-                    </Box>
                 </Box>
                 <Box sx={{ flexGrow: 0 }}>
                     {isLoggedIn ?
                         <>
                             <Tooltip title="Open settings">
                                 <Button
-                                    sx={{ my: 'auto', color: 'white', '&:hover': {bgcolor: '#3c3c3c'} }}
+                                    sx={Boolean(anchorElUser) ? { color: 'background.beiger' } : { color: 'white' }}
                                     onClick={handleOpenUserMenu}
                                 >
-                                    {userName ? userName + ' (' + role + ')' : 'Account'}
+                                    <AccountCircleIcon sx={{ml: {xs: 0, md: 7}}} />
+                                    <Typography sx={{ my: 'auto', ml: 1, maxWidth: 175, fontWeight: 500, fontSize: '.75rem', display: { xs: 'none', sm: 'inherit' } }}>
+                                        {userName}
+                                    </Typography>
                                 </Button>
                             </Tooltip>
 

@@ -298,7 +298,7 @@ export function FormatOrders({ userOrders, active, orderCount, manage }) {
                 }
 
                 {(orders.length === 0 && active) &&
-                    <ListItemButton sx={{ boxShadow: 3, borderRadius: 1, mx: 2, mt: 2, bgcolor: 'background.lightest' }}>
+                    <ListItemButton sx={{ boxShadow: 3, borderRadius: 1, mx: 2, my: 2, bgcolor: 'background.lightest' }}>
                         <ListItemText primary={
                             <Typography>
                                 {'No Active Orders'}

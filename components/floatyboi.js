@@ -68,7 +68,7 @@ export default function FloatingActionButtons(props) {
     return (
         <Box sx={{ '& > :not(style)': { m: 1 } }}>
             <Fab color="secondary" aria-label="edit" onClick={toggleDrawer(true)}>
-                <QuestionMarkOutlinedIcon color='whitey' />
+                <QuestionMarkOutlinedIcon />
             </Fab>
             <Drawer
                 anchor={'right'}

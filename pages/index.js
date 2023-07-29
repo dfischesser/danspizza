@@ -7,28 +7,51 @@ import Link from '@mui/material/Link'
 import Paper from '@mui/material/Paper';
 import { NextLinkComposed } from '../components/Link';
 import LocalPizzaIcon from '@mui/icons-material/LocalPizza';
+import { Abril_Fatface, Italianno } from 'next/font/google';
+import { styled } from '@mui/material/styles';
+import Stack from '@mui/material/Stack';
+
+export const abrilFatFace = Abril_Fatface({
+  weight: ['400'],
+  subsets: ['latin'],
+  display: 'swap',
+  fallback: ['Helvetica', 'Arial', 'sans-serif'],
+});
+
+export const italianno = Italianno({
+  weight: ['400'],
+  subsets: ['latin'],
+  display: 'swap',
+  fallback: ['Helvetica', 'Arial', 'sans-serif'],
+});
 
 export default function HomePage(props) {
-  console.log('index rendered. all props: ' + JSON.stringify(props))
-  console.log('node env: ' + process.env.NODE_ENV)
+
+  const Logo = styled(Typography)({
+    fontFamily: abrilFatFace.style.fontFamily
+  });
+
+  const Blurb = styled(Typography)({
+    fontFamily: italianno.style.fontFamily,
+    fontSize: '2rem'
+  });
+
   return (
     <Box sx={{ minHeight: 450 }}>
       <Grid container rowSpacing={1} columnSpacing={2} alignItems={'center'} sx={{ mx: 'auto', textAlign: 'center' }}>
         <Grid xs={12} >
-          <Typography variant='h1' 
+          <Logo variant='h1' 
                     sx={{
-                        fontFamily: 'fantasy',
-                        fontSize: '3rem',
-                        fontWeight: 500,
-                        letterSpacing: '.3rem',
+                        fontSize: '2.5rem',
+                        letterSpacing: '.1rem',
                         color: 'inherit',
                         textDecoration: 'none',
                         mt: 6,
-                        mb: 3
-                    }}>DAN'S <LocalPizzaIcon fontSize={'3rem'}/> PIZZA</Typography>
+                        mb: 1
+                    }}>DAN'S <LocalPizzaIcon fontSize={'3rem'}/> PIZZA</Logo>
         </Grid>
         <Grid xs={12} >
-          <Typography> Excellence in a Pie.</Typography>
+          <Typography>Excellence in a Pie.</Typography>
         </Grid>
         <Grid xs={12} >
           {props.role === 'Employee' &&

@@ -10,6 +10,7 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import LocalPizzaIcon from '@mui/icons-material/LocalPizza';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import Badge from '@mui/material/Badge';
 //import Link, { NextLinkComposed } from 'next/link'
 import Link, { NextLinkComposed } from '../../components/Link'
 import { useState, useRef, useEffect } from 'react';
@@ -21,22 +22,30 @@ import TuneIcon from '@mui/icons-material/Tune';
 import CottageIcon from '@mui/icons-material/Cottage';
 import RestaurantMenuIcon from '@mui/icons-material/RestaurantMenu';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
-import { getCookie } from '../../components/getCookie';
+import FaceIcon from '@mui/icons-material/Face';
 import LoginIcon from '@mui/icons-material/Login';
-import { forwardRef } from 'react';
-import { Refresh } from '@mui/icons-material';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import { Abril_Fatface } from 'next/font/google';
+import { useRouter } from 'next/router'
 
-export function Index() {
-    return (
-        <Button
-            component={NextLinkComposed}
-            to={{
-                pathname: '/',
-            }}
-        >
-            Button link
-        </Button>
-    );
+export const abrilFatFace = Abril_Fatface({
+    weight: ['400'],
+    subsets: ['latin'],
+    display: 'swap',
+    fallback: ['Helvetica', 'Arial', 'sans-serif'],
+  });
+
+const style = {
+    mr: 1,
+    color: 'white', 
+    textAlign: 'center', 
+    '&:hover': { bgcolor: 'background.hover' } 
+}
+const activeStyle = {
+    mr: 1,
+    color: 'background.beiger', 
+    textAlign: 'center', 
+    '&:hover': { bgcolor: 'background.hover' } 
 }
 
 export function MainToolbar({
@@ -55,29 +64,28 @@ export function MainToolbar({
     userName,
     role,
     handleCartClick,
-    cartHasItems,
+    cartItemCount,
     open,
 }) {
 
-
+    const router = useRouter();
     return (
 
         <Container maxWidth="xl">
             <Toolbar disableGutters>
                 <Typography
-                    variant="h6"
+                    fontFamily= {abrilFatFace.style.fontFamily}
                     noWrap
                     sx={{
-                        mr: 2,
+                        mr: 5,
+                        fontSize: '1.3rem',
                         display: { xs: 'none', md: 'flex' },
-                        fontFamily: 'fantasy',
-                        fontWeight: 500,
-                        letterSpacing: '.3rem',
+                        letterSpacing: '.2rem',
                         color: 'inherit',
                         textDecoration: 'none',
                     }}
                 >   DANS
-                    <LocalPizzaIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
+                    <LocalPizzaIcon sx={{ display: { xs: 'none', md: 'flex' }, mx: .5 }} />
                     PIZZA
                 </Typography>
 
@@ -122,14 +130,13 @@ export function MainToolbar({
                 </Box>
                 <Typography
                     variant="h6"
+                    fontFamily= {abrilFatFace.style.fontFamily}
                     noWrap
                     sx={{
                         mr: 2,
                         display: { xs: 'flex', md: 'none' },
                         flexGrow: 1,
-                        fontFamily: 'fantasy',
-                        fontWeight: 500,
-                        letterSpacing: '.3rem',
+                        letterSpacing: '.2rem',
                         color: 'inherit',
                         textDecoration: 'none',
                     }}
@@ -141,16 +148,18 @@ export function MainToolbar({
                         component={NextLinkComposed}
                         onClick={handleCloseNavMenu}
                         to='/'
-                        sx={{ my: 2, color: 'white', display: 'block', textAlign: 'center', '&:hover': { bgcolor: 'background.hover' } }}
+                        sx={router.asPath === '/' ? activeStyle : style}
                     >
+                    <CottageIcon fontSize='small' sx={{ mr: 1 }} />
                         Home
                     </Button>
                     <Button
                         component={NextLinkComposed}
                         onClick={handleCloseNavMenu}
                         to='/menu'
-                        sx={{ my: 2, color: 'white', display: 'block', textAlign: 'center', '&:hover': { bgcolor: 'background.hover' } }}
+                        sx={router.asPath.endsWith('menu') ? activeStyle : style}
                     >
+                    <RestaurantMenuIcon fontSize='small' sx={{ mr: 1 }} />
                         Menu
                     </Button>
                 </Box>
@@ -158,20 +167,22 @@ export function MainToolbar({
                     {isLoggedIn ?
                         <>
                             <Tooltip title="Open settings">
-                                <Button
-                                    sx={{ color: 'white', p: 0 }}
-                                    onClick={handleOpenUserMenu}
-                                >
-                                    {userName ? userName : 'Profile'}
-                                </Button>
+                                    <Button
+                                        sx={Boolean(anchorElUser) ? { color: 'background.beiger' } : { color: 'white' }}
+                                        onClick={handleOpenUserMenu} 
+                                    >
+                                        <AccountCircleIcon />
+                                        <Typography sx={{ my: 'auto', ml: 1, maxWidth: 175, fontWeight: 500, fontSize: '.75rem', display: { xs: 'none', sm: 'inherit' } }}>
+                                            {userName}
+                                        </Typography>
+                                    </Button>
                             </Tooltip>
 
                             <Menu
-                                sx={{ mt: '45px' }}
                                 id="menu-appbar"
                                 anchorEl={anchorElUser}
                                 anchorOrigin={{
-                                    vertical: 'top',
+                                    vertical: 'bottom',
                                     horizontal: 'right',
                                 }}
                                 keepMounted
@@ -204,15 +215,11 @@ export function MainToolbar({
                                     </MenuItem>
                                 }
                             </Menu>
-                            <IconButton onClick={handleCartClick} sx={{ pl: 3 }}>
-                                {(cartHasItems) ?
-                                    open ?
-                                        <ShoppingCartIcon />
-                                        :
-                                        <ShoppingCartIcon sx={{ color: '#8d762b' }} /> :
-                                    <ShoppingCartIcon sx={{ color: 'white' }} />
-                                }
-                            </IconButton>
+                            <Badge badgeContent={cartItemCount} max={10} color='secondary' overlap='circular' sx={{pl: {sm: 0, md: 2}}}>
+                                <IconButton onClick={handleCartClick}>
+                                    <ShoppingCartIcon sx={ open ? { color: 'background.beiger' } : {color: 'white'}} />
+                                </IconButton>
+                            </Badge>
                         </>
                         :
                         <>
@@ -236,15 +243,11 @@ export function MainToolbar({
                                     <LoginIcon sx={{ mr: 1 }} />
                                     {'Login'}
                                 </Button>
-                                <IconButton onClick={handleCartClick} sx={{ '&:hover': { bgcolor: 'background.hover' } }}>
-                                    {(cartHasItems) ?
-                                        open ?
-                                            <ShoppingCartIcon />
-                                            :
-                                            <ShoppingCartIcon sx={{ color: '#8d762b' }} /> :
-                                        <ShoppingCartIcon sx={{ color: 'white' }} />
-                                    }
-                                </IconButton>
+                                <Badge badgeContent={cartItemCount} max={10} color='secondary' overlap='circular' sx={{pl: {sm: 0, md: 2}}}>
+                                    <IconButton onClick={handleCartClick}>
+                                        <ShoppingCartIcon sx={ open ? { color: 'background.beiger' } : {color: 'white'}} />
+                                    </IconButton>
+                                </Badge>
                             </Box>
                             <Box sx={{
                                 display: { xs: 'flex', md: 'none' },
@@ -255,7 +258,7 @@ export function MainToolbar({
                                     focusRipple={false}
                                     onClick={() => { setIsCreate(true); setOpen(true); }}
                                 >
-                                    <PersonAddIcon/>
+                                    <PersonAddIcon />
                                 </IconButton>
                                 <IconButton
                                     sx={{ color: 'white', textAlign: 'center', '&:hover': { bgcolor: 'background.hover' } }}
@@ -264,15 +267,11 @@ export function MainToolbar({
                                 >
                                     <LoginIcon sx={{ mr: 1 }} />
                                 </IconButton>
-                                <IconButton onClick={handleCartClick} sx={{ '&:hover': { bgcolor: 'background.hover' }}}>
-                                    {(cartHasItems) ?
-                                        open ?
-                                            <ShoppingCartIcon />
-                                            :
-                                            <ShoppingCartIcon sx={{ color: '#8d762b' }} /> :
-                                        <ShoppingCartIcon sx={{ color: 'white' }} />
-                                    }
-                                </IconButton>
+                                <Badge badgeContent={cartItemCount} max={10} color='secondary' overlap='circular' sx={{pl: {sm: 0, md: 2}}}>
+                                    <IconButton onClick={handleCartClick}>
+                                        <ShoppingCartIcon sx={ open ? { color: 'background.beiger' } : {color: 'white'}} />
+                                    </IconButton>
+                                </Badge>
                             </Box>
                         </>}
                 </Box>

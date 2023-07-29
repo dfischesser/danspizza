@@ -16,35 +16,35 @@ export default function ChangeLog(props) {
   console.log('node env: ' + process.env.NODE_ENV)
   return (
     <Box sx={{ minHeight: 450}}>
-      <Grid container rowSpacing={1} columnSpacing={2} sx={{ mx: 'auto', textAlign: 'left', p:5}}>
+      <Grid container rowSpacing={1} columnSpacing={2} sx={{ mx: 'auto', textAlign: 'left', px: 5}}>
             <Grid xs={12} sx={{ textAlign: 'center' }} >
               <Header title="Change Log" />
             </Grid>
             <Grid xs={12} >
               Release Version 1
             </Grid>
-            <Grid xs={4} >
+            <Grid xs={3} >
               July 1
             </Grid>
-            <Grid xs={8} >
+            <Grid xs={9} >
               Material UI Implemented
             </Grid>
-            <Grid xs={4} >
+            <Grid xs={3} >
               June 19
             </Grid>
-            <Grid xs={8} >
+            <Grid xs={9} >
               Authentication/Authorization Implemented
             </Grid>
-            <Grid xs={4} >
+            <Grid xs={3} >
               May 20
             </Grid>
-            <Grid xs={8} >
+            <Grid xs={9} >
               Azure Environment Setup
             </Grid>
-            <Grid xs={4} >
+            <Grid xs={3} >
               April 20
             </Grid>
-            <Grid xs={8} >
+            <Grid xs={9} >
               Initial Commit
             </Grid>
       </Grid>

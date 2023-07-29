@@ -121,9 +121,10 @@ export function Customize(props) {
         console.log('NO default found. : ' + JSON.stringify(custOption.optionName));
         return ''
     }
-
+    console.log('custOptions length: ' + props.customizeFood.customizeOptions.length)
+    const optionsAmt = props.customizeFood.customizeOptions.length
     return (
-        <Paper sx={{ bgcolor: 'background.lightest', mx: 'auto', px:2 }}>
+        <Paper sx={{ bgcolor: 'background.lightest', mx: 'auto', px: 2, width: {xs: '100%', sm: '60%'}, height: {xs: '100%'} }}>
         <Stack>
             {props.customizeFood.customizeOptions.map(custOption => custOption.isMultiSelect ?
                 <CustomizeMultiAutocomplete 

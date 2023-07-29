@@ -131,7 +131,7 @@ export default function Menu(props) {
                                 <List component="div" disablePadding>
                                     {item.foodList.map(foodItem => (
                                         <div key={foodItem.foodID}>
-                                            <ListItem sx={{ width: '95%', mx: 'auto' }}>
+                                            <ListItem sx={{ width: '85%', mx: 'auto' }}>
                                                 <ListItemText primary={foodItem.foodName} />
                                                 {open.find(menuItem => menuItem.menuCategoryID === foodItem.menuCategoryID).food
                                                     .find((state) => (state.foodID == foodItem.foodID)).isOpen ?

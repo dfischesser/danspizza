@@ -3,11 +3,12 @@ import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import Popper from '@mui/material/Popper';
-import { useState, useEffect, useLayoutEffect, useRef } from 'react';
+import { useState, useEffect, useLayoutEffect, useRef, forwardRef } from 'react';
 import { Login } from '../components/login';
 import { Cart } from '../components/cart';
 import Fade from '@mui/material/Fade';
 import theme from '../components/theme';
+import Popover from '@mui/material/Popover';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { MainToolbar } from '../components/toolbars/main';
 import { OrderToolbar } from '../components/toolbars/order';
@@ -61,6 +62,7 @@ export function LogoutStatus(props) {
     })
 }
 
+
 export function ResponsiveAppBar(props) {
   const [anchorElNav, setAnchorElNav] = useState(null)
   const [anchorElUser, setAnchorElUser] = useState(null)
@@ -73,11 +75,22 @@ export function ResponsiveAppBar(props) {
 
   //const ref = useRef(0)
   const router = useRouter();
+  const riffRef = useRef();
 
   const open = Boolean(anchorElCart);
   const id = open ? 'simple-popper' : undefined;
   console.log('current path: ' + router.asPath)
   console.log('isBackOffice: ' + props.isBackOffice)
+  console.log('appbar cart items length: ' + props.currentCartItems.length)
+
+  // const CartyBoi = forwardRef((props, ref) => {
+  //   return (
+  //     <Cart
+  //       {...props}
+  //       ref={ref}
+  //     />)
+  // })
+
   //console.log('ref: ' + ref.current)
 
   // useEffect(() => {
@@ -127,6 +140,9 @@ export function ResponsiveAppBar(props) {
     setAnchorElUser(event.currentTarget);
   };
 
+  const handleCartClose = () => {
+    setAnchorElCart(false);
+  };
 
   const handleCloseNavMenu = (page) => {
     console.log('page:' + page)
@@ -163,7 +179,7 @@ export function ResponsiveAppBar(props) {
             hasCookie={hasCookie}
             userName={props.userName}
             role={props.role}
-            cartHasItems={props.currentCartItems.length > 0}
+            cartItemCount={props.currentCartItems.length}
           /> :
           props.hasOrder ?
             <OrderToolbar
@@ -180,7 +196,7 @@ export function ResponsiveAppBar(props) {
               hasCookie={hasCookie}
               userName={props.userName}
               role={props.role}
-              cartHasItems={props.currentCartItems.length > 0}
+              cartItemCount={props.currentCartItems.length}
             /> :
             <MainToolbar
               anchorElNav={anchorElNav}
@@ -201,34 +217,29 @@ export function ResponsiveAppBar(props) {
               hasCookie={hasCookie}
               userName={props.userName}
               role={props.role}
-              cartHasItems={props.currentCartItems.length > 0}
-            //riffRef={ref}
+              cartItemCount={props.currentCartItems.length}
             />
         }
       </AppBar>
 
       {!props.hasOrder &&
-        <Popper id={id} open={open} anchorEl={anchorElCart} placement='bottom-end' transition>
-          {({ TransitionProps }) => (
-            <Fade {...TransitionProps} timeout={300}>
-              <Box sx={{}}>
-                <Cart
-                  open={props.openLogin}
-                  currentCartItems={props.currentCartItems}
-                  setOpenLogin={(data) => props.setOpen(data)}
-                  removeItem={(foodItem) => props.removeItem(foodItem)}
-                  handleAddOrderClick={() => props.handleAddOrderClick()}
-                  setUserName={(data) => props.setUserName(data)}
-                  setIsCreate={(data) => setIsCreate(data)}
-                  setIsStep2={(data) => setIsStep2(data)}
-                  setAnchorElCart={(data) => setAnchorElCart(data)}
-                  isLoggedIn={props.isLoggedIn}
-                  userName={props.userName}
-                />
-              </Box>
-            </Fade>
-          )}
-        </Popper>}
+        <Popover id={id} open={open} anchorEl={anchorElCart} transformOrigin={{horizontal: 'right', vertical: 'top'}} anchorOrigin={{horizontal: 'right', vertical: 'bottom' }} onClose={handleCartClose} children={riffRef}>
+          <Box ref={riffRef}>
+            <Cart
+              open={props.openLogin}
+              currentCartItems={props.currentCartItems}
+              setOpenLogin={(data) => props.setOpen(data)}
+              removeItem={(foodItem) => props.removeItem(foodItem)}
+              handleAddOrderClick={() => props.handleAddOrderClick()}
+              setUserName={(data) => props.setUserName(data)}
+              setIsCreate={(data) => setIsCreate(data)}
+              setIsStep2={(data) => setIsStep2(data)}
+              setAnchorElCart={(data) => setAnchorElCart(data)}
+              isLoggedIn={props.isLoggedIn}
+              userName={props.userName}
+            />
+          </Box>
+        </Popover>}
       {logoutPosted && <LogoutStatus setLoginPosted={(data) => setLogoutPosted(data)} setError={(data) => setError(data)} />}
       <Modal
         open={props.open}

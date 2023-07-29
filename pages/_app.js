@@ -83,7 +83,8 @@ export default function MyApp({ Component, emotionCache = clientSideEmotionCache
   const [open, setOpen] = useState(false);
   const [openWelcome, setOpenWelcome] = useState(false);
   const [role, setRole] = useState(false)
-  const [userName, setUserName] = useState(false)
+  const [userName, setUserName] = useState('')
+  const [id, setId] = useState(0)
 
   const style = {
     // position: 'absolute',
@@ -97,6 +98,9 @@ export default function MyApp({ Component, emotionCache = clientSideEmotionCache
     p: 4,
   };
 
+  if (process.env.NODE_ENV == 'production') {
+    console.log = function() {}
+  }
   const handleCloseWelcome = (event, reason) => {
     console.log('welcome handleclose hit. reason: ' + reason)
     if (reason === 'clickaway') {
@@ -113,6 +117,7 @@ export default function MyApp({ Component, emotionCache = clientSideEmotionCache
     return
   };
 
+
   useEffect(() => {
     if (typeof window !== 'undefined') {
       console.log('location: ' + window.location)
@@ -120,6 +125,9 @@ export default function MyApp({ Component, emotionCache = clientSideEmotionCache
         location.replace(`https://www.danspizza.dev${location.pathname}`);
       }
     }
+
+    const effectCartName = 'cart'+ id
+    console.log('effect cart name: ' + effectCartName)
 
     const handleRouteChange = (url, { shallow }) => {
       console.log(
@@ -134,19 +142,19 @@ export default function MyApp({ Component, emotionCache = clientSideEmotionCache
       setOpenWelcome(true)
     }
 
-    if (window.localStorage.getItem("cart") && cartItems.length === 0) {
-      //console.log('local storage cart: ' + window.localStorage.getItem("cart"))
-      //console.log('local storage cartID: ' + JSON.parse(window.localStorage.getItem("cart")).findLast(x => x).cartItemID)
-      setCartID(JSON.parse(window.localStorage.getItem("cart")).findLast(x => x).cartItemID + 1)
+    console.log('effect cart name: ' + effectCartName)
+    console.log('effect cart length: ' + effectCartName.length)
+    if (window.localStorage.getItem(effectCartName) && cartItems.length === 0) {
+      setCartID(JSON.parse(window.localStorage.getItem(effectCartName)).findLast(x => x).cartItemID + 1)
       dispatch(
         {
           type: 'loaded',
-          cartItems: JSON.parse(window.localStorage.getItem("cart"))
+          cartItems: JSON.parse(window.localStorage.getItem(effectCartName))
         }
       )
     } else {
       if (cartItems.length > 0) {
-        window.localStorage.setItem("cart", JSON.stringify(cartItems))
+        window.localStorage.setItem(effectCartName, JSON.stringify(cartItems))
       }
     }
 
@@ -158,8 +166,12 @@ export default function MyApp({ Component, emotionCache = clientSideEmotionCache
       setIsBackOffice(false)
     }
 
+
     const firstNameToken = getCookie('firstName')
     const roleToken = getCookie('role')
+    const idToken = getCookie('id')
+
+    console.log('id is : ' + idToken)
 
     //console.log('app useeffect role: ' + role)
     //console.log('app useeffect userName: ' + userName)
@@ -171,6 +183,10 @@ export default function MyApp({ Component, emotionCache = clientSideEmotionCache
 
     if (firstNameToken) {
       setUserName(firstNameToken)
+    }
+
+    if (idToken) {
+      setId(idToken)
     }
 
     // if (router.isReady && !router.asPath.startsWith('/order')) {
@@ -241,7 +257,8 @@ export default function MyApp({ Component, emotionCache = clientSideEmotionCache
       {
         type: 'removed',
         id: selectedFood.cartItemID,
-        foodItem: selectedFood
+        foodItem: selectedFood,
+        userID: id
       }
     )
   }
@@ -251,7 +268,8 @@ export default function MyApp({ Component, emotionCache = clientSideEmotionCache
     console.log('handleRemoveAllItems hit')
     dispatch(
       {
-        type: 'removedAll'
+        type: 'removedAll',
+        userID: id
       }
     )
   }
@@ -272,13 +290,13 @@ export default function MyApp({ Component, emotionCache = clientSideEmotionCache
         console.log('removing id: ' + action.id)
         const cart = cartItems.filter(item => item.cartItemID != action.id)
         if (cart.length === 0) {
-          localStorage.setItem('cart', '');
+          localStorage.setItem('cart'+ action.userID, '');
         }
         return cart
       }
       case 'removedAll': {
         console.log('Removing all items')
-        localStorage.setItem('cart', '');
+        localStorage.setItem('cart'+ action.id, '');
         return cartItems = []
       }
       default: {
@@ -309,7 +327,7 @@ export default function MyApp({ Component, emotionCache = clientSideEmotionCache
       <Layout>
         <ThemeProvider theme={theme}>
           <CssBaseline />
-          <Container maxWidth='md' disableGutters>
+          <Container id={'containment'} maxWidth='md' disableGutters>
             <ResponsiveAppBar
               hasOrder={hasOrder}
               isLoggedIn={isLoggedIn}
@@ -392,7 +410,7 @@ export default function MyApp({ Component, emotionCache = clientSideEmotionCache
                 />
               }
 
-              <Box sx={{ textAlign: 'right', position: 'fixed', right: { xs: '0vw', md: '10vw', lg: '13vw', xl: '27vw' }, bottom: { xs: '0vh', sm: '15vh', md: '15vh', lg: '15vh', xl: '20vh' } }} >
+              <Box sx={{ textAlign: 'right', position: 'fixed', right: { xs: '10vw', md: '10vw', lg: '13vw', xl: '27vw' }, bottom: { xs: '5vh', sm: '15vh', md: '15vh', lg: '15vh', xl: '20vh' } }} >
                 <FloatingActionButtons
                   setIsLoggedIn={(data) => setIsLoggedIn(data)}
                   setUserName={(data) => setUserName(data)}
@@ -416,7 +434,9 @@ export default function MyApp({ Component, emotionCache = clientSideEmotionCache
                 <WelcomeModalBody handleCloseWelcome={handleCloseWelcome} />
               </Box>
             </Dialog>
-            <Footer />
+            <Box sx={{display: {xs: 'none', md: 'block'}}}>
+              <Footer />
+            </Box>
           </Container>
         </ThemeProvider>
       </Layout>

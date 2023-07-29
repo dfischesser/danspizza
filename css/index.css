@@ -1,8 +1,16 @@
 #lepapier {
     min-height: 75vh
 }
+#containment {
+    position: inherit
+}
 @media only screen and (max-width: 600px) {
     #lepapier {
-        height: 100vh
+        height: 100vh;
+        width: 100vw;
+        position: fixed;
+    }
+    #containment {
+        position: fixed
     }
   }

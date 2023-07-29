@@ -10,9 +10,19 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import LocalPizzaIcon from '@mui/icons-material/LocalPizza';
 import Container from '@mui/material/Container';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import Link from 'next/link'
+import { Abril_Fatface } from 'next/font/google';
 import { NextLinkComposed } from '../Link';
+
+export const abrilFatFace = Abril_Fatface({
+    weight: ['400'],
+    subsets: ['latin'],
+    display: 'swap',
+    fallback: ['Helvetica', 'Arial', 'sans-serif'],
+  });
 
 export function OrderToolbar({
     anchorElNav,
@@ -30,25 +40,26 @@ export function OrderToolbar({
     open,
     setHasOrder }) {
 
+
+       
     const pages = ['Home', 'Menu'];
     return (
         
         <Container maxWidth="xl">
         <Toolbar disableGutters>
                 <Typography
+                    fontFamily={abrilFatFace.style.fontFamily}
                     variant="h6"
                     noWrap
                     sx={{
                         mr: 2,
                         display: { xs: 'none', md: 'flex' },
-                        fontFamily: 'fantasy',
-                        fontWeight: 500,
-                        letterSpacing: '.3rem',
+                        letterSpacing: '.2rem',
                         color: 'inherit',
                         textDecoration: 'none',
                     }}
                 >   DANS
-                    <LocalPizzaIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
+                    <LocalPizzaIcon sx={{ display: { xs: 'none', md: 'flex' }, mx: .5 }} />
                     PIZZA
                 </Typography>
 
@@ -88,24 +99,22 @@ export function OrderToolbar({
                     ))}
                 </Menu>
             </Box>
+            
             <Typography
-                variant="h5"
-                noWrap
-                component="a"
-                href=""
-                sx={{
-                    mr: 2,
-                    display: { xs: 'flex', md: 'none' },
-                    flexGrow: 1,
-                    fontFamily: 'monospace',
-                    fontWeight: 700,
-                    letterSpacing: '.3rem',
-                    color: 'inherit',
-                    textDecoration: 'none',
-                }}
-            >
-                LOGO
-            </Typography>
+                    variant="h6"
+                    fontFamily= {abrilFatFace.style.fontFamily}
+                    noWrap
+                    sx={{
+                        mr: 2,
+                        display: { xs: 'flex', md: 'none' },
+                        flexGrow: 1,
+                        letterSpacing: '.2rem',
+                        color: 'inherit',
+                        textDecoration: 'none',
+                    }}
+                >
+                    DAN'S PIZZA
+                </Typography>
             <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
                     
             </Box>
@@ -116,7 +125,8 @@ export function OrderToolbar({
                 component={NextLinkComposed} 
                 to='/menu' 
             >
-                    Back To Cart
+                    <ExitToAppIcon sx={{mr:1}}/>
+                     Back
             </Button>
         </Toolbar>
         </Container>
