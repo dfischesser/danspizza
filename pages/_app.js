@@ -27,7 +27,7 @@ import Box from '@mui/material/Box';
 import Footer from '../components/footer'
 import { getCookie } from '../components/getCookie';
 import FloatingActionButtons from '../components/floatyboi';
-import DialogTitle from '@mui/material/DialogTitle';
+import Head from 'next/head';
 import Dialog from '@mui/material/Dialog';
 //import { ApplicationInsights } from '@microsoft/applicationinsights-web';
 //import { ReactPlugin } from '@microsoft/applicationinsights-react-js';
@@ -318,11 +318,9 @@ export default function MyApp({ Component, emotionCache = clientSideEmotionCache
   //Check Login Status
   return (
     <CacheProvider value={emotionCache}>
-      <meta name="viewport" content="initial-scale=1, width=device-width" />
-      <link
-        rel="stylesheet"
-        href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
-      />
+      <Head>
+        <meta name="viewport" content="initial-scale=1, width=device-width" />
+      </Head>
       {/* <AppInsightsErrorBoundary onError={() => <h1>Something went wrong! Report all bugs to report@danspizza.com</h1>} appInsights={reactPlugin}> */}
       <Layout>
         <ThemeProvider theme={theme}>
