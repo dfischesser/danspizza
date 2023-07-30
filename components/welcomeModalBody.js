@@ -17,6 +17,7 @@ import Footer from '../components/footer';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Unstable_Grid2'; // Grid version 2
 import Typography from '@mui/material/Typography';
+import { NextLinkComposed } from './Link';
 
 export function WelcomeModalBody({handleCloseWelcome}) {
 
@@ -46,8 +47,8 @@ export function WelcomeModalBody({handleCloseWelcome}) {
                         Features
                     </Typography>
                 </Grid>
-                <Grid xs={12} md={6}>
-                    <Paper sx={{ minWidth: 150, p: 2, bgcolor: 'background.lightest' }}>
+                <Grid xs={12} sm={6}>
+                    <Paper sx={{ minWidth: 150, p: 2, bgcolor: 'background.lightest', height: 150 }}>
                         <Typography variant="h5" component="div">
                             Store Front
                         </Typography>
@@ -59,8 +60,8 @@ export function WelcomeModalBody({handleCloseWelcome}) {
                         </Typography>
                     </Paper>
                 </Grid>
-                <Grid xs={12} md={6}>
-                    <Paper sx={{ minWidth: 150, p: 2, bgcolor: 'background.lightest' }}>
+                <Grid xs={12} sm={6}>
+                    <Paper sx={{ minWidth: 150, p: 2, bgcolor: 'background.lightest', height: 150 }}>
                         <Typography variant="h5" component="div">
                             Back Office
                         </Typography>
@@ -72,8 +73,8 @@ export function WelcomeModalBody({handleCloseWelcome}) {
                         </Typography>
                     </Paper>
                 </Grid>
-                <Grid xs={12} md={6}>
-                    <Paper sx={{ minWidth: 150, p: 2, bgcolor: 'background.lightest' }}>
+                <Grid xs={12} sm={6}>
+                    <Paper sx={{ minWidth: 150, p: 2, bgcolor: 'background.lightest', height: 150 }}>
                         <Stack direction={'row'} justifyContent={'space-between'}>
                         <Typography id="modal-modal-title" variant="h5" component="h2" sx={{ textAlign: 'left' }}>
                                 Info Drawer
@@ -90,8 +91,8 @@ export function WelcomeModalBody({handleCloseWelcome}) {
                             </Typography>
                     </Paper>
                 </Grid>
-                <Grid xs={12} md={6}>
-                    <Paper sx={{ minWidth: 150, p: 2, bgcolor: 'background.lightest' }}>
+                <Grid xs={12} sm={6}>
+                    <Paper sx={{ minWidth: 150, p: 2, bgcolor: 'background.lightest', height: 150 }}>
                         
                             <Typography id="modal-modal-title" variant="h5" component="h2" sx={{ textAlign: 'left' }}>
                                 More to Come!
@@ -100,7 +101,7 @@ export function WelcomeModalBody({handleCloseWelcome}) {
                                 Updates Mondays
                             </Typography>
                             <Typography sx={{ textAlign: 'left' }} variant="body2" gutterBottom>
-                                This is an ongoing project. <Link href='mailto:report@danspizza.dev' target='_blank'>Change Log</Link>
+                                This is an ongoing project. New features added every week.
                             </Typography>
                     </Paper>
                 </Grid>

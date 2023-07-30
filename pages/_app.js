@@ -91,7 +91,7 @@ export default function MyApp({ Component, emotionCache = clientSideEmotionCache
     // top: '50%',
     // left: '50%',
     // transform: 'translate(-50%, -50%)',
-    width: { xs: '75vw', md: '25vw', },
+    width: { md: '50vw', lg: '40vw', xl: '30vw' },
     //height: {xs: '80vh', md: '75vh',},
     bgcolor: 'background.paper',
     boxShadow: 24,
