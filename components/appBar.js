@@ -160,7 +160,7 @@ export function ResponsiveAppBar(props) {
 
   console.log('appBar username: ' + props.userName)
   return (
-    <ThemeProvider theme={theme}>
+    <>
       <AppBar position="static">
         {props.isBackOffice ?
           <BackOfficeToolbar
@@ -264,7 +264,7 @@ export function ResponsiveAppBar(props) {
           />
         </Box>
       </Modal>
-    </ThemeProvider>
+    </>
   );
 }
 export default ResponsiveAppBar;

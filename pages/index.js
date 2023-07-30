@@ -48,7 +48,7 @@ export default function HomePage(props) {
                         textDecoration: 'none',
                         mt: 6,
                         mb: 1
-                    }}>DAN'S <LocalPizzaIcon fontSize={'3rem'}/> PIZZA</Logo>
+                    }}>DAN'S <LocalPizzaIcon inheritViewBox fontSize={'3rem'}/> PIZZA</Logo>
         </Grid>
         <Grid xs={12} >
           <Typography>Excellence in a Pie.</Typography>

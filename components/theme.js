@@ -7,6 +7,7 @@ export const roboto = Roboto({
   subsets: ['latin'],
   display: 'swap',
   fallback: ['Helvetica', 'Arial', 'sans-serif'],
+  preload: true
 });
 
 export const abrilFatFace = Abril_Fatface({
@@ -14,6 +15,7 @@ export const abrilFatFace = Abril_Fatface({
   subsets: ['latin'],
   display: 'swap',
   fallback: ['Helvetica', 'Arial', 'sans-serif'],
+  preload: true
 });
 
 // Create a theme instance.
