@@ -29,10 +29,10 @@ import { getCookie } from '../components/getCookie';
 import FloatingActionButtons from '../components/floatyboi';
 import Head from 'next/head';
 import Dialog from '@mui/material/Dialog';
-//import { ApplicationInsights } from '@microsoft/applicationinsights-web';
-//import { ReactPlugin } from '@microsoft/applicationinsights-react-js';
+import { ApplicationInsights } from '@microsoft/applicationinsights-web';
+import { ReactPlugin } from '@microsoft/applicationinsights-react-js';
 //import { createBrowserHistory } from "history";
-//import { AppInsightsErrorBoundary } from "@microsoft/applicationinsights-react-js";
+import { AppInsightsErrorBoundary } from "@microsoft/applicationinsights-react-js";
 import { WelcomeModalBody } from '../components/welcomeModalBody';
 
 // Client-side cache, shared for the whole session of the user in the browser.
@@ -43,29 +43,29 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 });
 
 //const browserHistory = createBrowserHistory({ basename: '' });
-//var reactPlugin = new ReactPlugin();
-// Add the Click Analytics plug-in.
+var reactPlugin = new ReactPlugin();
+//Add the Click Analytics plug-in.
 /* var clickPluginInstance = new ClickAnalyticsPlugin();
    var clickPluginConfig = {
      autoCapture: true
 }; */
-// var appInsights = new ApplicationInsights({
-//   config: {
-//     connectionString: 'InstrumentationKey=92e06860-77de-4fc0-8aec-702644f32bf1;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/',
-//     enableAutoRouteTracking: true,
-//     // If you're adding the Click Analytics plug-in, delete the next line.
-//     extensions: [reactPlugin],
-//     // Add the Click Analytics plug-in.
-//     // extensions: [reactPlugin, clickPluginInstance],
-//     // extensionConfig: {
-//     //   [reactPlugin.identifier]: { history: browserHistory }
-//     // Add the Click Analytics plug-in.
-//     // [clickPluginInstance.identifier]: clickPluginConfig
-//     //}
-//   }
-// });
-// appInsights.loadAppInsights();
-// appInsights.trackPageView();
+var appInsights = new ApplicationInsights({
+  config: {
+    connectionString: 'InstrumentationKey=92e06860-77de-4fc0-8aec-702644f32bf1;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/',
+    enableAutoRouteTracking: true,
+    // If you're adding the Click Analytics plug-in, delete the next line.
+    extensions: [reactPlugin],
+    // Add the Click Analytics plug-in.
+    // extensions: [reactPlugin, clickPluginInstance],
+    // extensionConfig: {
+    //   [reactPlugin.identifier]: { history: browserHistory }
+    // Add the Click Analytics plug-in.
+    // [clickPluginInstance.identifier]: clickPluginConfig
+    //}
+  }
+});
+appInsights.loadAppInsights();
+appInsights.trackPageView();
 
 export default function MyApp({ Component, emotionCache = clientSideEmotionCache, pageProps }) {
 
@@ -87,19 +87,14 @@ export default function MyApp({ Component, emotionCache = clientSideEmotionCache
   const [id, setId] = useState(0)
 
   const style = {
-    // position: 'absolute',
-    // top: '50%',
-    // left: '50%',
-    // transform: 'translate(-50%, -50%)',
     width: { md: '50vw', lg: '40vw', xl: '30vw' },
-    //height: {xs: '80vh', md: '75vh',},
     bgcolor: 'background.paper',
     boxShadow: 24,
     p: 4,
   };
 
   if (process.env.NODE_ENV == 'production') {
-    console.log = function() {}
+    console.log = function () { }
   }
   const handleCloseWelcome = (event, reason) => {
     console.log('welcome handleclose hit. reason: ' + reason)
@@ -117,7 +112,6 @@ export default function MyApp({ Component, emotionCache = clientSideEmotionCache
     return
   };
 
-
   useEffect(() => {
     if (typeof window !== 'undefined') {
       console.log('location: ' + window.location)
@@ -126,7 +120,7 @@ export default function MyApp({ Component, emotionCache = clientSideEmotionCache
       }
     }
 
-    const effectCartName = 'cart'+ id
+    const effectCartName = 'cart' + id
     console.log('effect cart name: ' + effectCartName)
 
     const handleRouteChange = (url, { shallow }) => {
@@ -159,22 +153,16 @@ export default function MyApp({ Component, emotionCache = clientSideEmotionCache
     }
 
     if (router.isReady && router.asPath.startsWith('/backoffice')) {
-      //console.log('backoffice detected')
       setIsBackOffice(true)
-      //console.log('backoffice set 1: ' + isBackOffice)
     } else {
       setIsBackOffice(false)
     }
-
 
     const firstNameToken = getCookie('firstName')
     const roleToken = getCookie('role')
     const idToken = getCookie('id')
 
     console.log('id is : ' + idToken)
-
-    //console.log('app useeffect role: ' + role)
-    //console.log('app useeffect userName: ' + userName)
 
     if (roleToken) {
       setRole(roleToken)
@@ -188,13 +176,6 @@ export default function MyApp({ Component, emotionCache = clientSideEmotionCache
     if (idToken) {
       setId(idToken)
     }
-
-    // if (router.isReady && !router.asPath.startsWith('/order')) {
-    //   console.log('app useeffect hasOrder: ' + hasOrder)
-    //   if (hasOrder) {
-    //     router.push('/')
-    //   }
-    // }
 
     function start() {
       setLoading(true);
@@ -290,13 +271,15 @@ export default function MyApp({ Component, emotionCache = clientSideEmotionCache
         console.log('removing id: ' + action.id)
         const cart = cartItems.filter(item => item.cartItemID != action.id)
         if (cart.length === 0) {
-          localStorage.setItem('cart'+ action.userID, '');
+          localStorage.setItem('cart' + action.userID, '');
+          localStorage.setItem('cart0', '');
         }
         return cart
       }
       case 'removedAll': {
         console.log('Removing all items')
-        localStorage.setItem('cart'+ action.id, '');
+        localStorage.setItem('cart' + action.userID, '');
+        localStorage.setItem('cart0', '');
         return cartItems = []
       }
       default: {
@@ -321,7 +304,7 @@ export default function MyApp({ Component, emotionCache = clientSideEmotionCache
       <Head>
         <meta name="viewport" content="initial-scale=1, width=device-width" />
       </Head>
-      {/* <AppInsightsErrorBoundary onError={() => <h1>Something went wrong! Report all bugs to report@danspizza.com</h1>} appInsights={reactPlugin}> */}
+      <AppInsightsErrorBoundary onError={() => <h1>Something went wrong! Report all bugs to report@danspizza.com</h1>} appInsights={reactPlugin}>
       <Layout>
         <ThemeProvider theme={theme}>
           <CssBaseline />
@@ -341,6 +324,7 @@ export default function MyApp({ Component, emotionCache = clientSideEmotionCache
               setOpen={(data) => setOpenLogin(data)}
               setHasOrder={(data) => setHasOrder(data)}
               removeItem={(foodItem) => handleRemoveItem(foodItem)}
+              removeAllItems={() => handleRemoveAllItems()}
               handleAddOrderClick={() => handleAddOrderClick()}
             />
             {loading && (
@@ -353,61 +337,22 @@ export default function MyApp({ Component, emotionCache = clientSideEmotionCache
               </Backdrop>
             )}
             <Paper id={'lepapier'} square variant='outlined'>
-              {router.asPath == '/menu' &&
-                <Component {...pageProps}
-                  currentCartItems={cartItems}
-                  handleOpenCustomize={(foodItem) => handleOpenCustomize(foodItem)}
-                  openModal={openModal}
-                  setOpenModal={(data) => setOpenModal(data)}
-                  foodToCustomize={foodToCustomize}
-                  addCustomItem={(foodItem) => addCustomItem(foodItem)}
-                />
-              }
-              {router.asPath == '/' &&
-                <Component {...pageProps}
-                  isLoggedIn={isLoggedIn}
-                  role={role}
-                  userName={userName}
-                  setUserName={(data) => setUserName(data)}
-                  setIsLoggedIn={(data) => setIsLoggedIn(data)}
-                />
-              }
-              {router.asPath == '/order' &&
-                <Component {...pageProps}
-                  currentCartItems={cartItems}
-                  removeAllItems={() => handleRemoveAllItems()}
-                  removeItem={(foodItem) => handleRemoveItem(foodItem)}
-                  openModal={openModal}
-                  setHasOrder={(data) => setHasOrder(data)}
-                  setOpenModal={(data) => setOpenModal(data)}
-                />
-              }
-              {router.asPath == '/account' &&
-                <Component {...pageProps}
-                  isLoggedIn={isLoggedIn}
-                />
-              }
-              {router.asPath == '/backoffice/manage' &&
-                <Component {...pageProps}
-                  isLoggedIn={isLoggedIn}
-                />
-              }
-              {router.asPath == '/backoffice/editSite' &&
-                <Component {...pageProps}
-                  isLoggedIn={isLoggedIn}
-                />
-              }
-              {router.asPath == '/backoffice/sales' &&
-                <Component {...pageProps}
-                  isLoggedIn={isLoggedIn}
-                />
-              }
-              {router.asPath == '/changelog' &&
-                <Component {...pageProps}
-                  isLoggedIn={isLoggedIn}
-                />
-              }
-
+              <Component {...pageProps}
+                currentCartItems={cartItems}
+                handleOpenCustomize={(foodItem) => handleOpenCustomize(foodItem)}
+                openModal={openModal}
+                setOpenModal={(data) => setOpenModal(data)}
+                foodToCustomize={foodToCustomize}
+                addCustomItem={(foodItem) => addCustomItem(foodItem)}
+                isLoggedIn={isLoggedIn}
+                role={role}
+                userName={userName}
+                setUserName={(data) => setUserName(data)}
+                setIsLoggedIn={(data) => setIsLoggedIn(data)}
+                removeAllItems={() => handleRemoveAllItems()}
+                removeItem={(foodItem) => handleRemoveItem(foodItem)}
+                setHasOrder={(data) => setHasOrder(data)}
+              />
               <Box sx={{ textAlign: 'right', position: 'fixed', right: { xs: '10vw', md: '10vw', lg: '13vw', xl: '27vw' }, bottom: { xs: '5vh', sm: '15vh', md: '15vh', lg: '15vh', xl: '20vh' } }} >
                 <FloatingActionButtons
                   setIsLoggedIn={(data) => setIsLoggedIn(data)}
@@ -432,13 +377,13 @@ export default function MyApp({ Component, emotionCache = clientSideEmotionCache
                 <WelcomeModalBody handleCloseWelcome={handleCloseWelcome} />
               </Box>
             </Dialog>
-            <Box sx={{display: {xs: 'none', md: 'block'}}}>
+            <Box sx={{ display: { xs: 'none', md: 'block' } }}>
               <Footer />
             </Box>
           </Container>
         </ThemeProvider>
       </Layout>
-      {/* </AppInsightsErrorBoundary> */}
+      </AppInsightsErrorBoundary>
     </CacheProvider>
   )
 } 

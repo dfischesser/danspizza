@@ -105,7 +105,7 @@ export default function FloatingActionButtons(props) {
                             </ListItem>
                             <Collapse in={openR} timeout="auto" unmountOnExit>
                                 <List component="div" disablePadding>
-                                    <ListItemButton sx={{ pl: 4 }}>
+                                    <ListItemButton sx={{ pl: 4 }} href='/resume.pdf' target='_blank'>
                                         <ListItemIcon>
                                             <ContactPageIcon />
                                         </ListItemIcon>

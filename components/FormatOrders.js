@@ -16,6 +16,7 @@ import Grid from '@mui/material/Unstable_Grid2'; // Grid version 2
 import Paper from '@mui/material/Paper';
 import CircularProgress from '@mui/material/CircularProgress';
 import Backdrop from '@mui/material/Backdrop';
+import { CleaningServices } from '@mui/icons-material';
 
 
 function getOrderDate(order) {
@@ -63,13 +64,11 @@ export function OrderPageStatus(props) {
             props.setOrderPagePosted(false)
         })
         .then((data) => {
-            console.log('data')
             console.log('data: ' + JSON.stringify(data))
             props.setOrders(data)
             console.log('data end: ' + JSON.stringify(data))
             props.setOpen(data.map((order) => ({ isOpen: false, orderID: order.orderID })))
             props.setOrderPagePosted(false)
-            console.log('data end: ' + JSON.stringify(data))
         })
         .catch((error) => {
             console.log('React fetch error: ' + error)
@@ -88,10 +87,12 @@ export function PostFulfill(props) {
             props.setFulfillPosted(false)
         })
         .then((newOrders) => {
-            //console.log('handleFetch order count: ' + JSON.stringify(newOrders.foodItems.length))
-            props.setOpen(newOrders.map((order) => ({ isOpen: false, orderID: order.orderID })))
+            console.log('handleFetch order count: ' + JSON.stringify(newOrders))
+            props.setOpen(newOrders.activeOrders.map((order) => ({ isOpen: false, orderID: order.orderID })))
             props.setFulfillPosted(false)
-            props.setOrders(newOrders)
+            props.setOrders(newOrders.activeOrders)
+            props.setOrderCount(newOrders.orderCount)
+            console.log('orders length:' + newOrders.orderCount)
             return newOrders
         })
         .catch((error) => {
@@ -101,7 +102,7 @@ export function PostFulfill(props) {
         })
 }
 
-export function FormatOrders({ userOrders, active, orderCount, manage }) {
+export function FormatOrders({ userOrders, active, incOrderCount, manage }) {
     //console.log('orders: ' + JSON.stringify(userOrders))
     const [open, setOpen] = useState(userOrders.map((order) => ({ isOpen: false, orderID: order.orderID })))
     const [selectedIndex, setSelectedIndex] = useState(1);
@@ -110,6 +111,7 @@ export function FormatOrders({ userOrders, active, orderCount, manage }) {
     const [error, setError] = useState(null)
     const [orders, setOrders] = useState(userOrders)
     const [fulfillPosted, setFulfillPosted] = useState(false)
+    const [orderCount, setOrderCount] = useState(incOrderCount)
 
     console.log('order count: ' + orderCount)
 
@@ -173,7 +175,7 @@ export function FormatOrders({ userOrders, active, orderCount, manage }) {
                                                             </Grid>
                                                             {manage &&
                                                             <Grid xs={3} md={1}>
-                                                                    <Button disabled={fulfillPosted} variant="contained" onClick={(e) => { e.stopPropagation(); handleFulFill(order.orderID) }}>Fulfill</Button>
+                                                                    <Button disabled={fulfillPosted !== false} variant="contained" onClick={(e) => { e.stopPropagation(); handleFulFill(order.orderID) }}>Fulfill</Button>
                                                             </Grid>}
                                                         </Grid>
                                                     }
@@ -336,6 +338,7 @@ export function FormatOrders({ userOrders, active, orderCount, manage }) {
                         fulfillPosted={fulfillPosted}
                         setFulfillPosted={(data) => setFulfillPosted(data)}
                         setOrders={(data) => setOrders(data)}
+                        setOrderCount = {(data) => setOrderCount(data)}
                     />}
                 {error && <div>{error}</div>}
             </Box>

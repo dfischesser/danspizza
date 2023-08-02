@@ -15,6 +15,8 @@ import { OrderToolbar } from '../components/toolbars/order';
 import { BackOfficeToolbar } from '../components/toolbars/backOffice';
 import { useRouter } from 'next/router'
 import { fetchy } from '../components/fetchy';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
 
 const style = {
   position: 'absolute',
@@ -37,6 +39,9 @@ const style = {
   pb: 1
 };
 
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 export function LogoutStatus(props) {
   const router = useRouter();
@@ -53,6 +58,7 @@ export function LogoutStatus(props) {
         router.reload();
       }
       props.setLoginPosted(false)
+      props.setIsStep2(false)
     })
     .catch((error) => {
       console.log('React fetch error: ' + error.message)
@@ -68,6 +74,7 @@ export function ResponsiveAppBar(props) {
   const [anchorElUser, setAnchorElUser] = useState(null)
   const [anchorElCart, setAnchorElCart] = useState(null)
   const [hasCookie, setHasCookie] = useState(false)
+  const [openCartAlert, setOpenCartAlert] = useState(false)
   const [isCreate, setIsCreate] = useState(false)
   const [isStep2, setIsStep2] = useState(false)
   const [logoutPosted, setLogoutPosted] = useState(false)
@@ -128,8 +135,12 @@ export function ResponsiveAppBar(props) {
   }
 
   const handleCartClick = (event) => {
-    console.log('Navbar handleClick: ' + event.currentTarget)
-    setAnchorElCart(anchorElCart ? null : event.currentTarget);
+    console.log('appbar cart handleClick: ' + event.currentTarget)
+    if (router.asPath === '/menu' && props.currentCartItems.length === 0) {
+      setOpenCartAlert(true)
+    } else {
+      setAnchorElCart(anchorElCart ? null : event.currentTarget);
+    }
   };
 
   const handleOpenNavMenu = (event) => {
@@ -159,6 +170,15 @@ export function ResponsiveAppBar(props) {
   };
 
   console.log('appBar username: ' + props.userName)
+
+  const handleCloseCartAlert = (event, reason) => {
+    console.log('alert handleclose hit. reason: ' + reason)
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpenCartAlert(false);
+  };
+
   return (
     <>
       <AppBar position="static">
@@ -174,6 +194,7 @@ export function ResponsiveAppBar(props) {
             setHasOrder={(data) => props.setHasOrder(data)}
             handleCartClick={(e) => handleCartClick(e)}
             setIsBackOffice={(data) => props.setIsBackOffice(data)}
+            setOpenCartAlert={(data) => setOpenCartAlert(data)}
             isLoggedIn={props.isLoggedIn}
             open={open}
             hasCookie={hasCookie}
@@ -192,6 +213,7 @@ export function ResponsiveAppBar(props) {
               setOpen={(data) => setOpen(data)}
               setHasOrder={(data) => props.setHasOrder(data)}
               handleCartClick={(e) => handleCartClick(e)}
+              setOpenCartAlert={(data) => setOpenCartAlert(data)}
               open={open}
               hasCookie={hasCookie}
               userName={props.userName}
@@ -211,6 +233,7 @@ export function ResponsiveAppBar(props) {
               handleCartClick={(e) => handleCartClick(e)}
               setIsBackOffice={(data) => props.setIsBackOffice(data)}
               setTest={(data) => setLoginButton(data)}
+              setOpenCartAlert={(data) => setOpenCartAlert(data)}
               isBackOffice={props.isBackOffice}
               isLoggedIn={props.isLoggedIn}
               open={open}
@@ -222,14 +245,20 @@ export function ResponsiveAppBar(props) {
         }
       </AppBar>
 
+      <Snackbar anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }} open={openCartAlert} autoHideDuration={2000} onClose={handleCloseCartAlert}>
+        <Alert onClose={handleCloseCartAlert} severity='info' sx={{ width: '100%' }}>
+          Cart is Empty
+        </Alert>
+      </Snackbar>
       {!props.hasOrder &&
-        <Popover id={id} open={open} anchorEl={anchorElCart} transformOrigin={{horizontal: 'right', vertical: 'top'}} anchorOrigin={{horizontal: 'right', vertical: 'bottom' }} onClose={handleCartClose} children={riffRef}>
+        <Popover id={id} open={open} anchorEl={anchorElCart} transformOrigin={{ horizontal: 'right', vertical: 'top' }} anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }} onClose={handleCartClose} children={riffRef}>
           <Box ref={riffRef}>
             <Cart
               open={props.openLogin}
               currentCartItems={props.currentCartItems}
               setOpenLogin={(data) => props.setOpen(data)}
               removeItem={(foodItem) => props.removeItem(foodItem)}
+              removeAllItems={() => props.removeAllItems()}
               handleAddOrderClick={() => props.handleAddOrderClick()}
               setUserName={(data) => props.setUserName(data)}
               setIsCreate={(data) => setIsCreate(data)}
@@ -237,6 +266,7 @@ export function ResponsiveAppBar(props) {
               setAnchorElCart={(data) => setAnchorElCart(data)}
               isLoggedIn={props.isLoggedIn}
               userName={props.userName}
+              handleCartClose={() => handleCartClose()}
             />
           </Box>
         </Popover>}

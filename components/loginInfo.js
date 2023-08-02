@@ -32,8 +32,8 @@ export function LoginStatus(props) {
             console.log('handleFetch login data: ' + JSON.stringify(data))
             if (data.firstName) {
                 console.log('login success')
-
             }
+
             props.setLoginPosted(false)
             props.setEmail(data.email)
             props.setPass(data.password)
@@ -73,6 +73,8 @@ export function LoginInfo(props) {
         navigator.clipboard.writeText(pass)
     };
 
+    console.log('employee set to: ' + employee)
+
     return (
         <Grid container>
         <Paper sx={{p:3, bgcolor: 'background.paper'}}>
@@ -80,7 +82,7 @@ export function LoginInfo(props) {
             <Typography sx={{fontWeight:500}}> Generate a User</Typography>
         </Grid>
         <Grid xs={12} textAlign={'left'}>
-                <FormControlLabel control={<Switch />} value={employee} onClick={() => setEmployee(!employee)} label="Employee" sx={{ml:.5}}/>
+                <FormControlLabel control={<Switch onClick={() => {setEmployee(!employee) }} />} value={employee}  label="Employee" sx={{ml:.5}}/>
         </Grid>
             <Grid xs={12}>
                 <FormControl sx={{ m: 1, width: '25ch' }} variant="outlined" onClick={copyEmail}>

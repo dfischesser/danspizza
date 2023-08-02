@@ -11,7 +11,7 @@ import ListItemText from '@mui/material/ListItemText';
 import ListSubheader from '@mui/material/ListSubheader';
 import List from '@mui/material/List';
 import CloseIcon from '@mui/icons-material/CloseRounded';
-import KebabDiningIcon from '@mui/icons-material/KebabDining';
+import { useRouter } from 'next/router'
 import IconButton from '@mui/material/IconButton';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Unstable_Grid2'; // Grid version 2
@@ -20,6 +20,7 @@ import { styled } from '@mui/material/styles';
 import { useState } from 'react';
 import { getCookie } from './getCookie';
 import { NextLinkComposed } from './Link';
+import ClearIcon from '@mui/icons-material/Clear';
 
 const CartItem = styled(Paper)(({ theme }) => ({
     ...theme.typography.body2,
@@ -56,6 +57,9 @@ function OptionsWithPrice(props) {
 export function Cart(props) {
     const [expandItem, setExpandItem] = useState(0)
     const [token, setToken] = useState(getCookie('token'))
+
+    const router = useRouter();
+
     console.log('cart props: ' + JSON.stringify(props)) //jwt_decode(getCookie('token'))
     console.log('token: ' + token)
     if (token) {
@@ -80,17 +84,21 @@ export function Cart(props) {
     console.log('expandItem: ' + JSON.stringify(expandItem))
     console.log('cart items: ' + JSON.stringify(props.currentCartItems))
 
+
+    console.log('cart items: ' + JSON.stringify(props.currentCartItems.map(x => x.foodName)))
+
     return (
         <Submit elevation={3} sx={{ width: 300, width: '100%', pb: 2, boxShadow: 5 }}>
             <Stack spacing={1} justifyContent={'space-between'} sx={{ minHeight: 300, minWidth: 300 }}>
                 <Box>
+                    <Typography variant='h6'>Your Cart</Typography>
                     <List sx={{ p: 1 }}>
                         <Stack spacing={1}>
                             {(props.currentCartItems.length === 0) &&
                                 <CartItem>
-                                    <Typography component={'div'} textAlign={'center'} fontWeight={500} sx={{ mt: 2 }} >{'No items added'}
+                                    <Typography component={'div'} textAlign={'center'} fontWeight={500} sx={{ mt: 2 }} >{'Cart is Empty'}
                                     </Typography>
-                                    <Button component={NextLinkComposed} variant='contained' to='/menu' onClick={() => props.setAnchorElCart(false)} sx={{ m: 2 }}>Go To Menu</Button>
+                                    { router.asPath !== '/menu' && <Button component={NextLinkComposed} variant='contained' to='/menu' onClick={() => props.setAnchorElCart(false)} sx={{ m: 2 }}>Go To Menu</Button>}
                                 </CartItem>
                             }
                             {props.currentCartItems.map(
@@ -181,7 +189,7 @@ export function Cart(props) {
                         {(!props.isLoggedIn && props.currentCartItems.length > 0) ?
                             <Box sx={{ pt: 3, mx: 3 }}>
                                 <Typography>Create Account to Place Order</Typography>
-                                <Button sx={{ mt: 1 }} variant='contained' onClick={() => { props.setIsCreate(true); props.setOpenLogin(true) }}>
+                                <Button sx={{ mt: 1 }} variant='contained' onClick={() => { props.setIsCreate(true); props.setOpenLogin(true); props.handleCartClose(); }}>
                                     Create Account
                                 </Button>
                             </Box>
@@ -189,20 +197,29 @@ export function Cart(props) {
                             (!props.userName) ?
                                 <Box sx={{ width: '90%', mx: 'auto' }}>
                                     <Box>
-                                        <Button variant='contained' onClick={() => { props.setIsCreate(true); props.setIsStep2(true); props.setOpenLogin(true) }}>
+                                        <Button variant='contained' onClick={() => { props.setIsCreate(true); props.setIsStep2(true); props.setOpenLogin(true); props.handleCartClose(); }}>
                                             Complete Account Creation
                                         </Button></Box>
                                 </Box> :
                                 props.currentCartItems.length > 0 &&
+                                <Stack direction={'row'}>
                                 <Button
                                     component={NextLinkComposed}
-                                    sx={{ mx: 'auto', width: '150px', display: 'block', textAlign: 'center' }}
+                                    sx={{ mx: 'auto', width: '150px', textAlign: 'center' }}
                                     variant='contained'
-                                    color='secondary'
+                                    color='primary'
                                     to='/order'
-                                    onClick={() => { props.setAnchorElCart(null); props.handleAddOrderClick() }}>
+                                    onClick={() => {props.setAnchorElCart(null); props.handleAddOrderClick() }}>
                                     Prepare Order
                                 </Button>
+                                <Button
+                                    sx={{ mx: 'auto', width: '150px', textAlign: 'center' }}
+                                    variant='contained'
+                                    color='secondary'
+                                    onClick={(e) => {  e.stopPropagation(); props.handleCartClose(); props.removeAllItems(); }}>
+                                    Clear Cart
+                                </Button>
+                                </Stack>
                         }
                     </Typography>
                 </Box>

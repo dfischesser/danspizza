@@ -45,7 +45,7 @@ export default function Manage(props) {
     <Box textAlign={'center'}>
         <Header title="Manage Orders"/>
         <Box sx={{ mx: 'auto', width: '100%' }}>
-            <FormatOrders userOrders={props.orders.activeOrders} orderCount={props.orders.orderCount} manage={true} />
+            <FormatOrders userOrders={props.orders.activeOrders} incOrderCount={props.orders.orderCount} manage={true} />
         </Box>
     </Box>
   );
