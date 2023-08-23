@@ -9,7 +9,6 @@ import { NextLinkComposed } from '../components/Link';
 import LocalPizzaIcon from '@mui/icons-material/LocalPizza';
 import { Abril_Fatface, Italianno } from 'next/font/google';
 import { styled } from '@mui/material/styles';
-import Stack from '@mui/material/Stack';
 
 export const abrilFatFace = Abril_Fatface({
   weight: ['400'],
@@ -48,7 +47,7 @@ export default function HomePage(props) {
                         textDecoration: 'none',
                         mt: 6,
                         mb: 1
-                    }}>DAN'S <LocalPizzaIcon fontSize={'3rem'}/> PIZZA</Logo>
+                    }}>DAN'S <LocalPizzaIcon fontSize={'10rem'}/> PIZZA</Logo>
         </Grid>
         <Grid xs={12} >
           <Typography>Excellence in a Pie.</Typography>
