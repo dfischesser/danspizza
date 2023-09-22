@@ -9,6 +9,8 @@ export default function MyDocument({ emotionStyleTags }) {
   return (
     <Html lang="en">
       <Head>
+        <title>Dan's Pizza</title>
+        <meta name="description" content="Premium Restaurant Order Simulator. Excellence in a Pie"></meta>
         <meta name="theme-color" content={theme.palette.primary.main} />
         <link rel="icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
