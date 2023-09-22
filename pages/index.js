@@ -5,6 +5,7 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box'
 import Link from '@mui/material/Link'
 import Paper from '@mui/material/Paper';
+import Head from 'next/head';
 import { NextLinkComposed } from '../components/Link';
 import LocalPizzaIcon from '@mui/icons-material/LocalPizza';
 import { Abril_Fatface, Italianno } from 'next/font/google';
@@ -37,6 +38,9 @@ export default function HomePage(props) {
 
   return (
     <Box sx={{ minHeight: 450 }}>
+      <Head>
+        <title>Dan's Pizza - Order Your Virtual Pie Today!</title>
+      </Head>
       <Grid container rowSpacing={1} columnSpacing={2} alignItems={'center'} sx={{ mx: 'auto', textAlign: 'center' }}>
         <Grid xs={12} >
           <Logo variant='h1' 

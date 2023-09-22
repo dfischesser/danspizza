@@ -13,6 +13,7 @@ import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
+import Head from'next/head';
 import Grid from '@mui/material/Unstable_Grid2'; // Grid version 2
 import { Typography } from '@mui/material';
 
@@ -107,71 +108,76 @@ export default function Menu(props) {
     }
 
     return (
-        <Grid container rowSpacing={1} columnSpacing={2}>
-            <Grid xs={12} textAlign={'center'}>
-                <Header title="Menu" />
-            </Grid>
-            <Grid xs={10} xsOffset={1}>
-                <List
-                    component="nav"
-                >
-                    {data.map((item, index) =>
-                        <div key={item.menuCategoryID}>
-                            <ListItemButton
-                                onClick={(e) => { handleClick(e, item.menuCategoryID); setButtonFocus(item.menuCategoryID) }}
-                            >
-                                <ListItemIcon>
-                                    <GetIcon type={item.menuCategoryID} />
-                                </ListItemIcon>
-                                <ListItemText primary={item.foodType} />
-                                {open.find((state) => (state.menuCategoryID == item.menuCategoryID)).isOpen ? <ExpandLess /> : <ExpandMore />}
-                            </ListItemButton>
-                            {index !== (data.length - 1) && <Divider variant='middle' component='li' />}
-                            <Collapse in={open.find((state) => (state.menuCategoryID == item.menuCategoryID)).isOpen} timeout="auto" unmountOnExit>
-                                <List component="div" disablePadding>
-                                    {item.foodList.map(foodItem => (
-                                        <div key={foodItem.foodID}>
-                                            <ListItem sx={{ width: '85%', mx: 'auto' }}>
-                                                <ListItemText primary={foodItem.foodName} />
-                                                {open.find(menuItem => menuItem.menuCategoryID === foodItem.menuCategoryID).food
-                                                    .find((state) => (state.foodID == foodItem.foodID)).isOpen ?
-                                                    <Button
-                                                        onClick={(e) => {
-                                                            handleCustomizeClick(e, foodItem)
-                                                        }
-                                                        }
-                                                        variant="contained">
-                                                        Cancel
-                                                    </Button> : <Button
-                                                        onClick={(e) => {
-                                                            handleCustomizeClick(e, foodItem)
-                                                        }}
-                                                        variant="contained">
-                                                        Add
-                                                    </Button>
-                                                }
-                                            </ListItem>
-                                            <Collapse in={open.find(menuItem => menuItem.menuCategoryID === foodItem.menuCategoryID).food
-                                                .find((state) => (state.foodID == foodItem.foodID)).isOpen} timeout="auto" unmountOnExit>
-                                                <List component='div' disablePadding>
-                                                    <ListItem>
-                                                        <Customize
-                                                            customizeFood={foodItem}
-                                                            addCustomItem={(foodItem) => props.addCustomItem(foodItem)}
-                                                            collapseCustomizeOnAdd={() => collapseCustomizeOnAdd()}
-                                                        />
-                                                    </ListItem>
-                                                </List>
-                                            </Collapse>
-                                        </div>
-                                    ))}
-                                </List>
-                            </Collapse>
+        <Box>
+            <Head>
+                <title>Menu - Dan's Pizza - Order Your Virtual Pie Today!</title>
+            </Head>
+            <Grid container rowSpacing={1} columnSpacing={2}>
+                <Grid xs={12} textAlign={'center'}>
+                    <Header title="Menu" />
+                </Grid>
+                <Grid xs={10} xsOffset={1}>
+                    <List
+                        component="nav"
+                    >
+                        {data.map((item, index) =>
+                            <div key={item.menuCategoryID}>
+                                <ListItemButton
+                                    onClick={(e) => { handleClick(e, item.menuCategoryID); setButtonFocus(item.menuCategoryID) }}
+                                >
+                                    <ListItemIcon>
+                                        <GetIcon type={item.menuCategoryID} />
+                                    </ListItemIcon>
+                                    <ListItemText primary={item.foodType} />
+                                    {open.find((state) => (state.menuCategoryID == item.menuCategoryID)).isOpen ? <ExpandLess /> : <ExpandMore />}
+                                </ListItemButton>
+                                {index !== (data.length - 1) && <Divider variant='middle' component='li' />}
+                                <Collapse in={open.find((state) => (state.menuCategoryID == item.menuCategoryID)).isOpen} timeout="auto" unmountOnExit>
+                                    <List component="div" disablePadding>
+                                        {item.foodList.map(foodItem => (
+                                            <div key={foodItem.foodID}>
+                                                <ListItem sx={{ width: '85%', mx: 'auto' }}>
+                                                    <ListItemText primary={foodItem.foodName} />
+                                                    {open.find(menuItem => menuItem.menuCategoryID === foodItem.menuCategoryID).food
+                                                        .find((state) => (state.foodID == foodItem.foodID)).isOpen ?
+                                                        <Button
+                                                            onClick={(e) => {
+                                                                handleCustomizeClick(e, foodItem)
+                                                            }
+                                                            }
+                                                            variant="contained">
+                                                            Cancel
+                                                        </Button> : <Button
+                                                            onClick={(e) => {
+                                                                handleCustomizeClick(e, foodItem)
+                                                            }}
+                                                            variant="contained">
+                                                            Add
+                                                        </Button>
+                                                    }
+                                                </ListItem>
+                                                <Collapse in={open.find(menuItem => menuItem.menuCategoryID === foodItem.menuCategoryID).food
+                                                    .find((state) => (state.foodID == foodItem.foodID)).isOpen} timeout="auto" unmountOnExit>
+                                                    <List component='div' disablePadding>
+                                                        <ListItem>
+                                                            <Customize
+                                                                customizeFood={foodItem}
+                                                                addCustomItem={(foodItem) => props.addCustomItem(foodItem)}
+                                                                collapseCustomizeOnAdd={() => collapseCustomizeOnAdd()}
+                                                            />
+                                                        </ListItem>
+                                                    </List>
+                                                </Collapse>
+                                            </div>
+                                        ))}
+                                    </List>
+                                </Collapse>
 
-                        </div>
-                    )}
-                </List>
+                            </div>
+                        )}
+                    </List>
+                </Grid>
             </Grid>
-        </Grid>
+        </Box>
     )
 }

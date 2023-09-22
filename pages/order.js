@@ -13,7 +13,7 @@ import List from '@mui/material/List';
 import { Typography } from '@mui/material';
 import Button from '@mui/material/Button';
 import { styled } from '@mui/material/styles';
-import IconButton from '@mui/material/IconButton';
+import Head from 'next/head';
 import Collapse from '@mui/material/Collapse';
 import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
@@ -97,10 +97,10 @@ export const getServerSideProps = async (context) => {
     if (!context.req.cookies.serverToken) {
         return {
             redirect: {
-              destination: '/',
-              permanent: false,
+                destination: '/',
+                permanent: false,
             },
-          }
+        }
     }
     try {
         const res = await fetch(process.env.NODE_ENV === 'development' ? 'http://localhost:18080/api/User/Account' : 'https://www.danspizza.dev/api/User/Account', { headers: { 'Authorization': 'Bearer ' + context.req.cookies.serverToken } })
@@ -151,107 +151,111 @@ export default function Order(props) {
 
 
     return (
-        <Grid container rowSpacing={1} columnSpacing={2} alignItems={'center'}>
-            <Grid xs={12} textAlign={'center'} sx={{mt:5}}>
-                <Typography variant='h5' component='h2' sx={{fontWeight:500}}>Order</Typography>
-            </Grid>
-            <Grid xs={12} textAlign={'center'}>
-                <TableContainer component={Paper} sx={{ width: '100%', mx: 'auto', my: 5, maxWidth: 400, bgcolor: '#fafaf5' }}>
-                    <Table size='small'>
-                        <TableBody>
-                            <TableRow>
-                                <TableCell>Name:</TableCell>
-                                <TableCell>{props.user.firstName} {props.user.lastName}</TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell>Email:</TableCell>
-                                <TableCell>{props.user.email}</TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell>Phone:</TableCell>
-                                <TableCell>{props.user.phone}</TableCell>
-                            </TableRow>
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-            </Grid>
-            <Grid xs={12} sm={6} sx={{ mx: 'auto' }}>
-                <Stack spacing={1} justifyContent={'space-between'}>
-                    <Box>
-                        <List sx={{ p: 1 }}>
-                            <Stack spacing={1}>
-                            {props.currentCartItems.map(
-                                foodItem => <Box key={foodItem.cartItemID}>
-                                    <CartItem
-                                        onClick={() => handleExpand(foodItem.cartItemID)}>
-                                        <Grid container width={300} spacing={1} alignItems={'center'} sx={{ margin: '0 auto' }}>
-                                            <Grid xs={10} >
-                                                <Typography component={'div'} textAlign={'left'} fontWeight={500} >
-                                                    {foodItem.foodName} {foodItem.customizeOptions
-                                                        .find((cartItemCustomize) => (defaultOption === cartItemCustomize.optionID)) && '(' + foodItem.customizeOptions
-                                                            .find((cartItemCustomize) => ((defaultOption === cartItemCustomize.optionID))).optionItems
-                                                            .find(x => x).customizeOptionItem + ')'}
-                                                </Typography>
-                                            </Grid>
-                                            <Grid xs={12} >
-                                                <ListItem disablePadding
-                                                    key={foodItem.cartItemID}
-                                                >
-                                                    <ListItemText
-                                                        primary={
-                                                            (expandItem !== foodItem.cartItemID) &&
-                                                            <Grid spacing={1} container>
-                                                                <Grid xs={9}>
-                                                                    <Typography noWrap>{
-                                                                        foodItem.customizeOptions
-                                                                            .filter((cartItemCustomize) => ((defaultOption !== cartItemCustomize.optionID)))
-                                                                            .flatMap(option => option.optionItems
-                                                                                .filter((customizeOptionItem) =>
-                                                                                    ((customizeOptionItem.customizeOptionItem !== option.optionName) && customizeOptionItem.customizeOptionItem)
-                                                                                )
-                                                                                .map(x => x.customizeOptionItem)).join(', ')
-                                                                    }
-                                                                    </Typography>
-                                                                </Grid>
-                                                                <Grid xs={2}>
-                                                                    <Typography><FoodItemWithPrice foodItem={foodItem} /></Typography>
-                                                                </Grid>
-                                                            </Grid>
-                                                        }
-                                                    />
-                                                </ListItem>
-                                                <Collapse in={expandItem === foodItem.cartItemID} timeout="auto" unmountOnExit>
-                                                    {foodItem.customizeOptions.map((option) => (
-                                                        <List key={option.optionID} disablePadding dense>
-                                                            <ListItem sx={{ bgcolor: 'background.light', boxShadow: 3, mb: 1, borderRadius: .5 }}>
-                                                                <ListItemText primary={
-                                                                    <Stack direction={'row'} justifyContent={'space-between'} width={'100%'}>
-                                                                        <Typography component={'div'} fontSize={'.75rem'} >
+        <Box>
+            <Head>
+                <title>Order - Dan's Pizza - Order Your Virtual Pie Today!</title>
+            </Head>
+            <Grid container rowSpacing={1} columnSpacing={2} alignItems={'center'}>
+                <Grid xs={12} textAlign={'center'} sx={{ mt: 5 }}>
+                    <Typography variant='h5' component='h2' sx={{ fontWeight: 500 }}>Order</Typography>
+                </Grid>
+                <Grid xs={12} textAlign={'center'}>
+                    <TableContainer component={Paper} sx={{ width: '100%', mx: 'auto', my: 5, maxWidth: 400, bgcolor: '#fafaf5' }}>
+                        <Table size='small'>
+                            <TableBody>
+                                <TableRow>
+                                    <TableCell>Name:</TableCell>
+                                    <TableCell>{props.user.firstName} {props.user.lastName}</TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableCell>Email:</TableCell>
+                                    <TableCell>{props.user.email}</TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableCell>Phone:</TableCell>
+                                    <TableCell>{props.user.phone}</TableCell>
+                                </TableRow>
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                </Grid>
+                <Grid xs={12} sm={6} sx={{ mx: 'auto' }}>
+                    <Stack spacing={1} justifyContent={'space-between'}>
+                        <Box>
+                            <List sx={{ p: 1 }}>
+                                <Stack spacing={1}>
+                                    {props.currentCartItems.map(
+                                        foodItem => <Box key={foodItem.cartItemID}>
+                                            <CartItem
+                                                onClick={() => handleExpand(foodItem.cartItemID)}>
+                                                <Grid container width={300} spacing={1} alignItems={'center'} sx={{ margin: '0 auto' }}>
+                                                    <Grid xs={10} >
+                                                        <Typography component={'div'} textAlign={'left'} fontWeight={500} >
+                                                            {foodItem.foodName} {foodItem.customizeOptions
+                                                                .find((cartItemCustomize) => (defaultOption === cartItemCustomize.optionID)) && '(' + foodItem.customizeOptions
+                                                                    .find((cartItemCustomize) => ((defaultOption === cartItemCustomize.optionID))).optionItems
+                                                                    .find(x => x).customizeOptionItem + ')'}
+                                                        </Typography>
+                                                    </Grid>
+                                                    <Grid xs={12} >
+                                                        <ListItem disablePadding
+                                                            key={foodItem.cartItemID}
+                                                        >
+                                                            <ListItemText
+                                                                primary={
+                                                                    (expandItem !== foodItem.cartItemID) &&
+                                                                    <Grid spacing={1} container>
+                                                                        <Grid xs={9}>
+                                                                            <Typography noWrap>{
+                                                                                foodItem.customizeOptions
+                                                                                    .filter((cartItemCustomize) => ((defaultOption !== cartItemCustomize.optionID)))
+                                                                                    .flatMap(option => option.optionItems
+                                                                                        .filter((customizeOptionItem) =>
+                                                                                            ((customizeOptionItem.customizeOptionItem !== option.optionName) && customizeOptionItem.customizeOptionItem)
+                                                                                        )
+                                                                                        .map(x => x.customizeOptionItem)).join(', ')
+                                                                            }
+                                                                            </Typography>
+                                                                        </Grid>
+                                                                        <Grid xs={2}>
+                                                                            <Typography><FoodItemWithPrice foodItem={foodItem} /></Typography>
+                                                                        </Grid>
+                                                                    </Grid>
+                                                                }
+                                                            />
+                                                        </ListItem>
+                                                        <Collapse in={expandItem === foodItem.cartItemID} timeout="auto" unmountOnExit>
+                                                            {foodItem.customizeOptions.map((option) => (
+                                                                <List key={option.optionID} disablePadding dense>
+                                                                    <ListItem sx={{ bgcolor: 'background.light', boxShadow: 3, mb: 1, borderRadius: .5 }}>
+                                                                        <ListItemText primary={
                                                                             <Stack direction={'row'} justifyContent={'space-between'} width={'100%'}>
-                                                                                <Box minWidth={75}>
-                                                                                    <b>{option.optionName === foodItem.foodName ? 'Base Item: ' : option.optionName + ': '}</b>
-                                                                                </Box>
-                                                                                <Box fontSize={'.75rem'}>
-                                                                                    {option.optionItems.map(x => x.customizeOptionItem).join(', ')}
-                                                                                </Box>
+                                                                                <Typography component={'div'} fontSize={'.75rem'} >
+                                                                                    <Stack direction={'row'} justifyContent={'space-between'} width={'100%'}>
+                                                                                        <Box minWidth={75}>
+                                                                                            <b>{option.optionName === foodItem.foodName ? 'Base Item: ' : option.optionName + ': '}</b>
+                                                                                        </Box>
+                                                                                        <Box fontSize={'.75rem'}>
+                                                                                            {option.optionItems.map(x => x.customizeOptionItem).join(', ')}
+                                                                                        </Box>
+                                                                                    </Stack>
+                                                                                </Typography>
+                                                                                <Typography component={'div'} fontSize={'.75rem'}>
+                                                                                    <OptionsWithPrice option={option} />
+                                                                                    {/* {item.price !== 0 && item.price.toLocaleString('us-US', { style: 'currency', currency: 'USD' })} */}
+                                                                                </Typography>
                                                                             </Stack>
-                                                                        </Typography>
-                                                                        <Typography component={'div'} fontSize={'.75rem'}>
-                                                                            <OptionsWithPrice option={option} />
-                                                                            {/* {item.price !== 0 && item.price.toLocaleString('us-US', { style: 'currency', currency: 'USD' })} */}
-                                                                        </Typography>
-                                                                    </Stack>
-                                                                } />
-                                                            </ListItem>
-                                                        </List>
-                                                    ))}
-                                                </Collapse>
-                                            </Grid>
-                                        </Grid>
-                                    </CartItem>
-                                </Box>)
-                            }
-                                {/* {props.currentCartItems.map(
+                                                                        } />
+                                                                    </ListItem>
+                                                                </List>
+                                                            ))}
+                                                        </Collapse>
+                                                    </Grid>
+                                                </Grid>
+                                            </CartItem>
+                                        </Box>)
+                                    }
+                                    {/* {props.currentCartItems.map(
                                     foodItem => <Box key={foodItem.cartItemID}>
                                         <CartItem
                                             onClick={() => setExpandItem(!expandItem)}>
@@ -296,43 +300,44 @@ export default function Order(props) {
                                         </CartItem>
                                     </Box>)
                                 } */}
-                            </Stack>
-                        </List>
-                    </Box>
-                </Stack>
-            </Grid>
+                                </Stack>
+                            </List>
+                        </Box>
+                    </Stack>
+                </Grid>
 
-            <Grid xs={12} textAlign={'center'}>
-                {!orderPlaced && <GetPrice currentCartItems={props.currentCartItems} customizeData={props.customizeData} isOrderPage={true} />}
-                {!orderPlaced && (orderPosted ?
-                    <Typography textAlign={'center'} sx={{ minWidth: 200, my: 3 }} >
-                        <Button disabled sx={{ mx: 1 }} variant='contained'>
-                            Place Order
-                        </Button>
-                    </Typography> :
-                    <Typography textAlign={'center'} sx={{ minWidth: 200, my: 3 }} >
-                        <Button onClick={() => setOrderPosted(true)} sx={{ mx: 1 }} variant='contained'>
-                            Place Order
-                        </Button>
-                    </Typography>)}
-                {orderPosted &&
-                    <PostOrder
-                        currentCartItems={props.currentCartItems}
-                        setError={(error) => setError(error)}
-                        setOrderPosted={(data) => setOrderPosted(data)}
-                        setOrderPlaced={(data) => setOrderPlaced(data)}
-                        setHasOrder={(data) => props.setHasOrder(data)}
-                        removeAllItems={() => props.removeAllItems()}
-                    />}
-                {error && <div>{error}</div>}
-                {orderPlaced &&
-                    <Box sx={{ my: 3 }}>
-                        <Typography>
-                            Thank you for your order, {props.user.firstName}!<br />
-                            You can view your order status on your <Link href='/account' >account</Link> page.
-                        </Typography>
-                    </Box>}
+                <Grid xs={12} textAlign={'center'}>
+                    {!orderPlaced && <GetPrice currentCartItems={props.currentCartItems} customizeData={props.customizeData} isOrderPage={true} />}
+                    {!orderPlaced && (orderPosted ?
+                        <Typography textAlign={'center'} sx={{ minWidth: 200, my: 3 }} >
+                            <Button disabled sx={{ mx: 1 }} variant='contained'>
+                                Place Order
+                            </Button>
+                        </Typography> :
+                        <Typography textAlign={'center'} sx={{ minWidth: 200, my: 3 }} >
+                            <Button onClick={() => setOrderPosted(true)} sx={{ mx: 1 }} variant='contained'>
+                                Place Order
+                            </Button>
+                        </Typography>)}
+                    {orderPosted &&
+                        <PostOrder
+                            currentCartItems={props.currentCartItems}
+                            setError={(error) => setError(error)}
+                            setOrderPosted={(data) => setOrderPosted(data)}
+                            setOrderPlaced={(data) => setOrderPlaced(data)}
+                            setHasOrder={(data) => props.setHasOrder(data)}
+                            removeAllItems={() => props.removeAllItems()}
+                        />}
+                    {error && <div>{error}</div>}
+                    {orderPlaced &&
+                        <Box sx={{ my: 3 }}>
+                            <Typography>
+                                Thank you for your order, {props.user.firstName}!<br />
+                                You can view your order status on your <Link href='/account' >account</Link> page.
+                            </Typography>
+                        </Box>}
+                </Grid>
             </Grid>
-        </Grid>
+        </Box>
     )
 }

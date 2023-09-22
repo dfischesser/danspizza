@@ -10,6 +10,7 @@ import { getCookie } from '../../components/getCookie';
 import { useState } from 'react';
 import { fetchy } from '../../components/fetchy';
 import { EditMenu } from '../../components/editMenu';
+import Head from 'next/head';
 import Grid from '@mui/material/Unstable_Grid2'; // Grid version 2
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -25,12 +26,12 @@ function Header({ title }) {
 
 export const getServerSideProps = async (context) => {
   if (!context.req.cookies.serverToken) {
-      return {
-          redirect: {
-            destination: '/',
-            permanent: false,
-          },
-        }
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
+    }
   }
   try {
     const res = await fetch(process.env.NODE_ENV === 'development' ? 'http://localhost:18080/api/EditMenu/Food/Get' : 'https://www.danspizza.dev/api/EditMenu/Food/Get', { headers: { 'Authorization': 'Bearer ' + context.req.cookies.serverToken } })
@@ -169,66 +170,69 @@ export default function EditSite(props) {
   console.log('options: ' + JSON.stringify(props.items.customizeOptions))
   return (
     <Box textAlign={'center'}>
+      <Head>
+        <title>Edit Site - Dan's Pizza - Order Your Virtual Pie Today!</title>
+      </Head>
       <Header title="Edit Site" />
       <Tooltip title='Edit Site Disabled' followCursor>
         <Box>
-        <Grid container textAlign={'center'} sx={{ px: 5, pointerEvents: 'none', opacity: "0.4" } /*pointerEvents: "none",*/} >
-          <Grid xs={12}>
-            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-              <Tabs value={pageTabValue} onChange={handlePageTabChange} aria-label="basic tabs example">
-                <Tab label="Edit Home" {...a11yProps(0)} sx={{ fontSize: '1rem' }} />
-                <Tab label="Edit Menu" {...a11yProps(1)} sx={{ fontSize: '1rem' }} />
-              </Tabs>
-            </Box>
-          </Grid>
-          <Grid xs={12}>
-            <TabPanel value={pageTabValue} index={0}>
-              <Grid container>
-                <Grid xs={5} sm={3} md={2} sx={{ borderRight: 1, borderColor: 'divider' }}>
-                  <List sx={{ p: 1 }}>
-                    <ListItemButton sx={homeButtonValue === 1 ? focusStyle : blurStyle} selected={homeButtonValue === 1} onClick={(e) => setHomeButtonValue(1)} >
-                      <ListItemText primary={'Coupons'} sx={{ textAlign: 'center' }} />
-                    </ListItemButton>
-                    <ListItemButton sx={homeButtonValue === 2 ? focusStyle : blurStyle} selected={homeButtonValue === 2} onClick={(e) => setHomeButtonValue(2)} >
-                      <ListItemText primary={'Blurb'} sx={{ textAlign: 'center' }} />
-                    </ListItemButton>
-                    <ListItemButton sx={homeButtonValue === 3 ? focusStyle : blurStyle} selected={homeButtonValue === 3} onClick={(e) => setHomeButtonValue(3)} >
-                      <ListItemText primary={'News'} sx={{ textAlign: 'center' }} />
-                    </ListItemButton>
-                  </List>
+          <Grid container textAlign={'center'} sx={{ px: 5, pointerEvents: 'none', opacity: "0.4" } /*pointerEvents: "none",*/} >
+            <Grid xs={12}>
+              <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                <Tabs value={pageTabValue} onChange={handlePageTabChange} aria-label="basic tabs example">
+                  <Tab label="Edit Home" {...a11yProps(0)} sx={{ fontSize: '1rem' }} />
+                  <Tab label="Edit Menu" {...a11yProps(1)} sx={{ fontSize: '1rem' }} />
+                </Tabs>
+              </Box>
+            </Grid>
+            <Grid xs={12}>
+              <TabPanel value={pageTabValue} index={0}>
+                <Grid container>
+                  <Grid xs={5} sm={3} md={2} sx={{ borderRight: 1, borderColor: 'divider' }}>
+                    <List sx={{ p: 1 }}>
+                      <ListItemButton sx={homeButtonValue === 1 ? focusStyle : blurStyle} selected={homeButtonValue === 1} onClick={(e) => setHomeButtonValue(1)} >
+                        <ListItemText primary={'Coupons'} sx={{ textAlign: 'center' }} />
+                      </ListItemButton>
+                      <ListItemButton sx={homeButtonValue === 2 ? focusStyle : blurStyle} selected={homeButtonValue === 2} onClick={(e) => setHomeButtonValue(2)} >
+                        <ListItemText primary={'Blurb'} sx={{ textAlign: 'center' }} />
+                      </ListItemButton>
+                      <ListItemButton sx={homeButtonValue === 3 ? focusStyle : blurStyle} selected={homeButtonValue === 3} onClick={(e) => setHomeButtonValue(3)} >
+                        <ListItemText primary={'News'} sx={{ textAlign: 'center' }} />
+                      </ListItemButton>
+                    </List>
+                  </Grid>
+                  <Grid xs={7} sm={9} md={10}>
+                    {homeButtonValue == 1 &&
+                      <Typography sx={{ my: 'auto' }}>Current Coupons</Typography>
+                    }
+                    {homeButtonValue == 2 &&
+                      <Typography sx={{ my: 'auto' }}>Current Blurb</Typography>
+                    }
+                    {homeButtonValue == 3 &&
+                      <Typography sx={{ my: 'auto' }}>Current News</Typography>
+                    }
+                  </Grid>
                 </Grid>
-                <Grid xs={7} sm={9} md={10}>
-                  {homeButtonValue == 1 &&
-                    <Typography sx={{ my: 'auto' }}>Current Coupons</Typography>
-                  }
-                  {homeButtonValue == 2 &&
-                    <Typography sx={{ my: 'auto' }}>Current Blurb</Typography>
-                  }
-                  {homeButtonValue == 3 &&
-                    <Typography sx={{ my: 'auto' }}>Current News</Typography>
-                  }
-                </Grid>
-              </Grid>
-            </TabPanel>
-          </Grid>
-          <Grid xs={12} >
-            <TabPanel value={pageTabValue} index={1}>
-              <EditMenu foodItems={props.items.foodItems}></EditMenu>
-            </TabPanel>
-            {error && <Box>{error}</Box>}
-            {optionItemsPosted && selectedFoodItem &&
-              <OptionItemsForFood
-                foodID={selectedFoodItem.foodID}
-                foodOptions={foodOptions}
-                setOptionItemsPosted={(data) => setOptionItemsPosted(data)}
-                setFoodOptionItems={(data) => setFoodOptionItems(data)}
-                setFoodOptions={(data) => setFoodOptions(data)}
-                setError={(data) => setError(data)}
-              />
-            }
-          </Grid>
+              </TabPanel>
+            </Grid>
+            <Grid xs={12} >
+              <TabPanel value={pageTabValue} index={1}>
+                <EditMenu foodItems={props.items.foodItems}></EditMenu>
+              </TabPanel>
+              {error && <Box>{error}</Box>}
+              {optionItemsPosted && selectedFoodItem &&
+                <OptionItemsForFood
+                  foodID={selectedFoodItem.foodID}
+                  foodOptions={foodOptions}
+                  setOptionItemsPosted={(data) => setOptionItemsPosted(data)}
+                  setFoodOptionItems={(data) => setFoodOptionItems(data)}
+                  setFoodOptions={(data) => setFoodOptions(data)}
+                  setError={(data) => setError(data)}
+                />
+              }
+            </Grid>
 
-        </Grid>
+          </Grid>
         </Box>
       </Tooltip>
     </Box>
