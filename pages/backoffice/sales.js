@@ -39,7 +39,7 @@ export default function Sales(props) {
     return (
         <Box textAlign={'center'}>
             <Head>
-                <title>Sales - Dan's Pizza - Order Your Virtual Pie Today!</title>
+                <title>Sales - Dans Pizza - Order Your Virtual Pie Today!</title>
             </Head>
             <BarSales data={data} />
         </Box>

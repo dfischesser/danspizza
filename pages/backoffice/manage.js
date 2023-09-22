@@ -45,7 +45,7 @@ export default function Manage(props) {
     return (
         <Box textAlign={'center'}>
             <Head>
-                <title>Manage - Dan's Pizza - Order Your Virtual Pie Today!</title>
+                <title>Manage - Dans Pizza - Order Your Virtual Pie Today!</title>
             </Head>
             <Header title="Manage Orders" />
             <Box sx={{ mx: 'auto', width: '100%' }}>

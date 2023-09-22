@@ -39,7 +39,7 @@ export default function HomePage(props) {
   return (
     <Box sx={{ minHeight: 450 }}>
       <Head>
-        <title>Dan's Pizza - Order Your Virtual Pie Today!</title>
+        <title>Dans Pizza - Order Your Virtual Pie Today!</title>
       </Head>
       <Grid container rowSpacing={1} columnSpacing={2} alignItems={'center'} sx={{ mx: 'auto', textAlign: 'center' }}>
         <Grid xs={12} >

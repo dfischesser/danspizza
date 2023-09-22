@@ -93,7 +93,7 @@ export default function Account(props) {
     return (
         <Box sx={{ textAlign: 'center' }}>
             <Head>
-                <title>Account - Dan's Pizza - Order Your Virtual Pie Today!</title>
+                <title>Account - Dans Pizza - Order Your Virtual Pie Today!</title>
             </Head>
             <Header title="Account" />
             <TableContainer component={Paper} sx={{ width: '100%', mx: 'auto', mb: 5, maxWidth: 400 }}>

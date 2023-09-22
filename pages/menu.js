@@ -110,7 +110,7 @@ export default function Menu(props) {
     return (
         <Box>
             <Head>
-                <title>Menu - Dan's Pizza - Order Your Virtual Pie Today!</title>
+                <title>Menu - Dans Pizza - Order Your Virtual Pie Today!</title>
             </Head>
             <Grid container rowSpacing={1} columnSpacing={2}>
                 <Grid xs={12} textAlign={'center'}>

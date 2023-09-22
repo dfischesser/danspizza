@@ -171,7 +171,7 @@ export default function EditSite(props) {
   return (
     <Box textAlign={'center'}>
       <Head>
-        <title>Edit Site - Dan's Pizza - Order Your Virtual Pie Today!</title>
+        <title>Edit Site - Dans Pizza - Order Your Virtual Pie Today!</title>
       </Head>
       <Header title="Edit Site" />
       <Tooltip title='Edit Site Disabled' followCursor>

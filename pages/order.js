@@ -153,7 +153,7 @@ export default function Order(props) {
     return (
         <Box>
             <Head>
-                <title>Order - Dan's Pizza - Order Your Virtual Pie Today!</title>
+                <title>Order - Dans Pizza - Order Your Virtual Pie Today!</title>
             </Head>
             <Grid container rowSpacing={1} columnSpacing={2} alignItems={'center'}>
                 <Grid xs={12} textAlign={'center'} sx={{ mt: 5 }}>
