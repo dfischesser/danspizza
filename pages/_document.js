@@ -9,7 +9,7 @@ export default function MyDocument({ emotionStyleTags }) {
   return (
     <Html lang="en">
       <Head>
-        <meta name="description" content="Premium Restaurant Order Simulator. Excellence in a Pie. Created By Daniel Fischesser."></meta>
+        <meta name="description" content="Dans Pizza is a Premium Restaurant Order Simulator. Create Users, Fulfill Orders, and Generate Reports. Created by Daniel Fischesser."></meta>
         <meta name="theme-color" content={theme.palette.primary.main} />
         <link rel="icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />

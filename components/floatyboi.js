@@ -27,10 +27,36 @@ import JavascriptIcon from '@mui/icons-material/Javascript';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import CheckLive from './checkLive';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import SoapIcon from '@mui/icons-material/Soap';
+import Grid from '@mui/material/Unstable_Grid2'; // Grid version 2
+import { fetchy } from './fetchy';
 import { LoginInfo } from './loginInfo';
 import { useState } from 'react';
 import { NextLinkComposed } from './Link';
 import { useRouter } from 'next/router'
+
+export function SoapStatus(props) {
+    const headers = { 'content-type': 'text/xml; charset=utf-8', 'Host':'localhost', 'SOAPAction':'' }
+    const body = '<?xml version="1.0" encoding="utf-8"?\><soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope"><soap12:Body><HelloWorld xmlns="SoapyBoi" /></soap12:Body></soap12:Envelope>'
+    fetchy(process.env.NODE_ENV === 'development' ? 'http://localhost:61829/SoapyBoi.asmx/HelloWorld' : 'https://www.danspizza.dev/SoapyBoi.asmx/HelloWorld', 'POST', body, headers)
+        .catch((error) => {
+            console.log('API error: ' + JSON.stringify(error.message))
+            props.setResponsePosted(false)
+        })
+        .then((data) => {
+            //console.log('message: ' + data.message)
+            console.log('handleFetch login data: ' + JSON.stringify(data))
+            console.log('soap response received success')
+            props.setResponse(data)
+            props.setResponsePosted(false)
+        })
+        .catch((error) => {
+            console.log('React fetch error: ' + error.message)
+            //console.log('React fetch error: Username/Password combination does not match')
+            props.setError('Login Failed')
+            props.setResponsePosted(false)
+        })
+}
 
 export default function FloatingActionButtons(props) {
     const [infoDrawer, setInfoDrawer] = useState(false)
@@ -38,7 +64,12 @@ export default function FloatingActionButtons(props) {
     const [openR, setOpenR] = useState(false)
     const [openG, setOpenG] = useState(false)
     const [openU, setOpenU] = useState(false)
-    const [hasLoggedOn, setHasLoggedOn] = useState(false);
+    const [openS, setOpenS] = useState(false)
+    const [hasLoggedOn, setHasLoggedOn] = useState(false)
+    const [response, setResponse] = useState('Hit Invoke to Test Service')
+    const [responsePosted, setResponsePosted] = useState(false)
+    const [error, setError] = useState('')
+
 
     const router = useRouter();
 
@@ -48,7 +79,7 @@ export default function FloatingActionButtons(props) {
         }
         console.log('open state: ' + open)
         setInfoDrawer(open);
-        if(hasLoggedOn) {
+        if (hasLoggedOn) {
             console.log('floatyboi pushing reload')
             router.reload()
         }
@@ -64,6 +95,12 @@ export default function FloatingActionButtons(props) {
     const handleOpenUClick = () => {
         setOpenU(!openU);
     };
+    const handleOpenSClick = () => {
+        setOpenS(!openS);
+    };
+    const handleInvoke = () => {
+        setResponsePosted(true)
+    }
 
     return (
         <Box sx={{ '& > :not(style)': { m: 1 } }}>
@@ -77,7 +114,7 @@ export default function FloatingActionButtons(props) {
             >
                 <Box minWidth={400} textAlign={'center'} sx={{ p: 5 }}>
                     <List>
-                        <Typography sx={{fontSize: '1.5rem', fontWeight: 600, mb: 3}}>Site Options</Typography>
+                        <Typography sx={{ fontSize: '1.5rem', fontWeight: 600, mb: 3 }}>Site Options</Typography>
                         <Paper sx={{ bgcolor: 'background.beige', mb: 2 }}>
                             <ListItem>
                                 <ListItemButton sx={{ textAlign: 'left' }} onClick={handleOpenUClick}>
@@ -85,15 +122,15 @@ export default function FloatingActionButtons(props) {
                                         <PersonAddIcon />
                                     </ListItemIcon>
                                     <ListItemText primary={'Create User'} />
-                                </ListItemButton> 
+                                </ListItemButton>
                             </ListItem>
                             <Collapse in={openU} timeout="auto" unmountOnExit>
                                 <ListItem target='_blank'>
-                                    <LoginInfo 
-                                        hasLoggedOn={hasLoggedOn} 
-                                        setHasLoggedOn={(data) => setHasLoggedOn(data)} 
+                                    <LoginInfo
+                                        hasLoggedOn={hasLoggedOn}
+                                        setHasLoggedOn={(data) => setHasLoggedOn(data)}
                                     />
-                                </ListItem> 
+                                </ListItem>
                             </Collapse>
                         </Paper>
                         <Paper sx={{ bgcolor: 'background.beige', mb: 2 }}>
@@ -173,10 +210,75 @@ export default function FloatingActionButtons(props) {
                                 </ListItemButton>
                             </ListItem>
                         </Paper>
-                        <ListItem sx={{float: 'right'}}>
-                            <Button sx={{textAlign: 'right', float: 'right'}} onClick={() => setInfoDrawer(false)}><ArrowBackIcon sx={{mr:1}} />Back</Button>
+                        <Paper sx={{ bgcolor: 'background.beige', mb: 2 }}>
+                            <ListItem>
+                                <ListItemButton sx={{ textAlign: 'left' }} onClick={handleOpenSClick}>
+                                    <ListItemIcon>
+                                        <SoapIcon />
+                                    </ListItemIcon>
+                                    <ListItemText primary={'SOAP Test'} />
+                                </ListItemButton>
+                            </ListItem>
+                            <Collapse in={openS} timeout="auto" unmountOnExit>
+                                <ListItem target='_blank'>
+                                    <Grid container rowSpacing={3}>
+                                        <Paper sx={{ px: 3, mb: 3, bgcolor: 'background.paper' }}>
+                                            <Grid xs={12} textAlign={'center'}>
+                                                <Typography sx={{ fontWeight: 500 }}>Message Body</Typography>
+                                            </Grid>
+                                            <Grid xs={12}>
+                                                <Paper square sx={{ bgcolor: 'white', pl: 3, overflow: 'auto', maxWidth: '250px' }}>
+                                                    <Box sx={{ overflow: 'auto' }}>
+                                                        <pre>
+                                                            {'<?xml version="1.0" encoding=\"utf-8\"?\>'}<br />
+                                                            {'<soap12\:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope">'}<br />
+                                                            {'<soap12:Body>'}<br />
+                                                            {'    <HelloWorld xmlns="SoapyBoi" />'}<br />
+                                                            {'</soap12:Body>'}<br />
+                                                            {'</soap12:Envelope>'}
+                                                        </pre>
+                                                    </Box>
+                                                </Paper>
+                                            </Grid>
+                                            <Grid xs={12}>
+                                                <Button variant='contained' onClick={handleInvoke}>Invoke</Button>
+                                            </Grid>
+                                            <Grid xs={12} textAlign={'center'}>
+                                                <Typography sx={{ fontWeight: 500 }}>Service Response</Typography>
+                                            </Grid>
+                                                <Grid xs={12}>
+                                                    <Paper square sx={{ bgcolor: 'white', pl: 3, overflow: 'auto', maxWidth: '250px' }}>
+                                                        {response &&
+                                                        <Box sx={{ overflow: 'auto' }}>
+                                                            <pre>
+                                                                {response}
+                                                            </pre>
+                                                        </Box>}
+                                                        {error &&
+                                                            <Box>
+                                                                {error}
+                                                            </Box>
+                                                        }
+                                                    </Paper>
+                                                </Grid>
+                                            
+                                            {response && 
+                                                <Grid xs={12}>
+                                                    <Button variant='contained' onClick={() => setResponse(' ')}>Clear</Button>
+                                                </Grid>
+                                            }
+                                        </Paper>
+                                    </Grid>
+                                </ListItem>
+                            </Collapse>
+                        </Paper>
+                        <ListItem sx={{ float: 'right' }}>
+                            <Button sx={{ textAlign: 'right', float: 'right' }} onClick={() => setInfoDrawer(false)}><ArrowBackIcon sx={{ mr: 1 }} />Back</Button>
                         </ListItem>
                     </List>
+                    {responsePosted &&
+                        <SoapStatus responsePosted={responsePosted} setResponsePosted={(data) => setResponsePosted(data)} setError={(data) => setError(data)} setResponse={(data => setResponse(data))} />
+                    }
                 </Box>
             </Drawer>
         </Box>

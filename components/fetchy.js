@@ -18,5 +18,9 @@ export async function fetchy(url, method, postData, headers) {
     } 
     console.log('fetchy headers: ')
     console.log(...res.headers)
-    return res.json()
+    if (JSON.stringify(headers).includes('SOAPAction')) {
+        return res.text()
+    } else {
+        return res.json()
+    }
 }
