@@ -132,7 +132,7 @@ export default function MyApp({ Component, emotionCache = clientSideEmotionCache
 
     let welcomeModalClosed = sessionStorage.getItem('welcomeModalClosed') ?? false
     console.log('welcomeModalClosed: ' + welcomeModalClosed)
-    if (!welcomeModalClosed) {
+    if (!welcomeModalClosed && location.toString().startsWith('https://www')) {
       setOpenWelcome(true)
     }
 
