@@ -107,7 +107,7 @@ export default function MyApp({ Component, emotionCache = clientSideEmotionCache
       return;
     }
     console.log('setting setOpenWelcome')
-    localStorage.setItem('welcomeModalClosed', 'true')
+    sessionStorage.setItem('welcomeModalClosed', 'true')
     setOpenWelcome(false);
     return
   };
@@ -115,7 +115,7 @@ export default function MyApp({ Component, emotionCache = clientSideEmotionCache
   useEffect(() => {
     if (typeof window !== 'undefined') {
       console.log('location: ' + window.location)
-      if (location.toString().startsWith('https://danspizza.dev')) {
+      if (!location.toString().startsWith('https://www') && (process.env.NODE_ENV !== 'development')) {
         location.replace(`https://www.danspizza.dev${location.pathname}`);
       }
     }
@@ -130,7 +130,7 @@ export default function MyApp({ Component, emotionCache = clientSideEmotionCache
       )
     }
 
-    let welcomeModalClosed = window.localStorage.getItem('welcomeModalClosed') ?? false
+    let welcomeModalClosed = sessionStorage.getItem('welcomeModalClosed') ?? false
     console.log('welcomeModalClosed: ' + welcomeModalClosed)
     if (!welcomeModalClosed) {
       setOpenWelcome(true)
